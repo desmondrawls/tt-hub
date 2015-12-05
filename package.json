@@ -1,0 +1,26 @@
+{
+  "name": "techTalk",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js",
+    "dev": "node-inspector & nodemon --debug app.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.13.3",
+    "history": "^1.13.1",
+    "lodash": "^3.10.1",
+    "node-jsx": "^0.13.3",
+    "react": "^0.14.3",
+    "react-engine": "^2.6.0",
+    "react-router": "^1.0.1"
+  },
+  "devDependencies": {
+    "node-inspector": "^0.12.4",
+    "nodemon": "^1.8.1"
+  }
+}
