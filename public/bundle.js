@@ -45233,8 +45233,8 @@ var $ = require('jquery')
 var Show = React.createClass({displayName: "Show",
     getInitialState: function(){
         return {
-            attributes: this.props.initialAttributes,
-            scratchpad: this.props.initialAttributes,
+            bulk: this.props.bulk,
+            scratchpad: this.props.bulk,
             edit: false
         }
     },
@@ -45281,7 +45281,7 @@ var Show = React.createClass({displayName: "Show",
             React.createElement(Page, React.__spread({},  context.props), 
                 React.createElement("h1", {onClick: context.onEdit}, "Speaker"), 
                 React.createElement("dl", null, 
-                    attributes(context.state.attributes), 
+                    attributes(context.state.bulk.collection.items[0].data), 
                      context.state.edit ?
                         editButtons() : null
                     
@@ -45292,16 +45292,27 @@ var Show = React.createClass({displayName: "Show",
     },
 
     handleAttributeChange: function(event){
-        var oldAttribute = _.find(this.state.attributes, function(attr){return attr.name == event.target.name})
+        var attributes = this.state.bulk.collection.items[0].data
+        var oldAttribute = _.find(attributes, function(attr){return attr.name == event.target.name})
         var newAttribute = _.merge(_.clone(oldAttribute, true), {value: event.target.value})
-        var index = _.indexOf(this.state.attributes, oldAttribute)
-        var attributes = _.fill(_.clone(this.state.attributes, true), newAttribute, index, index + 1)
-        this.setState({scratchpad: attributes})
+        var index = _.indexOf(attributes, oldAttribute)
+        var newBulk = _.clone(this.state.bulk, true)
+        newBulk.collection.items[0].data.splice(index, 1, newAttribute)
+        this.setState({scratchpad: newBulk})
     },
 
     onSave: function(){
-        this.setState({attributes: this.state.scratchpad})
-        this.onCancel()
+        var context = this
+        this.setState({bulk: this.state.scratchpad})
+        $.ajax('/speakers/' + context.findAttribute('id').value, {
+            method: 'PUT',
+            data: this.state.scratchpad,
+            complete: function () {
+                context.onCancel()
+                //location.reload()
+            }
+        })
+        //this.onCancel()
     },
 
     onEdit: function(){
@@ -45313,6 +45324,10 @@ var Show = React.createClass({displayName: "Show",
     },
 
     onDestroy: function(id) {
+    },
+
+    findAttribute: function(name){
+        return _.find(this.state.bulk.collection.items[0].data, function(attr){ return attr.name == name})
     }
 })
 

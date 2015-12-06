@@ -24,7 +24,14 @@ function show(req, res) {
 }
 
 function update(req, res) {
-    res.send('update endpoint successfully acquired')
+    console.log("updating speaker " + req.params.id, "with " + req.body)
+    var args = {
+        data: req.body,
+        headers:{"Content-Type": "application/json", "Accept": "application/json"}
+    }
+    client.put('http://localhost:3000/' + req.params.id, args, function(speaker, response){
+        res.sendStatus(204)
+    })
 }
 
 function destroy(req, res) {
@@ -34,7 +41,7 @@ function destroy(req, res) {
 function respondWithSpeaker(res, speaker) {
     res.format({
         html: function () {
-            res.render('show', {initialAttributes: JSON.parse(speaker).collection.items[0].data})
+            res.render('show', {bulk: JSON.parse(speaker)})
         },
         json: function () {
             res.send(speaker)

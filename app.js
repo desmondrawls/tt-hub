@@ -22,7 +22,7 @@ app.use('/stylesheets', express.static('stylesheets'));
 app.use('/jquery', express.static(__dirname + '/node_modules/jquery/dist/'));
 app.use(function (req, res, next) {
     console.log('---------------')
-    console.log(req.method, ' with ', req.params, ' at ' + req.path)
+    console.log(req.method, ' with params ', req.params, 'and body ', req.body, ' at ' + req.path)
     console.log('---------------')
     next()
 })
