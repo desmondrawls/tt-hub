@@ -5,7 +5,11 @@ var $ = require('jquery')
 
 var Show = React.createClass({
     getInitialState: function(){
-        return {edit: true}
+        return {
+            attributes: this.props.initialAttributes,
+            scratchpad: this.props.initialAttributes,
+            edit: false
+        }
     },
 
     render: function(){
@@ -17,16 +21,13 @@ var Show = React.createClass({
                     <span>
                         <dt>{attribute.prompt}</dt>
                         { context.state.edit ?
-                            <dd className='edit'>{attribute.value}</dd> :
-                            <dd className='view'>{attribute.value}</dd>
+                            <dd><input type="text" name={attribute.name} defaultValue={attribute.value} onChange={context.handleAttributeChange}/></dd> :
+                            <dd>{attribute.value}</dd>
                         }
                         <br/>
                     </span>
                 )
             })
-        }
-        var test = function(){
-            console.log("clicked")
         }
 
         function editButtons(){
@@ -34,8 +35,8 @@ var Show = React.createClass({
                 <span>
                     <dt></dt>
                     <dd className='edit'>
-                        <input type='submit' value='Save' onClick={test}/>
-                        <input type='submit' value='Cancel' onClick={context.cancel}/>
+                        <input type='submit' value='Save' onClick={context.onSave}/>
+                        <input type='submit' value='Cancel' onClick={context.onCancel}/>
                     </dd>
                 </span>
             )
@@ -44,16 +45,16 @@ var Show = React.createClass({
         function actions(){
             return (
                 <p>
-                    <a href='#' onClick={context.edit}>Edit</a>
-                    <a href='#' onClick={context.destroy}>Delete</a>
+                    <a href='#' onClick={context.onEdit}>Edit</a>
+                    <a href='#' onClick={context.onDestroy}>Delete</a>
                 </p>
             )
         }
         return (
             <Page {...context.props}>
-                <h1 onClick={this.edit}>Speaker</h1>
+                <h1 onClick={context.onEdit}>Speaker</h1>
                 <dl>
-                    {attributes(context.props.attributes)}
+                    {attributes(context.state.attributes)}
                     { context.state.edit ?
                         editButtons() : null
                     }
@@ -63,18 +64,28 @@ var Show = React.createClass({
         )
     },
 
-    save: function(id){
+    handleAttributeChange: function(event){
+        var oldAttribute = _.find(this.state.attributes, function(attr){return attr.name == event.target.name})
+        var newAttribute = _.merge(_.clone(oldAttribute, true), {value: event.target.value})
+        var index = _.indexOf(this.state.attributes, oldAttribute)
+        var attributes = _.fill(_.clone(this.state.attributes, true), newAttribute, index, index + 1)
+        this.setState({scratchpad: attributes})
     },
 
-    edit: function(){
+    onSave: function(){
+        this.setState({attributes: this.state.scratchpad})
+        this.onCancel()
+    },
+
+    onEdit: function(){
         this.setState({edit: true})
     },
 
-    cancel: function(){
+    onCancel: function(){
         this.setState({edit: false})
     },
 
-    destroy: function(id) {
+    onDestroy: function(id) {
     }
 })
 

@@ -5,7 +5,7 @@ var _ = require('lodash')
 var Index = React.createClass({
     render: function(){
         function speakers(speakers) {
-            return _.map(speakers, (speaker) => {
+            return _.map(speakers, function(speaker) {
                 return (
                     <li>{speaker}</li>
                 )

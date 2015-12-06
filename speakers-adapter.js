@@ -34,7 +34,7 @@ function destroy(req, res) {
 function respondWithSpeaker(res, speaker) {
     res.format({
         html: function () {
-            res.render('show', {attributes: JSON.parse(speaker).collection.items[0].data})
+            res.render('show', {initialAttributes: JSON.parse(speaker).collection.items[0].data})
         },
         json: function () {
             res.send(speaker)

@@ -6,11 +6,12 @@ var Page = React.createClass({
             <html>
                 <head>
                     <title>TechTalk</title>
-                    <script src="/jquery/jquery.js"/>
                     <link rel='stylesheet' type='text/css' href='/stylesheets/main.css'/>
                 </head>
                 <body>
                     {this.props.children}
+                    <script src="/jquery/jquery.js"/>
+                    <script src="/bundle.js"/>
                 </body>
             </html>
         )
