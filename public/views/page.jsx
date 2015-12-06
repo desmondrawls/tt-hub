@@ -6,6 +6,7 @@ var Page = React.createClass({
             <html>
                 <head>
                     <title>TechTalk</title>
+                    <script src="/jquery/jquery.js"/>
                     <link rel='stylesheet' type='text/css' href='/stylesheets/main.css'/>
                 </head>
                 <body>
