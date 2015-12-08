@@ -41,7 +41,7 @@ function destroy(req, res) {
 function respondWithSpeaker(res, speaker) {
     res.format({
         html: function () {
-            res.render('show', {bulk: JSON.parse(speaker)})
+            res.render('show', {speaker: JSON.parse(speaker)})
         },
         json: function () {
             res.send(speaker)

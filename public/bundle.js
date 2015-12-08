@@ -45233,8 +45233,8 @@ var $ = require('jquery')
 var Show = React.createClass({displayName: "Show",
     getInitialState: function(){
         return {
-            bulk: this.props.bulk,
-            scratchpad: this.props.bulk,
+            speaker: this.props.speaker,
+            scratchpad: this.props.speaker,
             edit: false
         }
     },
@@ -45281,7 +45281,7 @@ var Show = React.createClass({displayName: "Show",
             React.createElement(Page, React.__spread({},  context.props), 
                 React.createElement("h1", {onClick: context.onEdit}, "Speaker"), 
                 React.createElement("dl", null, 
-                    attributes(context.state.bulk.collection.items[0].data), 
+                    attributes(context.state.speaker.collection.items[0].data), 
                      context.state.edit ?
                         editButtons() : null
                     
@@ -45292,11 +45292,11 @@ var Show = React.createClass({displayName: "Show",
     },
 
     handleAttributeChange: function(event){
-        var attributes = this.state.bulk.collection.items[0].data
+        var attributes = this.state.speaker.collection.items[0].data
         var oldAttribute = _.find(attributes, function(attr){return attr.name == event.target.name})
         var newAttribute = _.merge(_.clone(oldAttribute, true), {value: event.target.value})
         var index = _.indexOf(attributes, oldAttribute)
-        var newBulk = _.clone(this.state.bulk, true)
+        var newBulk = _.clone(this.state.speaker, true)
         newBulk.collection.items[0].data.splice(index, 1, newAttribute)
         this.setState({scratchpad: newBulk})
     },
@@ -45307,7 +45307,7 @@ var Show = React.createClass({displayName: "Show",
             method: 'PUT',
             data: this.state.scratchpad,
             success: function(data){
-                context.setState({bulk: JSON.parse(data)})
+                context.setState({speaker: JSON.parse(data)})
                 context.onCancel()
             }
         })
@@ -45325,7 +45325,7 @@ var Show = React.createClass({displayName: "Show",
     },
 
     findAttribute: function(name){
-        return _.find(this.state.bulk.collection.items[0].data, function(attr){ return attr.name == name})
+        return _.find(this.state.speaker.collection.items[0].data, function(attr){ return attr.name == name})
     }
 })
 
