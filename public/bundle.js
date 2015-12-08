@@ -45173,7 +45173,26 @@ document.addEventListener('DOMContentLoaded', function onLoad(){
     Client.boot(options)
 })
 
-},{"./views/index.jsx":214,"./views/page.jsx":215,"./views/show.jsx":216,"react-engine/lib/client":29}],214:[function(require,module,exports){
+},{"./views/index.jsx":215,"./views/page.jsx":216,"./views/show.jsx":217,"react-engine/lib/client":29}],214:[function(require,module,exports){
+var _ = require('lodash')
+
+function getAttributes(item){
+    return item.collection.items[0].data;
+}
+
+function getAttribute(item, name){
+    return _.find(getAttributes(item), function(attr){ return attr.name == name})
+}
+
+function updateAttribute(item, name, value) {
+    getAttribute(item, name)['value'] = value
+}
+
+exports.getAttributes = getAttributes
+exports.getAttribute = getAttribute
+exports.updateAttribute = updateAttribute
+
+},{"lodash":28}],215:[function(require,module,exports){
 var React = require('react')
 var Page = require('./page.jsx')
 var _ = require('lodash')
@@ -45201,7 +45220,7 @@ var Index = React.createClass({displayName: "Index",
 
 module.exports = Index
 
-},{"./page.jsx":215,"lodash":28,"react":212}],215:[function(require,module,exports){
+},{"./page.jsx":216,"lodash":28,"react":212}],216:[function(require,module,exports){
 var React = require('react')
 
 var Page = React.createClass({displayName: "Page",
@@ -45224,11 +45243,12 @@ var Page = React.createClass({displayName: "Page",
 
 module.exports = Page
 
-},{"react":212}],216:[function(require,module,exports){
+},{"react":212}],217:[function(require,module,exports){
 var React = require('react')
 var Page = require('./page.jsx')
 var _ = require('lodash')
 var $ = require('jquery')
+var attributeHelpers = require('./collectionJsonHelpers/attributes.js')
 
 var Show = React.createClass({displayName: "Show",
     getInitialState: function(){
@@ -45281,7 +45301,7 @@ var Show = React.createClass({displayName: "Show",
             React.createElement(Page, React.__spread({},  context.props), 
                 React.createElement("h1", {onClick: context.onEdit}, "Speaker"), 
                 React.createElement("dl", null, 
-                    attributes(context.getAttributes(context.state.speaker)), 
+                    attributes(attributeHelpers.getAttributes(context.state.speaker)), 
                      context.state.edit ?
                         editButtons() : null
                     
@@ -45293,13 +45313,13 @@ var Show = React.createClass({displayName: "Show",
 
     handleAttributeChange: function(event){
         var scratchSpeaker = _.clone(this.state.scratchSpeaker, true)
-        this.updateAttribute(scratchSpeaker, event.target.name, event.target.value)
+        attributeHelpers.updateAttribute(scratchSpeaker, event.target.name, event.target.value)
         this.setState({scratchSpeaker: scratchSpeaker})
     },
 
     onSave: function(){
         var context = this
-        $.ajax('/speakers/' + context.getAttribute(this.state.speaker, 'id').value, {
+        $.ajax('/speakers/' + attributeHelpers.getAttribute(this.state.speaker, 'id').value, {
             method: 'PUT',
             data: this.state.scratchSpeaker,
             success: function(data){
@@ -45318,21 +45338,9 @@ var Show = React.createClass({displayName: "Show",
     },
 
     onDestroy: function(id) {
-    },
-
-    getAttributes: function(item){
-        return item.collection.items[0].data;
-    },
-
-    getAttribute: function(item, name){
-        return _.find(this.getAttributes(item), function(attr){ return attr.name == name})
-    },
-
-    updateAttribute: function(item, name, value){
-        this.getAttribute(item, name)['value'] = value
     }
 })
 
 module.exports = Show
 
-},{"./page.jsx":215,"jquery":27,"lodash":28,"react":212}]},{},[213]);
+},{"./collectionJsonHelpers/attributes.js":214,"./page.jsx":216,"jquery":27,"lodash":28,"react":212}]},{},[213]);

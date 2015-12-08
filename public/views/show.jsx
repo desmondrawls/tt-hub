@@ -2,6 +2,7 @@ var React = require('react')
 var Page = require('./page.jsx')
 var _ = require('lodash')
 var $ = require('jquery')
+var attributeHelpers = require('./collectionJsonHelpers/attributes.js')
 
 var Show = React.createClass({
     getInitialState: function(){
@@ -54,7 +55,7 @@ var Show = React.createClass({
             <Page {...context.props}>
                 <h1 onClick={context.onEdit}>Speaker</h1>
                 <dl>
-                    {attributes(context.getAttributes(context.state.speaker))}
+                    {attributes(attributeHelpers.getAttributes(context.state.speaker))}
                     { context.state.edit ?
                         editButtons() : null
                     }
@@ -66,13 +67,13 @@ var Show = React.createClass({
 
     handleAttributeChange: function(event){
         var scratchSpeaker = _.clone(this.state.scratchSpeaker, true)
-        this.updateAttribute(scratchSpeaker, event.target.name, event.target.value)
+        attributeHelpers.updateAttribute(scratchSpeaker, event.target.name, event.target.value)
         this.setState({scratchSpeaker: scratchSpeaker})
     },
 
     onSave: function(){
         var context = this
-        $.ajax('/speakers/' + context.getAttribute(this.state.speaker, 'id').value, {
+        $.ajax('/speakers/' + attributeHelpers.getAttribute(this.state.speaker, 'id').value, {
             method: 'PUT',
             data: this.state.scratchSpeaker,
             success: function(data){
@@ -91,18 +92,6 @@ var Show = React.createClass({
     },
 
     onDestroy: function(id) {
-    },
-
-    getAttributes: function(item){
-        return item.collection.items[0].data;
-    },
-
-    getAttribute: function(item, name){
-        return _.find(this.getAttributes(item), function(attr){ return attr.name == name})
-    },
-
-    updateAttribute: function(item, name, value){
-        this.getAttribute(item, name)['value'] = value
     }
 })
 
