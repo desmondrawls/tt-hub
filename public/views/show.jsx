@@ -1,5 +1,6 @@
 var React = require('react')
 var Page = require('./page.jsx')
+var Link = require('./link.jsx')
 var _ = require('lodash')
 var $ = require('jquery')
 var attributeHelpers = require('./collectionJsonHelpers/attributes.js')
@@ -42,25 +43,19 @@ var Show = React.createClass({
                 </span>
             )
         }
-
-        function actions(){
-            return (
-                <p>
-                    <a href='#' onClick={context.onEdit}>Edit</a>
-                    <a href='#' onClick={context.onDestroy}>Delete</a>
-                </p>
-            )
-        }
         return (
             <Page {...context.props}>
-                <h1 onClick={context.onEdit}>Speaker</h1>
+                <h1>Speaker</h1>
                 <dl>
                     {attributes(attributeHelpers.getAttributes(context.state.speaker))}
                     { context.state.edit ?
                         editButtons() : null
                     }
                 </dl>
-                {actions()}
+                <p>
+                    <Link onClick={context.onEdit} text="Edit"/>
+                    <Link onClick={context.onDestroy} text="Delete"/>
+                </p>
             </Page>
         )
     },
@@ -92,6 +87,7 @@ var Show = React.createClass({
     },
 
     onDestroy: function(id) {
+        console.log("DESTROOOOYYYYY!!!")
     }
 })
 

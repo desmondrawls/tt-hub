@@ -45161,7 +45161,7 @@ module.exports = require('./lib/React');
 
 var Client = require('react-engine/lib/client')
 
-require('./views/index.jsx');require('./views/page.jsx');require('./views/show.jsx')
+require('./views/delete-button.jsx');require('./views/index.jsx');require('./views/link.jsx');require('./views/page.jsx');require('./views/show.jsx')
 
 var options = {
     viewResolver: function(viewName){
@@ -45173,7 +45173,7 @@ document.addEventListener('DOMContentLoaded', function onLoad(){
     Client.boot(options)
 })
 
-},{"./views/index.jsx":215,"./views/page.jsx":216,"./views/show.jsx":217,"react-engine/lib/client":29}],214:[function(require,module,exports){
+},{"./views/delete-button.jsx":215,"./views/index.jsx":216,"./views/link.jsx":217,"./views/page.jsx":218,"./views/show.jsx":219,"react-engine/lib/client":29}],214:[function(require,module,exports){
 var _ = require('lodash')
 
 function getAttributes(item){
@@ -45193,6 +45193,17 @@ exports.getAttribute = getAttribute
 exports.updateAttribute = updateAttribute
 
 },{"lodash":28}],215:[function(require,module,exports){
+var React = require('react')
+
+var DeleteButton = React.createClass({displayName: "DeleteButton",
+  render: function(){
+      return React.createElement("a", {href: "#", onClick: this.props.onClick}, "Delete")
+  }
+})
+
+module.exports = DeleteButton
+
+},{"react":212}],216:[function(require,module,exports){
 var React = require('react')
 var Page = require('./page.jsx')
 var _ = require('lodash')
@@ -45220,7 +45231,18 @@ var Index = React.createClass({displayName: "Index",
 
 module.exports = Index
 
-},{"./page.jsx":216,"lodash":28,"react":212}],216:[function(require,module,exports){
+},{"./page.jsx":218,"lodash":28,"react":212}],217:[function(require,module,exports){
+var React = require('react')
+
+var Link = React.createClass({displayName: "Link",
+  render: function(){
+      return React.createElement("a", {href: "#", onClick: this.props.onClick}, this.props.text)
+  }
+})
+
+module.exports = Link
+
+},{"react":212}],218:[function(require,module,exports){
 var React = require('react')
 
 var Page = React.createClass({displayName: "Page",
@@ -45243,9 +45265,10 @@ var Page = React.createClass({displayName: "Page",
 
 module.exports = Page
 
-},{"react":212}],217:[function(require,module,exports){
+},{"react":212}],219:[function(require,module,exports){
 var React = require('react')
 var Page = require('./page.jsx')
+var Link = require('./link.jsx')
 var _ = require('lodash')
 var $ = require('jquery')
 var attributeHelpers = require('./collectionJsonHelpers/attributes.js')
@@ -45288,25 +45311,19 @@ var Show = React.createClass({displayName: "Show",
                 )
             )
         }
-
-        function actions(){
-            return (
-                React.createElement("p", null, 
-                    React.createElement("a", {href: "#", onClick: context.onEdit}, "Edit"), 
-                    React.createElement("a", {href: "#", onClick: context.onDestroy}, "Delete")
-                )
-            )
-        }
         return (
             React.createElement(Page, React.__spread({},  context.props), 
-                React.createElement("h1", {onClick: context.onEdit}, "Speaker"), 
+                React.createElement("h1", null, "Speaker"), 
                 React.createElement("dl", null, 
                     attributes(attributeHelpers.getAttributes(context.state.speaker)), 
                      context.state.edit ?
                         editButtons() : null
                     
                 ), 
-                actions()
+                React.createElement("p", null, 
+                    React.createElement(Link, {onClick: context.onEdit, text: "Edit"}), 
+                    React.createElement(Link, {onClick: context.onDestroy, text: "Delete"})
+                )
             )
         )
     },
@@ -45338,9 +45355,10 @@ var Show = React.createClass({displayName: "Show",
     },
 
     onDestroy: function(id) {
+        console.log("DESTROOOOYYYYY!!!")
     }
 })
 
 module.exports = Show
 
-},{"./collectionJsonHelpers/attributes.js":214,"./page.jsx":216,"jquery":27,"lodash":28,"react":212}]},{},[213]);
+},{"./collectionJsonHelpers/attributes.js":214,"./link.jsx":217,"./page.jsx":218,"jquery":27,"lodash":28,"react":212}]},{},[213]);
