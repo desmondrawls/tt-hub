@@ -7,7 +7,7 @@ var Show = React.createClass({
     getInitialState: function(){
         return {
             speaker: this.props.speaker,
-            scratchpad: this.props.speaker,
+            scratchSpeaker: this.props.speaker,
             edit: false
         }
     },
@@ -54,7 +54,7 @@ var Show = React.createClass({
             <Page {...context.props}>
                 <h1 onClick={context.onEdit}>Speaker</h1>
                 <dl>
-                    {attributes(context.state.speaker.collection.items[0].data)}
+                    {attributes(context.getAttributes(context.state.speaker))}
                     { context.state.edit ?
                         editButtons() : null
                     }
@@ -65,20 +65,16 @@ var Show = React.createClass({
     },
 
     handleAttributeChange: function(event){
-        var attributes = this.state.speaker.collection.items[0].data
-        var oldAttribute = _.find(attributes, function(attr){return attr.name == event.target.name})
-        var newAttribute = _.merge(_.clone(oldAttribute, true), {value: event.target.value})
-        var index = _.indexOf(attributes, oldAttribute)
-        var newBulk = _.clone(this.state.speaker, true)
-        newBulk.collection.items[0].data.splice(index, 1, newAttribute)
-        this.setState({scratchpad: newBulk})
+        var scratchSpeaker = _.clone(this.state.scratchSpeaker, true)
+        this.updateAttribute(scratchSpeaker, event.target.name, event.target.value)
+        this.setState({scratchSpeaker: scratchSpeaker})
     },
 
     onSave: function(){
         var context = this
-        $.ajax('/speakers/' + context.findAttribute('id').value, {
+        $.ajax('/speakers/' + context.getAttribute(this.state.speaker, 'id').value, {
             method: 'PUT',
-            data: this.state.scratchpad,
+            data: this.state.scratchSpeaker,
             success: function(data){
                 context.setState({speaker: JSON.parse(data)})
                 context.onCancel()
@@ -97,8 +93,16 @@ var Show = React.createClass({
     onDestroy: function(id) {
     },
 
-    findAttribute: function(name){
-        return _.find(this.state.speaker.collection.items[0].data, function(attr){ return attr.name == name})
+    getAttributes: function(item){
+        return item.collection.items[0].data;
+    },
+
+    getAttribute: function(item, name){
+        return _.find(this.getAttributes(item), function(attr){ return attr.name == name})
+    },
+
+    updateAttribute: function(item, name, value){
+        this.getAttribute(item, name)['value'] = value
     }
 })
 
