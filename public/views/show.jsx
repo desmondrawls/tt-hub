@@ -1,6 +1,7 @@
 var React = require('react')
 var Page = require('./page.jsx')
 var Link = require('./link.jsx')
+var Details = require('./details.jsx')
 var _ = require('lodash')
 var $ = require('jquery')
 var attributeHelpers = require('./collectionJsonHelpers/attributes.js')
@@ -17,41 +18,25 @@ var Show = React.createClass({
     render: function(){
         var context = this
 
-        function attributes(attributes){
-            return _.map(attributes, function(attribute){
-                return(
-                    <span>
-                        <dt>{attribute.prompt}</dt>
-                        { context.state.edit ?
-                            <dd><input type="text" name={attribute.name} defaultValue={attribute.value} onChange={context.handleAttributeChange}/></dd> :
-                            <dd>{attribute.value}</dd>
-                        }
-                        <br/>
-                    </span>
-                )
-            })
-        }
-
         function editButtons(){
             return (
-                <span>
-                    <dt></dt>
-                    <dd className='edit'>
-                        <input type='submit' value='Save' onClick={context.onSave}/>
-                        <input type='submit' value='Cancel' onClick={context.onCancel}/>
-                    </dd>
-                </span>
+                <div className='edit'>
+                    <input type='submit' value='Save' onClick={context.onSave}/>
+                    <input type='submit' value='Cancel' onClick={context.onCancel}/>
+                </div>
             )
         }
         return (
             <Page {...context.props}>
                 <h1>Speaker</h1>
-                <dl>
-                    {attributes(attributeHelpers.getAttributes(context.state.speaker))}
-                    { context.state.edit ?
-                        editButtons() : null
-                    }
-                </dl>
+                <Details
+                    attributes={attributeHelpers.getAttributes(context.state.speaker)}
+                    onChange={context.handleAttributeChange}
+                    edit={context.state.edit}
+                />
+                { context.state.edit ?
+                    editButtons() : null
+                }
                 <p>
                     <Link onClick={context.onEdit} text="Edit"/>
                     <Link onClick={context.onDestroy} text="Delete"/>

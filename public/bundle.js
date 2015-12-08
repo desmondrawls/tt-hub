@@ -45161,7 +45161,7 @@ module.exports = require('./lib/React');
 
 var Client = require('react-engine/lib/client')
 
-require('./views/delete-button.jsx');require('./views/index.jsx');require('./views/link.jsx');require('./views/page.jsx');require('./views/show.jsx')
+require('./views/details.jsx');require('./views/index.jsx');require('./views/link.jsx');require('./views/page.jsx');require('./views/show.jsx')
 
 var options = {
     viewResolver: function(viewName){
@@ -45173,7 +45173,7 @@ document.addEventListener('DOMContentLoaded', function onLoad(){
     Client.boot(options)
 })
 
-},{"./views/delete-button.jsx":215,"./views/index.jsx":216,"./views/link.jsx":217,"./views/page.jsx":218,"./views/show.jsx":219,"react-engine/lib/client":29}],214:[function(require,module,exports){
+},{"./views/details.jsx":215,"./views/index.jsx":216,"./views/link.jsx":217,"./views/page.jsx":218,"./views/show.jsx":219,"react-engine/lib/client":29}],214:[function(require,module,exports){
 var _ = require('lodash')
 
 function getAttributes(item){
@@ -45194,16 +45194,36 @@ exports.updateAttribute = updateAttribute
 
 },{"lodash":28}],215:[function(require,module,exports){
 var React = require('react')
+var _ = require('lodash')
 
-var DeleteButton = React.createClass({displayName: "DeleteButton",
-  render: function(){
-      return React.createElement("a", {href: "#", onClick: this.props.onClick}, "Delete")
-  }
+var Details = React.createClass({displayName: "Details",
+    render: function(){
+        var context = this
+
+        function attributesList(attributes){
+            return _.map(attributes, function(attribute){
+                return(
+                    React.createElement("span", null, 
+                        React.createElement("dt", null, attribute.prompt), 
+                         context.props.edit ?
+                            React.createElement("dd", null, React.createElement("input", {type: "text", name: attribute.name, defaultValue: attribute.value, onChange: context.props.onChange})) :
+                            React.createElement("dd", null, attribute.value), 
+                        
+                        React.createElement("br", null)
+                    )
+                )
+            })
+        }
+
+        return (
+            React.createElement("dl", null, attributesList(this.props.attributes))
+        )
+    }
 })
 
-module.exports = DeleteButton
+module.exports = Details
 
-},{"react":212}],216:[function(require,module,exports){
+},{"lodash":28,"react":212}],216:[function(require,module,exports){
 var React = require('react')
 var Page = require('./page.jsx')
 var _ = require('lodash')
@@ -45269,6 +45289,7 @@ module.exports = Page
 var React = require('react')
 var Page = require('./page.jsx')
 var Link = require('./link.jsx')
+var Details = require('./details.jsx')
 var _ = require('lodash')
 var $ = require('jquery')
 var attributeHelpers = require('./collectionJsonHelpers/attributes.js')
@@ -45285,41 +45306,25 @@ var Show = React.createClass({displayName: "Show",
     render: function(){
         var context = this
 
-        function attributes(attributes){
-            return _.map(attributes, function(attribute){
-                return(
-                    React.createElement("span", null, 
-                        React.createElement("dt", null, attribute.prompt), 
-                         context.state.edit ?
-                            React.createElement("dd", null, React.createElement("input", {type: "text", name: attribute.name, defaultValue: attribute.value, onChange: context.handleAttributeChange})) :
-                            React.createElement("dd", null, attribute.value), 
-                        
-                        React.createElement("br", null)
-                    )
-                )
-            })
-        }
-
         function editButtons(){
             return (
-                React.createElement("span", null, 
-                    React.createElement("dt", null), 
-                    React.createElement("dd", {className: "edit"}, 
-                        React.createElement("input", {type: "submit", value: "Save", onClick: context.onSave}), 
-                        React.createElement("input", {type: "submit", value: "Cancel", onClick: context.onCancel})
-                    )
+                React.createElement("div", {className: "edit"}, 
+                    React.createElement("input", {type: "submit", value: "Save", onClick: context.onSave}), 
+                    React.createElement("input", {type: "submit", value: "Cancel", onClick: context.onCancel})
                 )
             )
         }
         return (
             React.createElement(Page, React.__spread({},  context.props), 
                 React.createElement("h1", null, "Speaker"), 
-                React.createElement("dl", null, 
-                    attributes(attributeHelpers.getAttributes(context.state.speaker)), 
-                     context.state.edit ?
-                        editButtons() : null
-                    
+                React.createElement(Details, {
+                    attributes: attributeHelpers.getAttributes(context.state.speaker), 
+                    onChange: context.handleAttributeChange, 
+                    edit: context.state.edit}
                 ), 
+                 context.state.edit ?
+                    editButtons() : null, 
+                
                 React.createElement("p", null, 
                     React.createElement(Link, {onClick: context.onEdit, text: "Edit"}), 
                     React.createElement(Link, {onClick: context.onDestroy, text: "Delete"})
@@ -45361,4 +45366,4 @@ var Show = React.createClass({displayName: "Show",
 
 module.exports = Show
 
-},{"./collectionJsonHelpers/attributes.js":214,"./link.jsx":217,"./page.jsx":218,"jquery":27,"lodash":28,"react":212}]},{},[213]);
+},{"./collectionJsonHelpers/attributes.js":214,"./details.jsx":215,"./link.jsx":217,"./page.jsx":218,"jquery":27,"lodash":28,"react":212}]},{},[213]);
