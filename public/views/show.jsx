@@ -2,6 +2,7 @@ var React = require('react')
 var Page = require('./page.jsx')
 var Link = require('./link.jsx')
 var Details = require('./details.jsx')
+var FormButtons = require('./form-buttons.jsx')
 var _ = require('lodash')
 var $ = require('jquery')
 var attributeHelpers = require('./collectionJsonHelpers/attributes.js')
@@ -18,14 +19,6 @@ var Show = React.createClass({
     render: function(){
         var context = this
 
-        function editButtons(){
-            return (
-                <div className='edit'>
-                    <input type='submit' value='Save' onClick={context.onSave}/>
-                    <input type='submit' value='Cancel' onClick={context.onCancel}/>
-                </div>
-            )
-        }
         return (
             <Page {...context.props}>
                 <h1>Speaker</h1>
@@ -34,9 +27,7 @@ var Show = React.createClass({
                     onChange={context.handleAttributeChange}
                     edit={context.state.edit}
                 />
-                { context.state.edit ?
-                    editButtons() : null
-                }
+                { context.state.edit ? <FormButtons onSave={context.onSave} onCancel={context.onCancel}/> : null }
                 <p>
                     <Link onClick={context.onEdit} text="Edit"/>
                     <Link onClick={context.onDestroy} text="Delete"/>

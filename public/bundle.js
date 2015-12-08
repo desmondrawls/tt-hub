@@ -45173,7 +45173,7 @@ document.addEventListener('DOMContentLoaded', function onLoad(){
     Client.boot(options)
 })
 
-},{"./views/details.jsx":215,"./views/index.jsx":216,"./views/link.jsx":217,"./views/page.jsx":218,"./views/show.jsx":219,"react-engine/lib/client":29}],214:[function(require,module,exports){
+},{"./views/details.jsx":215,"./views/index.jsx":217,"./views/link.jsx":218,"./views/page.jsx":219,"./views/show.jsx":220,"react-engine/lib/client":29}],214:[function(require,module,exports){
 var _ = require('lodash')
 
 function getAttributes(item){
@@ -45225,6 +45225,23 @@ module.exports = Details
 
 },{"lodash":28,"react":212}],216:[function(require,module,exports){
 var React = require('react')
+var _ = require('lodash')
+
+var FormButtons = React.createClass({displayName: "FormButtons",
+    render: function(){
+        return (
+            React.createElement("div", {className: "edit"}, 
+                React.createElement("input", {type: "submit", value: "Save", onClick: this.props.onSave}), 
+                React.createElement("input", {type: "submit", value: "Cancel", onClick: this.props.onCancel})
+            )
+        )
+    }
+})
+
+module.exports = FormButtons
+
+},{"lodash":28,"react":212}],217:[function(require,module,exports){
+var React = require('react')
 var Page = require('./page.jsx')
 var _ = require('lodash')
 
@@ -45251,7 +45268,7 @@ var Index = React.createClass({displayName: "Index",
 
 module.exports = Index
 
-},{"./page.jsx":218,"lodash":28,"react":212}],217:[function(require,module,exports){
+},{"./page.jsx":219,"lodash":28,"react":212}],218:[function(require,module,exports){
 var React = require('react')
 
 var Link = React.createClass({displayName: "Link",
@@ -45262,7 +45279,7 @@ var Link = React.createClass({displayName: "Link",
 
 module.exports = Link
 
-},{"react":212}],218:[function(require,module,exports){
+},{"react":212}],219:[function(require,module,exports){
 var React = require('react')
 
 var Page = React.createClass({displayName: "Page",
@@ -45285,11 +45302,12 @@ var Page = React.createClass({displayName: "Page",
 
 module.exports = Page
 
-},{"react":212}],219:[function(require,module,exports){
+},{"react":212}],220:[function(require,module,exports){
 var React = require('react')
 var Page = require('./page.jsx')
 var Link = require('./link.jsx')
 var Details = require('./details.jsx')
+var FormButtons = require('./form-buttons.jsx')
 var _ = require('lodash')
 var $ = require('jquery')
 var attributeHelpers = require('./collectionJsonHelpers/attributes.js')
@@ -45306,14 +45324,6 @@ var Show = React.createClass({displayName: "Show",
     render: function(){
         var context = this
 
-        function editButtons(){
-            return (
-                React.createElement("div", {className: "edit"}, 
-                    React.createElement("input", {type: "submit", value: "Save", onClick: context.onSave}), 
-                    React.createElement("input", {type: "submit", value: "Cancel", onClick: context.onCancel})
-                )
-            )
-        }
         return (
             React.createElement(Page, React.__spread({},  context.props), 
                 React.createElement("h1", null, "Speaker"), 
@@ -45322,9 +45332,7 @@ var Show = React.createClass({displayName: "Show",
                     onChange: context.handleAttributeChange, 
                     edit: context.state.edit}
                 ), 
-                 context.state.edit ?
-                    editButtons() : null, 
-                
+                 context.state.edit ? React.createElement(FormButtons, {onSave: context.onSave, onCancel: context.onCancel}) : null, 
                 React.createElement("p", null, 
                     React.createElement(Link, {onClick: context.onEdit, text: "Edit"}), 
                     React.createElement(Link, {onClick: context.onDestroy, text: "Delete"})
@@ -45366,4 +45374,4 @@ var Show = React.createClass({displayName: "Show",
 
 module.exports = Show
 
-},{"./collectionJsonHelpers/attributes.js":214,"./details.jsx":215,"./link.jsx":217,"./page.jsx":218,"jquery":27,"lodash":28,"react":212}]},{},[213]);
+},{"./collectionJsonHelpers/attributes.js":214,"./details.jsx":215,"./form-buttons.jsx":216,"./link.jsx":218,"./page.jsx":219,"jquery":27,"lodash":28,"react":212}]},{},[213]);
