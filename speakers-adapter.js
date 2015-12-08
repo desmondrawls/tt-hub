@@ -30,7 +30,7 @@ function update(req, res) {
         headers:{"Content-Type": "application/json", "Accept": "application/json"}
     }
     client.put('http://localhost:3000/' + req.params.id, args, function(speaker, response){
-        res.sendStatus(204)
+        res.send(speaker)
     })
 }
 

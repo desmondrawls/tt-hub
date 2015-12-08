@@ -45303,16 +45303,14 @@ var Show = React.createClass({displayName: "Show",
 
     onSave: function(){
         var context = this
-        this.setState({bulk: this.state.scratchpad})
         $.ajax('/speakers/' + context.findAttribute('id').value, {
             method: 'PUT',
             data: this.state.scratchpad,
-            complete: function () {
+            success: function(data){
+                context.setState({bulk: JSON.parse(data)})
                 context.onCancel()
-                //location.reload()
             }
         })
-        //this.onCancel()
     },
 
     onEdit: function(){
