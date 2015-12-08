@@ -17,6 +17,7 @@
     "history": "^1.13.1",
     "jquery": "^2.1.4",
     "lodash": "^3.10.1",
+    "method-override": "^2.3.5",
     "node-jsx": "^0.13.3",
     "node-rest-client": "^1.5.1",
     "react": "^0.14.3",

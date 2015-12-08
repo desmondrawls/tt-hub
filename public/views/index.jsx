@@ -1,7 +1,6 @@
 var React = require('react')
 var Page = require('./page.jsx')
 var _ = require('lodash')
-var attributesHelper = require('./helpers/collectionJson/attributes.js')
 var itemsHelper = require('./helpers/collectionJson/items.js')
 var speakersHelper = require('./helpers/speakers.js')
 

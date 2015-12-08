@@ -1,12 +1,14 @@
 var React = require('react')
 var Page = require('./page.jsx')
-var Link = require('./link.jsx')
 var Details = require('./details.jsx')
-var FormButtons = require('./form-buttons.jsx')
+var EdittingButtons = require('./editting-buttons.jsx')
+var DeleteButton = require('./delete-button.jsx')
+var Link = require('./link.jsx')
 var _ = require('lodash')
 var $ = require('jquery')
 var attributesHelper = require('./helpers/collectionJson/attributes.js')
 var itemsHelper = require('./helpers/collectionJson/items.js')
+var speakersHelper = require('./helpers/speakers.js')
 
 var Show = React.createClass({
     getInitialState: function(){
@@ -29,10 +31,10 @@ var Show = React.createClass({
                     onChange={context.handleAttributeChange}
                     edit={context.state.edit}
                 />
-                { context.state.edit ? <FormButtons onSave={context.onSave} onCancel={context.onCancel}/> : null }
+                { context.state.edit ? <EdittingButtons onSave={context.onSave} onCancel={context.onCancel}/> : null }
                 <p>
                     <Link onClick={context.onEdit} text="Edit"/>
-                    <Link onClick={context.onDestroy} text="Delete"/>
+                    <DeleteButton action={context.getSpeakerLink()}/>
                 </p>
             </Page>
         )
@@ -66,16 +68,16 @@ var Show = React.createClass({
         return attributesHelper.getItemAttributeValue(itemsHelper.getFirstItem(this.state.speaker), attributeName)
     },
 
+    getSpeakerLink: function(){
+        return speakersHelper.getLink(itemsHelper.getFirstItem(this.state.speaker))
+    },
+
     onEdit: function(){
         this.setState({edit: true})
     },
 
     onCancel: function(){
         this.setState({edit: false})
-    },
-
-    onDestroy: function(id) {
-        console.log("DESTROOOOYYYYY!!!")
     }
 })
 

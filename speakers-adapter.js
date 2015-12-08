@@ -38,8 +38,13 @@ function update(req, res) {
 }
 
 function destroy(req, res) {
-    res.send('delete endpoint successfully acquired')
-}
+    console.log("destroying speaker " + req.params.id)
+    var args = {
+        headers:{"Content-Type": "application/json", "Accept": "application/json"}
+    }
+    client.delete('http://localhost:3000/' + req.params.id, args, function(speaker, response){
+        res.redirect('/speakers/')
+    })}
 
 function respondWithSpeaker(res, speaker) {
     res.format({
@@ -60,7 +65,6 @@ function respondWithSpeakers(res, speakers) {
         },
         json: function () {
             res.send(speakers)
-
         }
     })
 }

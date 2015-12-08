@@ -9,6 +9,7 @@ var app = express()
 var engine = renderer.server.create()
 var speakersAdapter = require('./speakers-adapter')
 var bodyParser = require('body-parser')
+var methodOverride = require('method-override')
 
 app.engine('.jsx', engine)
 
@@ -16,6 +17,9 @@ app.set('views', __dirname + '/public/views')
 app.set('view engine', 'jsx')
 app.set('view', renderer.expressView)
 
+
+// override with POST having ?_method=DELETE
+app.use(methodOverride('_method'))
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(express.static(__dirname + '/public'))
 app.use('/stylesheets', express.static('stylesheets'));

@@ -45173,7 +45173,23 @@ document.addEventListener('DOMContentLoaded', function onLoad(){
     Client.boot(options)
 })
 
-},{"./views/details.jsx":214,"./views/index.jsx":219,"./views/link.jsx":220,"./views/page.jsx":221,"./views/show.jsx":222,"react-engine/lib/client":29}],214:[function(require,module,exports){
+},{"./views/details.jsx":215,"./views/index.jsx":220,"./views/link.jsx":221,"./views/page.jsx":222,"./views/show.jsx":223,"react-engine/lib/client":29}],214:[function(require,module,exports){
+var React = require('react')
+var _ = require('lodash')
+
+var DeleteButton = React.createClass({displayName: "DeleteButton",
+    render: function(){
+        return (
+            React.createElement("form", {method: "POST", action: this.props.action + '?_method=DELETE'}, 
+                React.createElement("input", {type: "submit", value: "Delete"})
+            )
+        )
+    }
+})
+
+module.exports = DeleteButton
+
+},{"lodash":28,"react":212}],215:[function(require,module,exports){
 var React = require('react')
 var _ = require('lodash')
 var attributesHelper = require('./helpers/collectionJson/attributes.js')
@@ -45212,7 +45228,7 @@ var Details = React.createClass({displayName: "Details",
 
 module.exports = Details
 
-},{"./helpers/collectionJson/attributes.js":216,"lodash":28,"react":212}],215:[function(require,module,exports){
+},{"./helpers/collectionJson/attributes.js":217,"lodash":28,"react":212}],216:[function(require,module,exports){
 var React = require('react')
 var _ = require('lodash')
 
@@ -45229,7 +45245,7 @@ var FormButtons = React.createClass({displayName: "FormButtons",
 
 module.exports = FormButtons
 
-},{"lodash":28,"react":212}],216:[function(require,module,exports){
+},{"lodash":28,"react":212}],217:[function(require,module,exports){
 var _ = require('lodash')
 
 function getAttributeValue(attribute){
@@ -45268,7 +45284,7 @@ exports.getAttributeName = getAttributeName
 exports.getAttributePrompt = getAttributePrompt
 exports.updateAttributeValue = updateAttributeValue
 
-},{"lodash":28}],217:[function(require,module,exports){
+},{"lodash":28}],218:[function(require,module,exports){
 var _ = require('lodash')
 
 function getItems(collectionJson){
@@ -45287,7 +45303,7 @@ exports.getItems = getItems
 exports.getFirstItem = getFirstItem
 exports.getFirst = getFirst
 
-},{"lodash":28}],218:[function(require,module,exports){
+},{"lodash":28}],219:[function(require,module,exports){
 var attributesHelper = require('./collectionJson/attributes.js')
 var itemsHelper = require('./collectionJson/items.js')
 
@@ -45302,11 +45318,10 @@ function getLink(speaker) {
 exports.getFullName = getFullName
 exports.getLink = getLink
 
-},{"./collectionJson/attributes.js":216,"./collectionJson/items.js":217}],219:[function(require,module,exports){
+},{"./collectionJson/attributes.js":217,"./collectionJson/items.js":218}],220:[function(require,module,exports){
 var React = require('react')
 var Page = require('./page.jsx')
 var _ = require('lodash')
-var attributesHelper = require('./helpers/collectionJson/attributes.js')
 var itemsHelper = require('./helpers/collectionJson/items.js')
 var speakersHelper = require('./helpers/speakers.js')
 
@@ -45344,7 +45359,7 @@ var Index = React.createClass({displayName: "Index",
 
 module.exports = Index
 
-},{"./helpers/collectionJson/attributes.js":216,"./helpers/collectionJson/items.js":217,"./helpers/speakers.js":218,"./page.jsx":221,"lodash":28,"react":212}],220:[function(require,module,exports){
+},{"./helpers/collectionJson/items.js":218,"./helpers/speakers.js":219,"./page.jsx":222,"lodash":28,"react":212}],221:[function(require,module,exports){
 var React = require('react')
 
 var Link = React.createClass({displayName: "Link",
@@ -45355,7 +45370,7 @@ var Link = React.createClass({displayName: "Link",
 
 module.exports = Link
 
-},{"react":212}],221:[function(require,module,exports){
+},{"react":212}],222:[function(require,module,exports){
 var React = require('react')
 
 var Page = React.createClass({displayName: "Page",
@@ -45378,16 +45393,18 @@ var Page = React.createClass({displayName: "Page",
 
 module.exports = Page
 
-},{"react":212}],222:[function(require,module,exports){
+},{"react":212}],223:[function(require,module,exports){
 var React = require('react')
 var Page = require('./page.jsx')
-var Link = require('./link.jsx')
 var Details = require('./details.jsx')
-var FormButtons = require('./form-buttons.jsx')
+var EdittingButtons = require('./editting-buttons.jsx')
+var DeleteButton = require('./delete-button.jsx')
+var Link = require('./link.jsx')
 var _ = require('lodash')
 var $ = require('jquery')
 var attributesHelper = require('./helpers/collectionJson/attributes.js')
 var itemsHelper = require('./helpers/collectionJson/items.js')
+var speakersHelper = require('./helpers/speakers.js')
 
 var Show = React.createClass({displayName: "Show",
     getInitialState: function(){
@@ -45410,10 +45427,10 @@ var Show = React.createClass({displayName: "Show",
                     onChange: context.handleAttributeChange, 
                     edit: context.state.edit}
                 ), 
-                 context.state.edit ? React.createElement(FormButtons, {onSave: context.onSave, onCancel: context.onCancel}) : null, 
+                 context.state.edit ? React.createElement(EdittingButtons, {onSave: context.onSave, onCancel: context.onCancel}) : null, 
                 React.createElement("p", null, 
                     React.createElement(Link, {onClick: context.onEdit, text: "Edit"}), 
-                    React.createElement(Link, {onClick: context.onDestroy, text: "Delete"})
+                    React.createElement(DeleteButton, {action: context.getSpeakerLink()})
                 )
             )
         )
@@ -45447,19 +45464,19 @@ var Show = React.createClass({displayName: "Show",
         return attributesHelper.getItemAttributeValue(itemsHelper.getFirstItem(this.state.speaker), attributeName)
     },
 
+    getSpeakerLink: function(){
+        return speakersHelper.getLink(itemsHelper.getFirstItem(this.state.speaker))
+    },
+
     onEdit: function(){
         this.setState({edit: true})
     },
 
     onCancel: function(){
         this.setState({edit: false})
-    },
-
-    onDestroy: function(id) {
-        console.log("DESTROOOOYYYYY!!!")
     }
 })
 
 module.exports = Show
 
-},{"./details.jsx":214,"./form-buttons.jsx":215,"./helpers/collectionJson/attributes.js":216,"./helpers/collectionJson/items.js":217,"./link.jsx":220,"./page.jsx":221,"jquery":27,"lodash":28,"react":212}]},{},[213]);
+},{"./delete-button.jsx":214,"./details.jsx":215,"./editting-buttons.jsx":216,"./helpers/collectionJson/attributes.js":217,"./helpers/collectionJson/items.js":218,"./helpers/speakers.js":219,"./link.jsx":221,"./page.jsx":222,"jquery":27,"lodash":28,"react":212}]},{},[213]);
