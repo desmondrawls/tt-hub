@@ -45173,7 +45173,63 @@ document.addEventListener('DOMContentLoaded', function onLoad(){
     Client.boot(options)
 })
 
-},{"./views/details.jsx":216,"./views/index.jsx":218,"./views/link.jsx":219,"./views/page.jsx":220,"./views/show.jsx":221,"react-engine/lib/client":29}],214:[function(require,module,exports){
+},{"./views/details.jsx":214,"./views/index.jsx":219,"./views/link.jsx":220,"./views/page.jsx":221,"./views/show.jsx":222,"react-engine/lib/client":29}],214:[function(require,module,exports){
+var React = require('react')
+var _ = require('lodash')
+var attributesHelper = require('./helpers/collectionJson/attributes.js')
+
+var Details = React.createClass({displayName: "Details",
+    render: function(){
+        var context = this
+
+        function attributesList(attributes){
+            return _.map(attributes, function(attribute){
+                return(
+                    React.createElement("span", null, 
+                        React.createElement("dt", null, attributesHelper.getAttributePrompt(attribute)), 
+                         context.props.edit ?
+                            React.createElement("dd", null, 
+                                React.createElement("input", {
+                                    type: "text", 
+                                    name: attributesHelper.getAttributeName(attribute), 
+                                    defaultValue: attributesHelper.getAttributeValue(attribute), 
+                                    onChange: context.props.onChange}
+                                )
+                            ) :
+                            React.createElement("dd", null, attributesHelper.getAttributeValue(attribute)), 
+                        
+                        React.createElement("br", null)
+                    )
+                )
+            })
+        }
+
+        return (
+            React.createElement("dl", null, attributesList(this.props.attributes))
+        )
+    }
+})
+
+module.exports = Details
+
+},{"./helpers/collectionJson/attributes.js":216,"lodash":28,"react":212}],215:[function(require,module,exports){
+var React = require('react')
+var _ = require('lodash')
+
+var FormButtons = React.createClass({displayName: "FormButtons",
+    render: function(){
+        return (
+            React.createElement("div", {className: "edit"}, 
+                React.createElement("input", {type: "submit", value: "Save", onClick: this.props.onSave}), 
+                React.createElement("input", {type: "submit", value: "Cancel", onClick: this.props.onCancel})
+            )
+        )
+    }
+})
+
+module.exports = FormButtons
+
+},{"lodash":28,"react":212}],216:[function(require,module,exports){
 var _ = require('lodash')
 
 function getAttributeValue(attribute){
@@ -45212,7 +45268,7 @@ exports.getAttributeName = getAttributeName
 exports.getAttributePrompt = getAttributePrompt
 exports.updateAttributeValue = updateAttributeValue
 
-},{"lodash":28}],215:[function(require,module,exports){
+},{"lodash":28}],217:[function(require,module,exports){
 var _ = require('lodash')
 
 function getItems(collectionJson){
@@ -45231,84 +45287,49 @@ exports.getItems = getItems
 exports.getFirstItem = getFirstItem
 exports.getFirst = getFirst
 
-},{"lodash":28}],216:[function(require,module,exports){
-var React = require('react')
-var _ = require('lodash')
-var attributesHelper = require('./collectionJsonHelpers/attributes.js')
+},{"lodash":28}],218:[function(require,module,exports){
+var attributesHelper = require('./collectionJson/attributes.js')
+var itemsHelper = require('./collectionJson/items.js')
 
-var Details = React.createClass({displayName: "Details",
-    render: function(){
-        var context = this
+function getFullName(speaker) {
+    return attributesHelper.getItemAttributeValue(speaker, 'first_name') + ' ' + attributesHelper.getItemAttributeValue(speaker, 'last_name')
+}
 
-        function attributesList(attributes){
-            return _.map(attributes, function(attribute){
-                return(
-                    React.createElement("span", null, 
-                        React.createElement("dt", null, attributesHelper.getAttributePrompt(attribute)), 
-                         context.props.edit ?
-                            React.createElement("dd", null, 
-                                React.createElement("input", {
-                                    type: "text", 
-                                    name: attributesHelper.getAttributeName(attribute), 
-                                    defaultValue: attributesHelper.getAttributeValue(attribute), 
-                                    onChange: context.props.onChange}
-                                )
-                            ) :
-                            React.createElement("dd", null, attributesHelper.getAttributeValue(attribute)), 
-                        
-                        React.createElement("br", null)
-                    )
-                )
-            })
-        }
+function getLink(speaker) {
+    return '/speakers/' + attributesHelper.getItemAttributeValue(speaker, 'id')
+}
 
-        return (
-            React.createElement("dl", null, attributesList(this.props.attributes))
-        )
-    }
-})
+exports.getFullName = getFullName
+exports.getLink = getLink
 
-module.exports = Details
-
-},{"./collectionJsonHelpers/attributes.js":214,"lodash":28,"react":212}],217:[function(require,module,exports){
-var React = require('react')
-var _ = require('lodash')
-
-var FormButtons = React.createClass({displayName: "FormButtons",
-    render: function(){
-        return (
-            React.createElement("div", {className: "edit"}, 
-                React.createElement("input", {type: "submit", value: "Save", onClick: this.props.onSave}), 
-                React.createElement("input", {type: "submit", value: "Cancel", onClick: this.props.onCancel})
-            )
-        )
-    }
-})
-
-module.exports = FormButtons
-
-},{"lodash":28,"react":212}],218:[function(require,module,exports){
+},{"./collectionJson/attributes.js":216,"./collectionJson/items.js":217}],219:[function(require,module,exports){
 var React = require('react')
 var Page = require('./page.jsx')
 var _ = require('lodash')
-var attributesHelper = require('./collectionJsonHelpers/attributes.js')
-var itemsHelper = require('./collectionJsonHelpers/items.js')
+var attributesHelper = require('./helpers/collectionJson/attributes.js')
+var itemsHelper = require('./helpers/collectionJson/items.js')
+var speakersHelper = require('./helpers/speakers.js')
 
 var Index = React.createClass({displayName: "Index",
-    getInitialState: function(){
+    getInitialState: function () {
         return {
             speakers: this.props.speakers,
         }
     },
 
-    render: function(){
+    render: function () {
+        var context = this
+
         function speakers(speakers) {
-            return _.map(speakers, function(speaker) {
+            return _.map(speakers, function (speaker) {
                 return (
-                    React.createElement("li", null, attributesHelper.getItemAttributeValue(speaker, 'first_name'))
+                    React.createElement("li", null, 
+                        React.createElement("a", {href: speakersHelper.getLink(speaker)}, speakersHelper.getFullName(speaker))
+                    )
                 )
             })
         }
+
         return (
             React.createElement(Page, React.__spread({},  this.props), 
                 React.createElement("h1", null, "TechTalk"), 
@@ -45323,7 +45344,7 @@ var Index = React.createClass({displayName: "Index",
 
 module.exports = Index
 
-},{"./collectionJsonHelpers/attributes.js":214,"./collectionJsonHelpers/items.js":215,"./page.jsx":220,"lodash":28,"react":212}],219:[function(require,module,exports){
+},{"./helpers/collectionJson/attributes.js":216,"./helpers/collectionJson/items.js":217,"./helpers/speakers.js":218,"./page.jsx":221,"lodash":28,"react":212}],220:[function(require,module,exports){
 var React = require('react')
 
 var Link = React.createClass({displayName: "Link",
@@ -45334,7 +45355,7 @@ var Link = React.createClass({displayName: "Link",
 
 module.exports = Link
 
-},{"react":212}],220:[function(require,module,exports){
+},{"react":212}],221:[function(require,module,exports){
 var React = require('react')
 
 var Page = React.createClass({displayName: "Page",
@@ -45357,7 +45378,7 @@ var Page = React.createClass({displayName: "Page",
 
 module.exports = Page
 
-},{"react":212}],221:[function(require,module,exports){
+},{"react":212}],222:[function(require,module,exports){
 var React = require('react')
 var Page = require('./page.jsx')
 var Link = require('./link.jsx')
@@ -45365,8 +45386,8 @@ var Details = require('./details.jsx')
 var FormButtons = require('./form-buttons.jsx')
 var _ = require('lodash')
 var $ = require('jquery')
-var attributesHelper = require('./collectionJsonHelpers/attributes.js')
-var itemsHelper = require('./collectionJsonHelpers/items.js')
+var attributesHelper = require('./helpers/collectionJson/attributes.js')
+var itemsHelper = require('./helpers/collectionJson/items.js')
 
 var Show = React.createClass({displayName: "Show",
     getInitialState: function(){
@@ -45382,6 +45403,7 @@ var Show = React.createClass({displayName: "Show",
 
         return (
             React.createElement(Page, React.__spread({},  context.props), 
+                React.createElement("a", {href: "/speakers/"}, "Back to all speakers"), 
                 React.createElement("h1", null, "Speaker"), 
                 React.createElement(Details, {
                     attributes: context.getSpeakerAttributes(), 
@@ -45440,4 +45462,4 @@ var Show = React.createClass({displayName: "Show",
 
 module.exports = Show
 
-},{"./collectionJsonHelpers/attributes.js":214,"./collectionJsonHelpers/items.js":215,"./details.jsx":216,"./form-buttons.jsx":217,"./link.jsx":219,"./page.jsx":220,"jquery":27,"lodash":28,"react":212}]},{},[213]);
+},{"./details.jsx":214,"./form-buttons.jsx":215,"./helpers/collectionJson/attributes.js":216,"./helpers/collectionJson/items.js":217,"./link.jsx":220,"./page.jsx":221,"jquery":27,"lodash":28,"react":212}]},{},[213]);

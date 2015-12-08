@@ -5,8 +5,8 @@ var Details = require('./details.jsx')
 var FormButtons = require('./form-buttons.jsx')
 var _ = require('lodash')
 var $ = require('jquery')
-var attributesHelper = require('./collectionJsonHelpers/attributes.js')
-var itemsHelper = require('./collectionJsonHelpers/items.js')
+var attributesHelper = require('./helpers/collectionJson/attributes.js')
+var itemsHelper = require('./helpers/collectionJson/items.js')
 
 var Show = React.createClass({
     getInitialState: function(){
@@ -22,6 +22,7 @@ var Show = React.createClass({
 
         return (
             <Page {...context.props}>
+                <a href="/speakers/">Back to all speakers</a>
                 <h1>Speaker</h1>
                 <Details
                     attributes={context.getSpeakerAttributes()}
