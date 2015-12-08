@@ -10,17 +10,17 @@ var Details = React.createClass({
             return _.map(attributes, function(attribute){
                 return(
                     <span>
-                        <dt>{attributesHelper.getPrompt(attribute)}</dt>
+                        <dt>{attributesHelper.getAttributePrompt(attribute)}</dt>
                         { context.props.edit ?
                             <dd>
                                 <input
                                     type="text"
-                                    name={attributesHelper.getName(attribute)}
-                                    defaultValue={attributesHelper.getValue(attribute)}
+                                    name={attributesHelper.getAttributeName(attribute)}
+                                    defaultValue={attributesHelper.getAttributeValue(attribute)}
                                     onChange={context.props.onChange}
                                 />
                             </dd> :
-                            <dd>{attributesHelper.getValue(attribute)}</dd>
+                            <dd>{attributesHelper.getAttributeValue(attribute)}</dd>
                         }
                         <br/>
                     </span>

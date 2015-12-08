@@ -6,6 +6,7 @@ var FormButtons = require('./form-buttons.jsx')
 var _ = require('lodash')
 var $ = require('jquery')
 var attributesHelper = require('./collectionJsonHelpers/attributes.js')
+var itemsHelper = require('./collectionJsonHelpers/items.js')
 
 var Show = React.createClass({
     getInitialState: function(){
@@ -23,7 +24,7 @@ var Show = React.createClass({
             <Page {...context.props}>
                 <h1>Speaker</h1>
                 <Details
-                    attributes={attributesHelper.getAttributes(context.state.speaker)}
+                    attributes={context.getSpeakerAttributes()}
                     onChange={context.handleAttributeChange}
                     edit={context.state.edit}
                 />
@@ -38,13 +39,15 @@ var Show = React.createClass({
 
     handleAttributeChange: function(event){
         var scratchSpeaker = _.clone(this.state.scratchSpeaker, true)
-        attributesHelper.updateAttribute(scratchSpeaker, event.target.name, event.target.value)
+        attributesHelper.updateAttributeValue(
+            attributesHelper.getItemAttribute(itemsHelper.getFirstItem(scratchSpeaker), event.target.name),
+            event.target.value)
         this.setState({scratchSpeaker: scratchSpeaker})
     },
 
     onSave: function(){
         var context = this
-        $.ajax('/speakers/' + attributesHelper.getAttribute(this.state.speaker, 'id').value, {
+        $.ajax('/speakers/' + context.getSpeakerAttribute('id'), {
             method: 'PUT',
             data: this.state.scratchSpeaker,
             success: function(data){
@@ -52,6 +55,14 @@ var Show = React.createClass({
                 context.onCancel()
             }
         })
+    },
+
+    getSpeakerAttributes: function(){
+        return attributesHelper.getItemAttributes(itemsHelper.getFirstItem(this.state.speaker))
+    },
+
+    getSpeakerAttribute: function(attributeName){
+        return attributesHelper.getItemAttributeValue(itemsHelper.getFirstItem(this.state.speaker), attributeName)
     },
 
     onEdit: function(){
