@@ -1,13 +1,21 @@
 var React = require('react')
 var Page = require('./page.jsx')
 var _ = require('lodash')
+var attributesHelper = require('./collectionJsonHelpers/attributes.js')
+var itemsHelper = require('./collectionJsonHelpers/items.js')
 
 var Index = React.createClass({
+    getInitialState: function(){
+        return {
+            speakers: this.props.speakers,
+        }
+    },
+
     render: function(){
         function speakers(speakers) {
             return _.map(speakers, function(speaker) {
                 return (
-                    <li>{speaker}</li>
+                    <li>{attributesHelper.getItemAttributeValue(speaker, 'first_name')}</li>
                 )
             })
         }
@@ -16,7 +24,7 @@ var Index = React.createClass({
                 <h1>TechTalk</h1>
                 <h3>Speakers</h3>
                 <ul>
-                    {speakers(this.props.speakers)}
+                    {speakers(itemsHelper.getItems(this.state.speakers))}
                 </ul>
             </Page>
         )

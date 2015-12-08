@@ -5,8 +5,11 @@ var debug = require('./app').debug
 client = new Client()
 
 function index(req, res){
-    res.render('index', {
-        speakers: ['Ada Lovelace', 'Charles Babbage', 'Claude Shannon']
+    var args = {
+        headers:{"Content-Type": "application/json", "Accept": "application/json"}
+    }
+    client.get('http://localhost:3000/', args, function(speakers, response){
+        respondWithSpeakers(res, speakers)
     })
 }
 
@@ -45,6 +48,18 @@ function respondWithSpeaker(res, speaker) {
         },
         json: function () {
             res.send(speaker)
+
+        }
+    })
+}
+
+function respondWithSpeakers(res, speakers) {
+    res.format({
+        html: function () {
+            res.render('index', {speakers: JSON.parse(speakers)})
+        },
+        json: function () {
+            res.send(speakers)
 
         }
     })

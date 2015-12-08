@@ -45173,28 +45173,83 @@ document.addEventListener('DOMContentLoaded', function onLoad(){
     Client.boot(options)
 })
 
-},{"./views/details.jsx":215,"./views/index.jsx":217,"./views/link.jsx":218,"./views/page.jsx":219,"./views/show.jsx":220,"react-engine/lib/client":29}],214:[function(require,module,exports){
+},{"./views/details.jsx":216,"./views/index.jsx":218,"./views/link.jsx":219,"./views/page.jsx":220,"./views/show.jsx":221,"react-engine/lib/client":29}],214:[function(require,module,exports){
 var _ = require('lodash')
 
-function getAttributes(item){
-    return item.collection.items[0].data;
+function getAttributes(collectionJson){
+    return collectionJson.collection.items[0].data;
 }
 
-function getAttribute(item, name){
-    return _.find(getAttributes(item), function(attr){ return attr.name == name})
+function getAttribute(collectionJson, name){
+    return _.find(getAttributes(collectionJson), function(attr){ return attr.name == name})
 }
 
-function updateAttribute(item, name, value) {
-    getAttribute(item, name)['value'] = value
+function getAttributeValue(collectionJson, name){
+    return getValue(getAttribute(collectionJson, name))
 }
 
+function getAttributeName(collectionJson, name){
+    return getName(getAttribute(collectionJson, name))
+}
+
+function getAttributePrompt(collectionJson, name){
+    return getPrompt(getAttribute(collectionJson, name))
+}
+
+function getValue(attribute){
+    return attribute.value
+}
+
+function getName(attribute){
+    return attribute.name
+}
+
+function getPrompt(attribute){
+    return attribute.prompt
+}
+
+function updateAttribute(collectionJson, name, value) {
+    getAttribute(collectionJson, name)['value'] = value
+}
+
+function getItemAttributeValue(item, name){
+    return getItemAttribute(item, name).value
+}
+
+function getItemAttribute(item, name){
+    return _.find(getItemAttributes(item), function(attr){ return attr.name == name})
+}
+
+function getItemAttributes(item){
+    return item.data
+}
+
+exports.getItemAttributes = getItemAttributes
+exports.getItemAttribute = getItemAttribute
+exports.getItemAttributeValue = getItemAttributeValue
 exports.getAttributes = getAttributes
 exports.getAttribute = getAttribute
+exports.getAttributeValue = getAttributeValue
+exports.getValue = getValue
+exports.getAttributeName = getAttributeName
+exports.getName = getName
+exports.getAttributePrompt = getAttributePrompt
+exports.getPrompt = getPrompt
 exports.updateAttribute = updateAttribute
 
 },{"lodash":28}],215:[function(require,module,exports){
+var _ = require('lodash')
+
+function getItems(collectionJson){
+    return collectionJson.collection.items
+}
+
+exports.getItems = getItems
+
+},{"lodash":28}],216:[function(require,module,exports){
 var React = require('react')
 var _ = require('lodash')
+var attributesHelper = require('./collectionJsonHelpers/attributes.js')
 
 var Details = React.createClass({displayName: "Details",
     render: function(){
@@ -45204,10 +45259,17 @@ var Details = React.createClass({displayName: "Details",
             return _.map(attributes, function(attribute){
                 return(
                     React.createElement("span", null, 
-                        React.createElement("dt", null, attribute.prompt), 
+                        React.createElement("dt", null, attributesHelper.getPrompt(attribute)), 
                          context.props.edit ?
-                            React.createElement("dd", null, React.createElement("input", {type: "text", name: attribute.name, defaultValue: attribute.value, onChange: context.props.onChange})) :
-                            React.createElement("dd", null, attribute.value), 
+                            React.createElement("dd", null, 
+                                React.createElement("input", {
+                                    type: "text", 
+                                    name: attributesHelper.getName(attribute), 
+                                    defaultValue: attributesHelper.getValue(attribute), 
+                                    onChange: context.props.onChange}
+                                )
+                            ) :
+                            React.createElement("dd", null, attributesHelper.getValue(attribute)), 
                         
                         React.createElement("br", null)
                     )
@@ -45223,7 +45285,7 @@ var Details = React.createClass({displayName: "Details",
 
 module.exports = Details
 
-},{"lodash":28,"react":212}],216:[function(require,module,exports){
+},{"./collectionJsonHelpers/attributes.js":214,"lodash":28,"react":212}],217:[function(require,module,exports){
 var React = require('react')
 var _ = require('lodash')
 
@@ -45240,17 +45302,25 @@ var FormButtons = React.createClass({displayName: "FormButtons",
 
 module.exports = FormButtons
 
-},{"lodash":28,"react":212}],217:[function(require,module,exports){
+},{"lodash":28,"react":212}],218:[function(require,module,exports){
 var React = require('react')
 var Page = require('./page.jsx')
 var _ = require('lodash')
+var attributesHelper = require('./collectionJsonHelpers/attributes.js')
+var itemsHelper = require('./collectionJsonHelpers/items.js')
 
 var Index = React.createClass({displayName: "Index",
+    getInitialState: function(){
+        return {
+            speakers: this.props.speakers,
+        }
+    },
+
     render: function(){
         function speakers(speakers) {
             return _.map(speakers, function(speaker) {
                 return (
-                    React.createElement("li", null, speaker)
+                    React.createElement("li", null, attributesHelper.getItemAttributeValue(speaker, 'first_name'))
                 )
             })
         }
@@ -45259,7 +45329,7 @@ var Index = React.createClass({displayName: "Index",
                 React.createElement("h1", null, "TechTalk"), 
                 React.createElement("h3", null, "Speakers"), 
                 React.createElement("ul", null, 
-                    speakers(this.props.speakers)
+                    speakers(itemsHelper.getItems(this.state.speakers))
                 )
             )
         )
@@ -45268,7 +45338,7 @@ var Index = React.createClass({displayName: "Index",
 
 module.exports = Index
 
-},{"./page.jsx":219,"lodash":28,"react":212}],218:[function(require,module,exports){
+},{"./collectionJsonHelpers/attributes.js":214,"./collectionJsonHelpers/items.js":215,"./page.jsx":220,"lodash":28,"react":212}],219:[function(require,module,exports){
 var React = require('react')
 
 var Link = React.createClass({displayName: "Link",
@@ -45279,7 +45349,7 @@ var Link = React.createClass({displayName: "Link",
 
 module.exports = Link
 
-},{"react":212}],219:[function(require,module,exports){
+},{"react":212}],220:[function(require,module,exports){
 var React = require('react')
 
 var Page = React.createClass({displayName: "Page",
@@ -45302,7 +45372,7 @@ var Page = React.createClass({displayName: "Page",
 
 module.exports = Page
 
-},{"react":212}],220:[function(require,module,exports){
+},{"react":212}],221:[function(require,module,exports){
 var React = require('react')
 var Page = require('./page.jsx')
 var Link = require('./link.jsx')
@@ -45310,7 +45380,7 @@ var Details = require('./details.jsx')
 var FormButtons = require('./form-buttons.jsx')
 var _ = require('lodash')
 var $ = require('jquery')
-var attributeHelpers = require('./collectionJsonHelpers/attributes.js')
+var attributesHelper = require('./collectionJsonHelpers/attributes.js')
 
 var Show = React.createClass({displayName: "Show",
     getInitialState: function(){
@@ -45328,7 +45398,7 @@ var Show = React.createClass({displayName: "Show",
             React.createElement(Page, React.__spread({},  context.props), 
                 React.createElement("h1", null, "Speaker"), 
                 React.createElement(Details, {
-                    attributes: attributeHelpers.getAttributes(context.state.speaker), 
+                    attributes: attributesHelper.getAttributes(context.state.speaker), 
                     onChange: context.handleAttributeChange, 
                     edit: context.state.edit}
                 ), 
@@ -45343,13 +45413,13 @@ var Show = React.createClass({displayName: "Show",
 
     handleAttributeChange: function(event){
         var scratchSpeaker = _.clone(this.state.scratchSpeaker, true)
-        attributeHelpers.updateAttribute(scratchSpeaker, event.target.name, event.target.value)
+        attributesHelper.updateAttribute(scratchSpeaker, event.target.name, event.target.value)
         this.setState({scratchSpeaker: scratchSpeaker})
     },
 
     onSave: function(){
         var context = this
-        $.ajax('/speakers/' + attributeHelpers.getAttribute(this.state.speaker, 'id').value, {
+        $.ajax('/speakers/' + attributesHelper.getAttribute(this.state.speaker, 'id').value, {
             method: 'PUT',
             data: this.state.scratchSpeaker,
             success: function(data){
@@ -45374,4 +45444,4 @@ var Show = React.createClass({displayName: "Show",
 
 module.exports = Show
 
-},{"./collectionJsonHelpers/attributes.js":214,"./details.jsx":215,"./form-buttons.jsx":216,"./link.jsx":218,"./page.jsx":219,"jquery":27,"lodash":28,"react":212}]},{},[213]);
+},{"./collectionJsonHelpers/attributes.js":214,"./details.jsx":216,"./form-buttons.jsx":217,"./link.jsx":219,"./page.jsx":220,"jquery":27,"lodash":28,"react":212}]},{},[213]);

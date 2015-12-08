@@ -5,7 +5,7 @@ var Details = require('./details.jsx')
 var FormButtons = require('./form-buttons.jsx')
 var _ = require('lodash')
 var $ = require('jquery')
-var attributeHelpers = require('./collectionJsonHelpers/attributes.js')
+var attributesHelper = require('./collectionJsonHelpers/attributes.js')
 
 var Show = React.createClass({
     getInitialState: function(){
@@ -23,7 +23,7 @@ var Show = React.createClass({
             <Page {...context.props}>
                 <h1>Speaker</h1>
                 <Details
-                    attributes={attributeHelpers.getAttributes(context.state.speaker)}
+                    attributes={attributesHelper.getAttributes(context.state.speaker)}
                     onChange={context.handleAttributeChange}
                     edit={context.state.edit}
                 />
@@ -38,13 +38,13 @@ var Show = React.createClass({
 
     handleAttributeChange: function(event){
         var scratchSpeaker = _.clone(this.state.scratchSpeaker, true)
-        attributeHelpers.updateAttribute(scratchSpeaker, event.target.name, event.target.value)
+        attributesHelper.updateAttribute(scratchSpeaker, event.target.name, event.target.value)
         this.setState({scratchSpeaker: scratchSpeaker})
     },
 
     onSave: function(){
         var context = this
-        $.ajax('/speakers/' + attributeHelpers.getAttribute(this.state.speaker, 'id').value, {
+        $.ajax('/speakers/' + attributesHelper.getAttribute(this.state.speaker, 'id').value, {
             method: 'PUT',
             data: this.state.scratchSpeaker,
             success: function(data){
