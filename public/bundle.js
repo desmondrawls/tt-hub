@@ -45173,7 +45173,7 @@ document.addEventListener('DOMContentLoaded', function onLoad(){
     Client.boot(options)
 })
 
-},{"./views/details.jsx":215,"./views/index.jsx":220,"./views/link.jsx":221,"./views/page.jsx":222,"./views/show.jsx":223,"react-engine/lib/client":29}],214:[function(require,module,exports){
+},{"./views/details.jsx":215,"./views/index.jsx":221,"./views/link.jsx":222,"./views/page.jsx":223,"./views/show.jsx":224,"react-engine/lib/client":29}],214:[function(require,module,exports){
 var React = require('react')
 var _ = require('lodash')
 
@@ -45304,6 +45304,24 @@ exports.getFirstItem = getFirstItem
 exports.getFirst = getFirst
 
 },{"lodash":28}],219:[function(require,module,exports){
+var _ = require('lodash')
+var attributesHelper = require('./attributes.js')
+
+function getPopulatedTemplate(template, item){
+    _.each(attributesHelper.getItemAttributes(template), function(attribute){
+        attribute['value'] = attributesHelper.getItemAttributeValue(item, attribute['name'])
+    })
+    return template;
+}
+
+function getTemplate(collectionObject){
+    return collectionObject.collection.template
+}
+
+exports.getPopulatedTemplate = getPopulatedTemplate
+exports.getTemplate = getTemplate
+
+},{"./attributes.js":217,"lodash":28}],220:[function(require,module,exports){
 var attributesHelper = require('./collectionJson/attributes.js')
 var itemsHelper = require('./collectionJson/items.js')
 
@@ -45318,7 +45336,7 @@ function getLink(speaker) {
 exports.getFullName = getFullName
 exports.getLink = getLink
 
-},{"./collectionJson/attributes.js":217,"./collectionJson/items.js":218}],220:[function(require,module,exports){
+},{"./collectionJson/attributes.js":217,"./collectionJson/items.js":218}],221:[function(require,module,exports){
 var React = require('react')
 var Page = require('./page.jsx')
 var _ = require('lodash')
@@ -45359,7 +45377,7 @@ var Index = React.createClass({displayName: "Index",
 
 module.exports = Index
 
-},{"./helpers/collectionJson/items.js":218,"./helpers/speakers.js":219,"./page.jsx":222,"lodash":28,"react":212}],221:[function(require,module,exports){
+},{"./helpers/collectionJson/items.js":218,"./helpers/speakers.js":220,"./page.jsx":223,"lodash":28,"react":212}],222:[function(require,module,exports){
 var React = require('react')
 
 var Link = React.createClass({displayName: "Link",
@@ -45370,7 +45388,7 @@ var Link = React.createClass({displayName: "Link",
 
 module.exports = Link
 
-},{"react":212}],222:[function(require,module,exports){
+},{"react":212}],223:[function(require,module,exports){
 var React = require('react')
 
 var Page = React.createClass({displayName: "Page",
@@ -45393,7 +45411,7 @@ var Page = React.createClass({displayName: "Page",
 
 module.exports = Page
 
-},{"react":212}],223:[function(require,module,exports){
+},{"react":212}],224:[function(require,module,exports){
 var React = require('react')
 var Page = require('./page.jsx')
 var Details = require('./details.jsx')
@@ -45404,13 +45422,14 @@ var _ = require('lodash')
 var $ = require('jquery')
 var attributesHelper = require('./helpers/collectionJson/attributes.js')
 var itemsHelper = require('./helpers/collectionJson/items.js')
+var templateHelper = require('./helpers/collectionJson/template.js')
 var speakersHelper = require('./helpers/speakers.js')
 
 var Show = React.createClass({displayName: "Show",
     getInitialState: function(){
         return {
             speaker: this.props.speaker,
-            template: this.getPopulatedTemplate(this.props.speaker.collection.template, itemsHelper.getFirstItem(this.props.speaker)),
+            template: templateHelper.getPopulatedTemplate(this.props.speaker.collection.template, itemsHelper.getFirstItem(this.props.speaker)),
             edit: false
         }
     },
@@ -45452,17 +45471,12 @@ var Show = React.createClass({displayName: "Show",
             success: function(data){
                 var speaker = JSON.parse(data)
                 context.setState({speaker: speaker})
-                context.setState({template: context.getPopulatedTemplate(speaker, speaker.collection.template)})
+                context.setState({template: templateHelper.getPopulatedTemplate(
+                                                templateHelper.getTemplate(speaker),
+                                                itemsHelper.getFirstItem(speaker))})
                 context.onCancel()
             }
         })
-    },
-
-    getPopulatedTemplate: function(template, item){
-        _.each(attributesHelper.getItemAttributes(template), function(attribute){
-            attribute['value'] = attributesHelper.getItemAttributeValue(item, attribute['name'])
-        })
-        return template;
     },
 
     getSpeakerAttributes: function(){
@@ -45488,4 +45502,4 @@ var Show = React.createClass({displayName: "Show",
 
 module.exports = Show
 
-},{"./delete-button.jsx":214,"./details.jsx":215,"./editting-buttons.jsx":216,"./helpers/collectionJson/attributes.js":217,"./helpers/collectionJson/items.js":218,"./helpers/speakers.js":219,"./link.jsx":221,"./page.jsx":222,"jquery":27,"lodash":28,"react":212}]},{},[213]);
+},{"./delete-button.jsx":214,"./details.jsx":215,"./editting-buttons.jsx":216,"./helpers/collectionJson/attributes.js":217,"./helpers/collectionJson/items.js":218,"./helpers/collectionJson/template.js":219,"./helpers/speakers.js":220,"./link.jsx":222,"./page.jsx":223,"jquery":27,"lodash":28,"react":212}]},{},[213]);

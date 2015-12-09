@@ -8,13 +8,14 @@ var _ = require('lodash')
 var $ = require('jquery')
 var attributesHelper = require('./helpers/collectionJson/attributes.js')
 var itemsHelper = require('./helpers/collectionJson/items.js')
+var templateHelper = require('./helpers/collectionJson/template.js')
 var speakersHelper = require('./helpers/speakers.js')
 
 var Show = React.createClass({
     getInitialState: function(){
         return {
             speaker: this.props.speaker,
-            template: this.getPopulatedTemplate(this.props.speaker.collection.template, itemsHelper.getFirstItem(this.props.speaker)),
+            template: templateHelper.getPopulatedTemplate(this.props.speaker.collection.template, itemsHelper.getFirstItem(this.props.speaker)),
             edit: false
         }
     },
@@ -56,17 +57,12 @@ var Show = React.createClass({
             success: function(data){
                 var speaker = JSON.parse(data)
                 context.setState({speaker: speaker})
-                context.setState({template: context.getPopulatedTemplate(speaker, speaker.collection.template)})
+                context.setState({template: templateHelper.getPopulatedTemplate(
+                                                templateHelper.getTemplate(speaker),
+                                                itemsHelper.getFirstItem(speaker))})
                 context.onCancel()
             }
         })
-    },
-
-    getPopulatedTemplate: function(template, item){
-        _.each(attributesHelper.getItemAttributes(template), function(attribute){
-            attribute['value'] = attributesHelper.getItemAttributeValue(item, attribute['name'])
-        })
-        return template;
     },
 
     getSpeakerAttributes: function(){
