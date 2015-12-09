@@ -14,7 +14,7 @@ var Show = React.createClass({
     getInitialState: function(){
         return {
             speaker: this.props.speaker,
-            scratchSpeaker: this.props.speaker,
+            template: this.getPopulatedTemplate(this.props.speaker.collection.template, itemsHelper.getFirstItem(this.props.speaker)),
             edit: false
         }
     },
@@ -41,23 +41,32 @@ var Show = React.createClass({
     },
 
     handleAttributeChange: function(event){
-        var scratchSpeaker = _.clone(this.state.scratchSpeaker, true)
+        var template = _.clone(this.state.template, true)
         attributesHelper.updateAttributeValue(
-            attributesHelper.getItemAttribute(itemsHelper.getFirstItem(scratchSpeaker), event.target.name),
+            attributesHelper.getItemAttribute(template, event.target.name),
             event.target.value)
-        this.setState({scratchSpeaker: scratchSpeaker})
+        this.setState({template: template})
     },
 
     onSave: function(){
         var context = this
         $.ajax('/speakers/' + context.getSpeakerAttribute('id'), {
             method: 'PUT',
-            data: this.state.scratchSpeaker,
+            data: {'template': this.state.template},
             success: function(data){
-                context.setState({speaker: JSON.parse(data)})
+                var speaker = JSON.parse(data)
+                context.setState({speaker: speaker})
+                context.setState({template: context.getPopulatedTemplate(speaker, speaker.collection.template)})
                 context.onCancel()
             }
         })
+    },
+
+    getPopulatedTemplate: function(template, item){
+        _.each(attributesHelper.getItemAttributes(template), function(attribute){
+            attribute['value'] = attributesHelper.getItemAttributeValue(item, attribute['name'])
+        })
+        return template;
     },
 
     getSpeakerAttributes: function(){
