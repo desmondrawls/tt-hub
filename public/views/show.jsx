@@ -14,8 +14,8 @@ var speakersHelper = require('./helpers/speakers.js')
 var Show = React.createClass({
     getInitialState: function(){
         return {
-            speaker: this.props.speaker,
-            template: templateHelper.getPopulatedTemplate(this.props.speaker.collection.template, itemsHelper.getFirstItem(this.props.speaker)),
+            speakerObject: this.props.speakerObject,
+            template: templateHelper.getPopulatedTemplate(this.props.speakerObject.collection.template, itemsHelper.getFirstItem(this.props.speakerObject)),
             edit: false
         }
     },
@@ -55,26 +55,26 @@ var Show = React.createClass({
             method: 'PUT',
             data: {'template': this.state.template},
             success: function(data){
-                var speaker = JSON.parse(data)
-                context.setState({speaker: speaker})
+                var speakerObject = JSON.parse(data)
+                context.setState({speakerObject: speakerObject})
                 context.setState({template: templateHelper.getPopulatedTemplate(
-                                                templateHelper.getTemplate(speaker),
-                                                itemsHelper.getFirstItem(speaker))})
+                                                templateHelper.getTemplate(speakerObject),
+                                                itemsHelper.getFirstItem(speakerObject))})
                 context.onCancel()
             }
         })
     },
 
     getSpeakerAttributes: function(){
-        return attributesHelper.getItemAttributes(itemsHelper.getFirstItem(this.state.speaker))
+        return attributesHelper.getItemAttributes(itemsHelper.getFirstItem(this.state.speakerObject))
     },
 
     getSpeakerAttribute: function(attributeName){
-        return attributesHelper.getItemAttributeValue(itemsHelper.getFirstItem(this.state.speaker), attributeName)
+        return attributesHelper.getItemAttributeValue(itemsHelper.getFirstItem(this.state.speakerObject), attributeName)
     },
 
     getSpeakerLink: function(){
-        return speakersHelper.getLink(itemsHelper.getFirstItem(this.state.speaker))
+        return speakersHelper.getLink(itemsHelper.getFirstItem(this.state.speakerObject))
     },
 
     onEdit: function(){

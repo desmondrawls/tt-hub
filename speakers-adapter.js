@@ -8,8 +8,8 @@ function index(req, res){
     var args = {
         headers:{"Content-Type": "application/json", "Accept": "application/json"}
     }
-    client.get('http://localhost:3000/', args, function(speakers, response){
-        respondWithSpeakers(res, speakers)
+    client.get('http://localhost:3000/', args, function(speakersObject, response){
+        respondWithSpeakers(res, speakersObject)
     })
 }
 
@@ -21,8 +21,8 @@ function show(req, res) {
     var args = {
         headers:{"Content-Type": "application/json", "Accept": "application/json"}
     }
-    client.get('http://localhost:3000/' + req.params.id, args, function(speaker, response){
-        respondWithSpeaker(res, speaker)
+    client.get('http://localhost:3000/' + req.params.id, args, function(speakerObject, response){
+        respondWithSpeaker(res, speakerObject)
     })
 }
 
@@ -32,8 +32,8 @@ function update(req, res) {
         data: req.body,
         headers:{"Content-Type": "application/json", "Accept": "application/json"}
     }
-    client.put('http://localhost:3000/' + req.params.id, args, function(speaker, response){
-        res.send(speaker)
+    client.put('http://localhost:3000/' + req.params.id, args, function(speakerObject, response){
+        res.send(speakerObject)
     })
 }
 
@@ -42,29 +42,29 @@ function destroy(req, res) {
     var args = {
         headers:{"Content-Type": "application/json", "Accept": "application/json"}
     }
-    client.delete('http://localhost:3000/' + req.params.id, args, function(speaker, response){
+    client.delete('http://localhost:3000/' + req.params.id, args, function(speakerObject, response){
         res.redirect('/speakers/')
     })}
 
-function respondWithSpeaker(res, speaker) {
+function respondWithSpeaker(res, speakerObject) {
     res.format({
         html: function () {
-            res.render('show', {speaker: JSON.parse(speaker)})
+            res.render('show', {speakerObject: JSON.parse(speakerObject)})
         },
         json: function () {
-            res.send(speaker)
+            res.send(speakerObject)
 
         }
     })
 }
 
-function respondWithSpeakers(res, speakers) {
+function respondWithSpeakers(res, speakersObject) {
     res.format({
         html: function () {
-            res.render('index', {speakers: JSON.parse(speakers)})
+            res.render('index', {speakersObject: JSON.parse(speakersObject)})
         },
         json: function () {
-            res.send(speakers)
+            res.send(speakersObject)
         }
     })
 }

@@ -7,7 +7,7 @@ var speakersHelper = require('./helpers/speakers.js')
 var Index = React.createClass({
     getInitialState: function () {
         return {
-            speakers: this.props.speakers,
+            speakersObject: this.props.speakersObject,
         }
     },
 
@@ -29,7 +29,7 @@ var Index = React.createClass({
                 <h1>TechTalk</h1>
                 <h3>Speakers</h3>
                 <ul>
-                    {speakers(itemsHelper.getItems(this.state.speakers))}
+                    {speakers(itemsHelper.getItems(this.state.speakersObject))}
                 </ul>
             </Page>
         )
