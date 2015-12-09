@@ -8,6 +8,7 @@ var _ = require('lodash')
 var app = express()
 var engine = renderer.server.create()
 var speakersAdapter = require('./speakers-adapter')
+var middleware = require('./middleware')
 var bodyParser = require('body-parser')
 var methodOverride = require('method-override')
 
@@ -24,12 +25,8 @@ app.use(bodyParser.urlencoded({ extended: true }))
 app.use(express.static(__dirname + '/public'))
 app.use('/stylesheets', express.static('stylesheets'));
 app.use('/jquery', express.static(__dirname + '/node_modules/jquery/dist/'));
-app.use(function (req, res, next) {
-    console.log('---------------')
-    console.log(req.method, ' with params ', req.params, 'and body ', req.body, ' at ' + req.path)
-    console.log('---------------')
-    next()
-})
+app.use(middleware.logRequest)
+app.use(middleware.logResponse)
 
 app.get('/speakers/', speakersAdapter.index)
 app.post('/speakers/', speakersAdapter.create)

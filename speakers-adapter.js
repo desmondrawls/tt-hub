@@ -9,12 +9,19 @@ function index(req, res){
         headers:{"Content-Type": "application/json", "Accept": "application/json"}
     }
     client.get('http://localhost:3000/', args, function(speakersObject, response){
-        respondWithSpeakers(res, speakersObject)
+        respondWithSpeakers(req, res, speakersObject)
     })
 }
 
 function create(req, res){
-    res.send('create endpoint successfully acquired')
+    console.log("creating speaker ", "with " + req.body)
+    var args = {
+        data: req.body,
+        headers:{"Content-Type": "application/json", "Accept": "application/json"}
+    }
+    client.post('http://localhost:3000/', args, function(speakersObject, response){
+        res.redirect('/speakers/')
+    })
 }
 
 function show(req, res) {
@@ -58,15 +65,12 @@ function respondWithSpeaker(res, speakerObject) {
     })
 }
 
-function respondWithSpeakers(res, speakersObject) {
-    res.format({
-        html: function () {
-            res.render('index', {speakersObject: JSON.parse(speakersObject)})
-        },
-        json: function () {
-            res.send(speakersObject)
-        }
-    })
+function respondWithSpeakers(req, res, speakersObject) {
+    if(req.header('accept') == 'application/json'){
+        res.send(speakersObject)
+    } else {
+        res.render('index', {speakersObject: JSON.parse(speakersObject)})
+    }
 }
 
 exports.index = index

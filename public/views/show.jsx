@@ -15,7 +15,7 @@ var Show = React.createClass({
     getInitialState: function(){
         return {
             speakerObject: this.props.speakerObject,
-            template: templateHelper.getPopulatedTemplate(this.props.speakerObject.collection.template, itemsHelper.getFirstItem(this.props.speakerObject)),
+            template: templateHelper.getPopulatedTemplate(templateHelper.getTemplate(this.props.speakerObject), itemsHelper.getFirstItem(this.props.speakerObject)),
             edit: false
         }
     },

@@ -1,6 +1,11 @@
 var React = require('react')
 var Page = require('./page.jsx')
+var NewForm = require('./new.jsx')
+var Link = require('./link.jsx')
 var _ = require('lodash')
+var itemsHelper = require('./helpers/collectionJson/items.js')
+var templateHelper = require('./helpers/collectionJson/template.js')
+var attributesHelper = require('./helpers/collectionJson/attributes.js')
 var itemsHelper = require('./helpers/collectionJson/items.js')
 var speakersHelper = require('./helpers/speakers.js')
 
@@ -8,6 +13,7 @@ var Index = React.createClass({
     getInitialState: function () {
         return {
             speakersObject: this.props.speakersObject,
+            adding: false
         }
     },
 
@@ -31,8 +37,26 @@ var Index = React.createClass({
                 <ul>
                     {speakers(itemsHelper.getItems(this.state.speakersObject))}
                 </ul>
+                { this.state.adding ?
+                    <NewForm
+                        onCreate={this.onCreate}
+                        onCancel={this.onCancel}
+                        template={templateHelper.getTemplate(this.props.speakersObject)}/>
+                : <Link onClick={context.onNew} text="New"/> }
             </Page>
         )
+    },
+
+    onCreate: function(speakersObject){
+        this.setState({speakersObject: speakersObject})
+    },
+
+    onNew: function(){
+        this.setState({adding: true})
+    },
+
+    onCancel: function(){
+        this.setState({adding: false})
     }
 })
 

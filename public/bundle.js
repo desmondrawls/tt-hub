@@ -45173,7 +45173,7 @@ document.addEventListener('DOMContentLoaded', function onLoad(){
     Client.boot(options)
 })
 
-},{"./views/details.jsx":215,"./views/index.jsx":221,"./views/link.jsx":222,"./views/page.jsx":223,"./views/show.jsx":224,"react-engine/lib/client":29}],214:[function(require,module,exports){
+},{"./views/details.jsx":215,"./views/index.jsx":221,"./views/link.jsx":222,"./views/page.jsx":224,"./views/show.jsx":225,"react-engine/lib/client":29}],214:[function(require,module,exports){
 var React = require('react')
 var _ = require('lodash')
 
@@ -45339,7 +45339,12 @@ exports.getLink = getLink
 },{"./collectionJson/attributes.js":217,"./collectionJson/items.js":218}],221:[function(require,module,exports){
 var React = require('react')
 var Page = require('./page.jsx')
+var NewForm = require('./new.jsx')
+var Link = require('./link.jsx')
 var _ = require('lodash')
+var itemsHelper = require('./helpers/collectionJson/items.js')
+var templateHelper = require('./helpers/collectionJson/template.js')
+var attributesHelper = require('./helpers/collectionJson/attributes.js')
 var itemsHelper = require('./helpers/collectionJson/items.js')
 var speakersHelper = require('./helpers/speakers.js')
 
@@ -45347,6 +45352,7 @@ var Index = React.createClass({displayName: "Index",
     getInitialState: function () {
         return {
             speakersObject: this.props.speakersObject,
+            adding: false
         }
     },
 
@@ -45369,15 +45375,33 @@ var Index = React.createClass({displayName: "Index",
                 React.createElement("h3", null, "Speakers"), 
                 React.createElement("ul", null, 
                     speakers(itemsHelper.getItems(this.state.speakersObject))
-                )
+                ), 
+                 this.state.adding ?
+                    React.createElement(NewForm, {
+                        onCreate: this.onCreate, 
+                        onCancel: this.onCancel, 
+                        template: templateHelper.getTemplate(this.props.speakersObject)})
+                : React.createElement(Link, {onClick: context.onNew, text: "New"})
             )
         )
+    },
+
+    onCreate: function(speakersObject){
+        this.setState({speakersObject: speakersObject})
+    },
+
+    onNew: function(){
+        this.setState({adding: true})
+    },
+
+    onCancel: function(){
+        this.setState({adding: false})
     }
 })
 
 module.exports = Index
 
-},{"./helpers/collectionJson/items.js":218,"./helpers/speakers.js":220,"./page.jsx":223,"lodash":28,"react":212}],222:[function(require,module,exports){
+},{"./helpers/collectionJson/attributes.js":217,"./helpers/collectionJson/items.js":218,"./helpers/collectionJson/template.js":219,"./helpers/speakers.js":220,"./link.jsx":222,"./new.jsx":223,"./page.jsx":224,"lodash":28,"react":212}],222:[function(require,module,exports){
 var React = require('react')
 
 var Link = React.createClass({displayName: "Link",
@@ -45389,6 +45413,62 @@ var Link = React.createClass({displayName: "Link",
 module.exports = Link
 
 },{"react":212}],223:[function(require,module,exports){
+var React = require('react')
+var _ = require('lodash')
+var Details = require('./details.jsx')
+var EdittingButtons = require('./editting-buttons.jsx')
+var attributesHelper = require('./helpers/collectionJson/attributes.js')
+
+var New = React.createClass({displayName: "New",
+    getInitialState: function () {
+        return { template: this.props.template }
+    },
+
+    render: function () {
+        return (
+            React.createElement("div", null, 
+                React.createElement(Details, {
+                    attributes: attributesHelper.getItemAttributes(this.state.template), 
+                    onChange: this.handleAttributeChange, 
+                    edit: true}
+                ), 
+                React.createElement(EdittingButtons, {onSave: this.onSave, onCancel: this.onCancel})
+            )
+        )
+    },
+
+    onSave: function(){
+        var context = this
+        $.ajax('/speakers/', {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json'
+            },
+            data: {'template': this.state.template},
+            success: function(speakersObject){
+                context.props.onCreate(speakersObject)
+                context.onCancel()
+            }
+        })
+    },
+
+    onCancel: function() {
+        this.setState({ template: this.props.template })
+        this.props.onCancel()
+    },
+
+    handleAttributeChange: function(event) {
+        var template = _.clone(this.state.template, true)
+        attributesHelper.updateAttributeValue(
+            attributesHelper.getItemAttribute(template, event.target.name),
+            event.target.value)
+        this.setState({template: template})
+    }
+})
+
+module.exports = New
+
+},{"./details.jsx":215,"./editting-buttons.jsx":216,"./helpers/collectionJson/attributes.js":217,"lodash":28,"react":212}],224:[function(require,module,exports){
 var React = require('react')
 
 var Page = React.createClass({displayName: "Page",
@@ -45411,7 +45491,7 @@ var Page = React.createClass({displayName: "Page",
 
 module.exports = Page
 
-},{"react":212}],224:[function(require,module,exports){
+},{"react":212}],225:[function(require,module,exports){
 var React = require('react')
 var Page = require('./page.jsx')
 var Details = require('./details.jsx')
@@ -45429,7 +45509,7 @@ var Show = React.createClass({displayName: "Show",
     getInitialState: function(){
         return {
             speakerObject: this.props.speakerObject,
-            template: templateHelper.getPopulatedTemplate(this.props.speakerObject.collection.template, itemsHelper.getFirstItem(this.props.speakerObject)),
+            template: templateHelper.getPopulatedTemplate(templateHelper.getTemplate(this.props.speakerObject), itemsHelper.getFirstItem(this.props.speakerObject)),
             edit: false
         }
     },
@@ -45502,4 +45582,4 @@ var Show = React.createClass({displayName: "Show",
 
 module.exports = Show
 
-},{"./delete-button.jsx":214,"./details.jsx":215,"./editting-buttons.jsx":216,"./helpers/collectionJson/attributes.js":217,"./helpers/collectionJson/items.js":218,"./helpers/collectionJson/template.js":219,"./helpers/speakers.js":220,"./link.jsx":222,"./page.jsx":223,"jquery":27,"lodash":28,"react":212}]},{},[213]);
+},{"./delete-button.jsx":214,"./details.jsx":215,"./editting-buttons.jsx":216,"./helpers/collectionJson/attributes.js":217,"./helpers/collectionJson/items.js":218,"./helpers/collectionJson/template.js":219,"./helpers/speakers.js":220,"./link.jsx":222,"./page.jsx":224,"jquery":27,"lodash":28,"react":212}]},{},[213]);
