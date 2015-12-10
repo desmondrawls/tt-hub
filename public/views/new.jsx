@@ -24,7 +24,7 @@ var New = React.createClass({
 
     onSave: function(){
         var context = this
-        $.ajax('/speakers/', {
+        $.ajax(context.props.href, {
             method: 'POST',
             headers: {
                 'Accept': 'application/json'

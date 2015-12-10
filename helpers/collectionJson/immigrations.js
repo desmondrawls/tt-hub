@@ -1,8 +1,8 @@
 var _ = require('lodash')
 var transformer = require('./transformer.js')
 
-function domesticateSpeakerObject(url, speakerObject){
-    return transformer.layout(url, speakerObject.collection.items, speakerObject.collection.template)
+function domesticateObject(url, object){
+    return transformer.layout(url, object.collection.items, object.collection.template)
 }
 
-exports.domesticateSpeakerObject = domesticateSpeakerObject
+exports.domesticateObject = domesticateObject

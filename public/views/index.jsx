@@ -39,7 +39,8 @@ var Index = React.createClass({
                     <NewForm
                         onCreate={this.onCreate}
                         onCancel={this.onCancel}
-                        template={templateHelper.getTemplate(this.props.speakersObject)}/>
+                        template={templateHelper.getTemplate(this.props.speakersObject)}
+                        href={this.state.speakersObject.collection.href}/>
                 : <Link onClick={context.onNew} text="New"/> }
             </Page>
         )

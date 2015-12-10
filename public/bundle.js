@@ -45378,7 +45378,8 @@ var Index = React.createClass({displayName: "Index",
                     React.createElement(NewForm, {
                         onCreate: this.onCreate, 
                         onCancel: this.onCancel, 
-                        template: templateHelper.getTemplate(this.props.speakersObject)})
+                        template: templateHelper.getTemplate(this.props.speakersObject), 
+                        href: this.state.speakersObject.collection.href})
                 : React.createElement(Link, {onClick: context.onNew, text: "New"})
             )
         )
@@ -45437,7 +45438,7 @@ var New = React.createClass({displayName: "New",
 
     onSave: function(){
         var context = this
-        $.ajax('/speakers/', {
+        $.ajax(context.props.href, {
             method: 'POST',
             headers: {
                 'Accept': 'application/json'
