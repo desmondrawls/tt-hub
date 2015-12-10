@@ -10,6 +10,7 @@ var attributesHelper = require('./../../helpers/collectionJson/attributes.js')
 var itemsHelper = require('./../../helpers/collectionJson/items.js')
 var templateHelper = require('./../../helpers/collectionJson/template.js')
 var speakersHelper = require('./../../helpers/speakers.js')
+var collectionHelper = require('./../../helpers/collectionJson/collection.js')
 
 var Show = React.createClass({
     getInitialState: function(){
@@ -51,7 +52,7 @@ var Show = React.createClass({
 
     onSave: function(){
         var context = this
-        $.ajax(context.state.speakerObject.collection.href, {
+        $.ajax(collectionHelper.getCollectionValue(collectionHelper.getCollection(context.state.speakerObject), 'href'), {
             method: 'PUT',
             data: {'template': this.state.template},
             success: function(data){
@@ -63,6 +64,10 @@ var Show = React.createClass({
                 context.onCancel()
             }
         })
+    },
+
+    getPrimaryUrl: function(object){
+        return collectionHelper.getCollectionValue(collectionHelper.getCollection(object), 'href')
     },
 
     getSpeakerAttributes: function(){

@@ -17,7 +17,7 @@ function updateAttributeValue(attribute, value) {
 }
 
 function getItemAttributeValue(item, name){
-    return getItemAttribute(item, name).value
+    return getAttributeValue(getItemAttribute(item, name))
 }
 
 function getItemAttribute(item, name){

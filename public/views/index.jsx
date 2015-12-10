@@ -6,6 +6,7 @@ var _ = require('lodash')
 var templateHelper = require('./../../helpers/collectionJson/template.js')
 var itemsHelper = require('./../../helpers/collectionJson/items.js')
 var speakersHelper = require('./../../helpers/speakers.js')
+var collectionHelper = require('./../../helpers/collectionJson/collection.js')
 
 var Index = React.createClass({
     getInitialState: function () {
@@ -40,10 +41,14 @@ var Index = React.createClass({
                         onCreate={this.onCreate}
                         onCancel={this.onCancel}
                         template={templateHelper.getTemplate(this.props.speakersObject)}
-                        href={this.state.speakersObject.collection.href}/>
+                        href={this.getPrimaryUrl()}/>
                 : <Link onClick={context.onNew} text="New"/> }
             </Page>
         )
+    },
+
+    getPrimaryUrl: function(){
+       return collectionHelper.getCollectionValue(collectionHelper.getCollection(this.state.speakersObject))
     },
 
     onCreate: function(speakersObject){
