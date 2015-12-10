@@ -12,24 +12,19 @@ var Speaker = require('./db').CollectionJsonSpeaker
 var Item = require('./db').CollectionJsonItem
 var hostUrl = 'http://localhost:4000/speakers/'
 
-function index(req, res){
+function index(req, res) {
     var args = {
-        headers:{"Content-Type": "application/json", "Accept": "application/json"}
+        headers: {"Content-Type": "application/json", "Accept": "application/json"}
     }
-    client.get('http://localhost:3000/', args, function(rawSpeakersObject, response){
+    client.get('http://localhost:3000/', args, function (rawSpeakersObject, response) {
         var speakersObject = JSON.parse(rawSpeakersObject);
-        var promises = _.map(speakersObject.collection.items, function(item){
-            var newItem = new Item(item);
-            return newItem.save()
+        var savePromises = _.map(speakersObject.collection.items, function (item) {
+            return new Item(item).save()
         })
-        Q.all(promises)
-            .then(function(items){
-                return immigrationsHelper.domesticateObjectItems(speakersObject, items, hostUrl)
-            })
-            .then(function(partiallyDomesticatedObject){
-                var domesticatedObject = immigrationsHelper.domesticateObject(hostUrl, partiallyDomesticatedObject);
-                respondWithSpeakers(req, res, domesticatedObject)
-            }).done()
+        Q.all(savePromises).then(function (items) {
+            var partiallyDomesticatedObject = immigrationsHelper.domesticateObjectItems(speakersObject, items, hostUrl)
+            respondWithSpeakers(req, res, immigrationsHelper.domesticateObject(hostUrl, partiallyDomesticatedObject))
+        }).done()
     })
 }
 
