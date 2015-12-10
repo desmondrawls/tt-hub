@@ -6,7 +6,7 @@ function getFullName(speaker) {
 }
 
 function getLink(speaker) {
-    return '/speakers/' + attributesHelper.getItemAttributeValue(speaker, 'id')
+    return speaker.href
 }
 
 exports.getFullName = getFullName

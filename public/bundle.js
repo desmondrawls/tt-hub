@@ -97,7 +97,7 @@ function getFullName(speaker) {
 }
 
 function getLink(speaker) {
-    return '/speakers/' + attributesHelper.getItemAttributeValue(speaker, 'id')
+    return speaker.href
 }
 
 exports.getFullName = getFullName
@@ -45548,7 +45548,7 @@ var Show = React.createClass({displayName: "Show",
                  context.state.edit ? React.createElement(EdittingButtons, {onSave: context.onSave, onCancel: context.onCancel}) : null, 
                 React.createElement("p", null, 
                     React.createElement(Link, {onClick: context.onEdit, text: "Edit"}), 
-                    React.createElement(DeleteButton, {action: context.getSpeakerLink()})
+                    React.createElement(DeleteButton, {action: context.getPrimaryUrl(context.state.speakerObject)})
                 )
             )
         )
@@ -45588,10 +45588,6 @@ var Show = React.createClass({displayName: "Show",
 
     getSpeakerAttribute: function(attributeName){
         return attributesHelper.getItemAttributeValue(itemsHelper.getFirstItem(this.state.speakerObject), attributeName)
-    },
-
-    getSpeakerLink: function(){
-        return speakersHelper.getLink(itemsHelper.getFirstItem(this.state.speakerObject))
     },
 
     onEdit: function(){

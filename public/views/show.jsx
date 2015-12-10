@@ -36,7 +36,7 @@ var Show = React.createClass({
                 { context.state.edit ? <EdittingButtons onSave={context.onSave} onCancel={context.onCancel}/> : null }
                 <p>
                     <Link onClick={context.onEdit} text="Edit"/>
-                    <DeleteButton action={context.getSpeakerLink()}/>
+                    <DeleteButton action={context.getPrimaryUrl(context.state.speakerObject)}/>
                 </p>
             </Page>
         )
@@ -76,10 +76,6 @@ var Show = React.createClass({
 
     getSpeakerAttribute: function(attributeName){
         return attributesHelper.getItemAttributeValue(itemsHelper.getFirstItem(this.state.speakerObject), attributeName)
-    },
-
-    getSpeakerLink: function(){
-        return speakersHelper.getLink(itemsHelper.getFirstItem(this.state.speakerObject))
     },
 
     onEdit: function(){

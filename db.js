@@ -29,4 +29,13 @@ var collectionJsonSpeakerSchema = mongoose.Schema(
             data: [{name: String, value: mongoose.Schema.Types.Mixed, prompt: String}]
         }
     }, {strict: false})
+
+var collectionJsonItemSchema = mongoose.Schema(
+    {
+        href: String,
+        links: [{rel: String, href: String, prompt: String}],
+        data: [{name: String, value: mongoose.Schema.Types.Mixed, prompt: String}]
+    }
+)
 exports.CollectionJsonSpeaker = mongoose.model('CollectionJsonSpeaker', collectionJsonSpeakerSchema)
+exports.CollectionJsonItem = mongoose.model('Item', collectionJsonItemSchema)

@@ -2,18 +2,34 @@ var express = require('express')
 var Client = require('node-rest-client').Client
 var debug = require('./app').debug
 var immigrationsHelper = require('./helpers/collectionJson/immigrations.js')
+var _ = require('lodash')
+var Q = require('q');
+
 
 client = new Client()
 
 var Speaker = require('./db').CollectionJsonSpeaker
+var Item = require('./db').CollectionJsonItem
 var hostUrl = 'http://localhost:4000/speakers/'
 
 function index(req, res){
     var args = {
         headers:{"Content-Type": "application/json", "Accept": "application/json"}
     }
-    client.get('http://localhost:3000/', args, function(speakersObject, response){
-        respondWithSpeakers(req, res, immigrationsHelper.domesticateObject(hostUrl, JSON.parse(speakersObject)))
+    client.get('http://localhost:3000/', args, function(rawSpeakersObject, response){
+        var speakersObject = JSON.parse(rawSpeakersObject);
+        var promises = _.map(speakersObject.collection.items, function(item){
+            var newItem = new Item(item);
+            return newItem.save()
+        })
+        Q.all(promises)
+            .then(function(items){
+                return immigrationsHelper.domesticateObjectItems(speakersObject, items, hostUrl)
+            })
+            .then(function(partiallyDomesticatedObject){
+                var domesticatedObject = immigrationsHelper.domesticateObject(hostUrl, partiallyDomesticatedObject);
+                respondWithSpeakers(req, res, domesticatedObject)
+            }).done()
     })
 }
 
@@ -29,19 +45,15 @@ function create(req, res){
 }
 
 function show(req, res) {
-    var args = {
-        headers:{"Content-Type": "application/json", "Accept": "application/json"}
-    }
-    client.get('http://localhost:3000/' + req.params.id, args, function(speakerObject, response){
-        new Speaker(JSON.parse(speakerObject).collection).save(function(err, speakerObject){
-            respondWithSpeaker(res, immigrationsHelper.domesticateObject(hostUrl + speakerObject.id, {collection: speakerObject}))
+    Item.findById(req.params.id, function(err, item){
+        var args = {
+            headers:{"Content-Type": "application/json", "Accept": "application/json"}
+        }
+        client.get(item.href, args, function(speakerObject, response){
+            new Speaker(JSON.parse(speakerObject).collection).save(function(err, speakerObject){
+                respondWithSpeaker(res, immigrationsHelper.domesticateObject(hostUrl + speakerObject.id, {collection: speakerObject}))
+            })
         })
-    })
-}
-
-function findAllSpeakers(){
-    return Speaker.find({}, function(err, speakers){
-        return speakers
     })
 }
 
@@ -60,12 +72,15 @@ function update(req, res) {
 
 function destroy(req, res) {
     console.log("destroying speaker " + req.params.id)
-    var args = {
-        headers:{"Content-Type": "application/json", "Accept": "application/json"}
-    }
-    client.delete('http://localhost:3000/' + req.params.id, args, function(speakerObject, response){
-        res.redirect('/speakers/')
-    })}
+    Speaker.findById(req.params.id, function (err, speaker) {
+        var args = {
+            headers:{"Content-Type": "application/json", "Accept": "application/json"}
+        }
+        client.delete(speaker.href, args, function(speakerObject, response){
+            res.redirect('/speakers/')
+        })
+    })
+}
 
 function respondWithSpeaker(res, speakerObject) {
     res.format({
@@ -83,6 +98,7 @@ function respondWithSpeakers(req, res, speakersObject) {
     if(req.header('accept') == 'application/json'){
         res.send(speakersObject)
     } else {
+        console.log("SPEAKERS WITH HTML")
         res.render('index', {speakersObject: speakersObject})
     }
 }
