@@ -3,11 +3,9 @@ var Page = require('./page.jsx')
 var NewForm = require('./new.jsx')
 var Link = require('./link.jsx')
 var _ = require('lodash')
-var itemsHelper = require('./helpers/collectionJson/items.js')
-var templateHelper = require('./helpers/collectionJson/template.js')
-var attributesHelper = require('./helpers/collectionJson/attributes.js')
-var itemsHelper = require('./helpers/collectionJson/items.js')
-var speakersHelper = require('./helpers/speakers.js')
+var templateHelper = require('./../../helpers/collectionJson/template.js')
+var itemsHelper = require('./../../helpers/collectionJson/items.js')
+var speakersHelper = require('./../../helpers/speakers.js')
 
 var Index = React.createClass({
     getInitialState: function () {

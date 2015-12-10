@@ -6,10 +6,10 @@ var DeleteButton = require('./delete-button.jsx')
 var Link = require('./link.jsx')
 var _ = require('lodash')
 var $ = require('jquery')
-var attributesHelper = require('./helpers/collectionJson/attributes.js')
-var itemsHelper = require('./helpers/collectionJson/items.js')
-var templateHelper = require('./helpers/collectionJson/template.js')
-var speakersHelper = require('./helpers/speakers.js')
+var attributesHelper = require('./../../helpers/collectionJson/attributes.js')
+var itemsHelper = require('./../../helpers/collectionJson/items.js')
+var templateHelper = require('./../../helpers/collectionJson/template.js')
+var speakersHelper = require('./../../helpers/speakers.js')
 
 var Show = React.createClass({
     getInitialState: function(){
@@ -51,7 +51,7 @@ var Show = React.createClass({
 
     onSave: function(){
         var context = this
-        $.ajax('/speakers/' + context.getSpeakerAttribute('id'), {
+        $.ajax(context.state.speakerObject.collection.href, {
             method: 'PUT',
             data: {'template': this.state.template},
             success: function(data){

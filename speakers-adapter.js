@@ -1,8 +1,11 @@
 var express = require('express')
 var Client = require('node-rest-client').Client
 var debug = require('./app').debug
+var jsonTransmogrifier = require('./helpers/collectionJson/transmogrifier.js')
 
 client = new Client()
+
+var Speaker = require('./db').CollectionJsonSpeaker
 
 function index(req, res){
     var args = {
@@ -29,18 +32,28 @@ function show(req, res) {
         headers:{"Content-Type": "application/json", "Accept": "application/json"}
     }
     client.get('http://localhost:3000/' + req.params.id, args, function(speakerObject, response){
-        respondWithSpeaker(res, speakerObject)
+        new Speaker(JSON.parse(speakerObject).collection).save(function(err, speakerObject){
+            respondWithSpeaker(res, jsonTransmogrifier.domesticateSpeakerObject('http://localhost:4000/speakers/' + speakerObject.id, {collection: speakerObject}))
+        })
+    })
+}
+
+function findAllSpeakers(){
+    return Speaker.find({}, function(err, speakers){
+        return speakers
     })
 }
 
 function update(req, res) {
     console.log("updating speaker " + req.params.id, "with " + req.body)
-    var args = {
-        data: req.body,
-        headers:{"Content-Type": "application/json", "Accept": "application/json"}
-    }
-    client.put('http://localhost:3000/' + req.params.id, args, function(speakerObject, response){
-        res.send(speakerObject)
+    Speaker.findById(req.params.id, function (err, speaker) {
+        var args = {
+            data: req.body,
+            headers: {"Content-Type": "application/json", "Accept": "application/json"}
+        }
+        client.put(speaker.href, args, function (speakerObject, response) {
+            res.send(speakerObject)
+        })
     })
 }
 
@@ -56,7 +69,7 @@ function destroy(req, res) {
 function respondWithSpeaker(res, speakerObject) {
     res.format({
         html: function () {
-            res.render('show', {speakerObject: JSON.parse(speakerObject)})
+            res.render('show', {speakerObject: speakerObject})
         },
         json: function () {
             res.send(speakerObject)
