@@ -1,7 +1,7 @@
 var express = require('express')
 var Client = require('node-rest-client').Client
 var debug = require('./app').debug
-var jsonTransmogrifier = require('./helpers/collectionJson/transmogrifier.js')
+var immigrationsHelper = require('./helpers/collectionJson/immigrations.js')
 
 client = new Client()
 
@@ -12,7 +12,7 @@ function index(req, res){
         headers:{"Content-Type": "application/json", "Accept": "application/json"}
     }
     client.get('http://localhost:3000/', args, function(speakersObject, response){
-        respondWithSpeakers(req, res, speakersObject)
+        respondWithSpeakers(req, res, immigrationsHelper.domesticateSpeakerObject('http://localhost:4000/speakers/', JSON.parse(speakersObject)))
     })
 }
 
@@ -33,7 +33,7 @@ function show(req, res) {
     }
     client.get('http://localhost:3000/' + req.params.id, args, function(speakerObject, response){
         new Speaker(JSON.parse(speakerObject).collection).save(function(err, speakerObject){
-            respondWithSpeaker(res, jsonTransmogrifier.domesticateSpeakerObject('http://localhost:4000/speakers/' + speakerObject.id, {collection: speakerObject}))
+            respondWithSpeaker(res, immigrationsHelper.domesticateSpeakerObject('http://localhost:4000/speakers/' + speakerObject.id, {collection: speakerObject}))
         })
     })
 }
@@ -82,7 +82,7 @@ function respondWithSpeakers(req, res, speakersObject) {
     if(req.header('accept') == 'application/json'){
         res.send(speakersObject)
     } else {
-        res.render('index', {speakersObject: JSON.parse(speakersObject)})
+        res.render('index', {speakersObject: speakersObject})
     }
 }
 
