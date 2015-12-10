@@ -53,6 +53,7 @@ exports.getCollectionValue = getCollectionValue
 
 },{"lodash":33}],3:[function(require,module,exports){
 var _ = require('lodash')
+var attributesHelper = require('./attributes.js')
 
 function getItems(collectionJson){
     return collectionJson.collection.items
@@ -66,11 +67,16 @@ function getFirst(items){
     return items[0]
 }
 
+function getLink(item) {
+    return item.href
+}
+
+exports.getLink = getLink
 exports.getItems = getItems
 exports.getFirstItem = getFirstItem
 exports.getFirst = getFirst
 
-},{"lodash":33}],4:[function(require,module,exports){
+},{"./attributes.js":1,"lodash":33}],4:[function(require,module,exports){
 var _ = require('lodash')
 var attributesHelper = require('./attributes.js')
 
@@ -96,12 +102,7 @@ function getFullName(speaker) {
     return attributesHelper.getItemAttributeValue(speaker, 'first_name') + ' ' + attributesHelper.getItemAttributeValue(speaker, 'last_name')
 }
 
-function getLink(speaker) {
-    return speaker.href
-}
-
 exports.getFullName = getFullName
-exports.getLink = getLink
 
 },{"./collectionJson/attributes.js":1,"./collectionJson/items.js":3}],6:[function(require,module,exports){
 // shim for using process in browser
@@ -45364,7 +45365,7 @@ var collectionHelper = require('./../../helpers/collectionJson/collection.js')
 var Index = React.createClass({displayName: "Index",
     getInitialState: function () {
         return {
-            speakersObject: this.props.speakersObject,
+            collectionObject: this.props.collectionObject,
             adding: false
         }
     },
@@ -45372,11 +45373,11 @@ var Index = React.createClass({displayName: "Index",
     render: function () {
         var context = this
 
-        function speakers(speakers) {
-            return _.map(speakers, function (speaker) {
+        function items(items) {
+            return _.map(items, function (item) {
                 return (
                     React.createElement("li", null, 
-                        React.createElement("a", {href: speakersHelper.getLink(speaker)}, speakersHelper.getFullName(speaker))
+                        React.createElement("a", {href: itemsHelper.getLink(item)}, speakersHelper.getFullName(item))
                     )
                 )
             })
@@ -45387,13 +45388,13 @@ var Index = React.createClass({displayName: "Index",
                 React.createElement("h1", null, "TechTalk"), 
                 React.createElement("h3", null, "Speakers"), 
                 React.createElement("ul", null, 
-                    speakers(itemsHelper.getItems(this.state.speakersObject))
+                    items(itemsHelper.getItems(this.state.collectionObject))
                 ), 
                  this.state.adding ?
                     React.createElement(NewForm, {
                         onCreate: this.onCreate, 
                         onCancel: this.onCancel, 
-                        template: templateHelper.getTemplate(this.props.speakersObject), 
+                        template: templateHelper.getTemplate(this.props.collectionObject), 
                         href: this.getPrimaryUrl()})
                 : React.createElement(Link, {onClick: context.onNew, text: "New"})
             )
@@ -45401,11 +45402,11 @@ var Index = React.createClass({displayName: "Index",
     },
 
     getPrimaryUrl: function(){
-       return collectionHelper.getCollectionValue(collectionHelper.getCollection(this.state.speakersObject))
+       return collectionHelper.getCollectionValue(collectionHelper.getCollection(this.state.collectionObject))
     },
 
-    onCreate: function(speakersObject){
-        this.setState({speakersObject: speakersObject})
+    onCreate: function(collectionObject){
+        this.setState({collectionObject: collectionObject})
     },
 
     onNew: function(){
@@ -45527,8 +45528,8 @@ var collectionHelper = require('./../../helpers/collectionJson/collection.js')
 var Show = React.createClass({displayName: "Show",
     getInitialState: function(){
         return {
-            speakerObject: this.props.speakerObject,
-            template: templateHelper.getPopulatedTemplate(templateHelper.getTemplate(this.props.speakerObject), itemsHelper.getFirstItem(this.props.speakerObject)),
+            itemObject: this.props.itemObject,
+            template: templateHelper.getPopulatedTemplate(templateHelper.getTemplate(this.props.itemObject), itemsHelper.getFirstItem(this.props.itemObject)),
             edit: false
         }
     },
@@ -45541,14 +45542,14 @@ var Show = React.createClass({displayName: "Show",
                 React.createElement("a", {href: "/speakers/"}, "Back to all speakers"), 
                 React.createElement("h1", null, "Speaker"), 
                 React.createElement(Details, {
-                    attributes: context.getSpeakerAttributes(), 
+                    attributes: context.getItemAttributes(), 
                     onChange: context.handleAttributeChange, 
                     edit: context.state.edit}
                 ), 
                  context.state.edit ? React.createElement(EdittingButtons, {onSave: context.onSave, onCancel: context.onCancel}) : null, 
                 React.createElement("p", null, 
                     React.createElement(Link, {onClick: context.onEdit, text: "Edit"}), 
-                    React.createElement(DeleteButton, {action: context.getPrimaryUrl(context.state.speakerObject)})
+                    React.createElement(DeleteButton, {action: context.getPrimaryUrl(context.state.itemObject)})
                 )
             )
         )
@@ -45564,15 +45565,15 @@ var Show = React.createClass({displayName: "Show",
 
     onSave: function(){
         var context = this
-        $.ajax(collectionHelper.getCollectionValue(collectionHelper.getCollection(context.state.speakerObject), 'href'), {
+        $.ajax(collectionHelper.getCollectionValue(collectionHelper.getCollection(context.state.itemObject), 'href'), {
             method: 'PUT',
             data: {'template': this.state.template},
             success: function(data){
-                var speakerObject = JSON.parse(data)
-                context.setState({speakerObject: speakerObject})
+                var itemObject = JSON.parse(data)
+                context.setState({itemObject: itemObject})
                 context.setState({template: templateHelper.getPopulatedTemplate(
-                                                templateHelper.getTemplate(speakerObject),
-                                                itemsHelper.getFirstItem(speakerObject))})
+                                                templateHelper.getTemplate(itemObject),
+                                                itemsHelper.getFirstItem(itemObject))})
                 context.onCancel()
             }
         })
@@ -45582,12 +45583,12 @@ var Show = React.createClass({displayName: "Show",
         return collectionHelper.getCollectionValue(collectionHelper.getCollection(object), 'href')
     },
 
-    getSpeakerAttributes: function(){
-        return attributesHelper.getItemAttributes(itemsHelper.getFirstItem(this.state.speakerObject))
+    getItemAttributes: function(){
+        return attributesHelper.getItemAttributes(itemsHelper.getFirstItem(this.state.itemObject))
     },
 
-    getSpeakerAttribute: function(attributeName){
-        return attributesHelper.getItemAttributeValue(itemsHelper.getFirstItem(this.state.speakerObject), attributeName)
+    getItemAttribute: function(attributeName){
+        return attributesHelper.getItemAttributeValue(itemsHelper.getFirstItem(this.state.itemObject), attributeName)
     },
 
     onEdit: function(){

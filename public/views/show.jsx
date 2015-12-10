@@ -15,8 +15,8 @@ var collectionHelper = require('./../../helpers/collectionJson/collection.js')
 var Show = React.createClass({
     getInitialState: function(){
         return {
-            speakerObject: this.props.speakerObject,
-            template: templateHelper.getPopulatedTemplate(templateHelper.getTemplate(this.props.speakerObject), itemsHelper.getFirstItem(this.props.speakerObject)),
+            itemObject: this.props.itemObject,
+            template: templateHelper.getPopulatedTemplate(templateHelper.getTemplate(this.props.itemObject), itemsHelper.getFirstItem(this.props.itemObject)),
             edit: false
         }
     },
@@ -29,14 +29,14 @@ var Show = React.createClass({
                 <a href="/speakers/">Back to all speakers</a>
                 <h1>Speaker</h1>
                 <Details
-                    attributes={context.getSpeakerAttributes()}
+                    attributes={context.getItemAttributes()}
                     onChange={context.handleAttributeChange}
                     edit={context.state.edit}
                 />
                 { context.state.edit ? <EdittingButtons onSave={context.onSave} onCancel={context.onCancel}/> : null }
                 <p>
                     <Link onClick={context.onEdit} text="Edit"/>
-                    <DeleteButton action={context.getPrimaryUrl(context.state.speakerObject)}/>
+                    <DeleteButton action={context.getPrimaryUrl(context.state.itemObject)}/>
                 </p>
             </Page>
         )
@@ -52,15 +52,15 @@ var Show = React.createClass({
 
     onSave: function(){
         var context = this
-        $.ajax(collectionHelper.getCollectionValue(collectionHelper.getCollection(context.state.speakerObject), 'href'), {
+        $.ajax(collectionHelper.getCollectionValue(collectionHelper.getCollection(context.state.itemObject), 'href'), {
             method: 'PUT',
             data: {'template': this.state.template},
             success: function(data){
-                var speakerObject = JSON.parse(data)
-                context.setState({speakerObject: speakerObject})
+                var itemObject = JSON.parse(data)
+                context.setState({itemObject: itemObject})
                 context.setState({template: templateHelper.getPopulatedTemplate(
-                                                templateHelper.getTemplate(speakerObject),
-                                                itemsHelper.getFirstItem(speakerObject))})
+                                                templateHelper.getTemplate(itemObject),
+                                                itemsHelper.getFirstItem(itemObject))})
                 context.onCancel()
             }
         })
@@ -70,12 +70,12 @@ var Show = React.createClass({
         return collectionHelper.getCollectionValue(collectionHelper.getCollection(object), 'href')
     },
 
-    getSpeakerAttributes: function(){
-        return attributesHelper.getItemAttributes(itemsHelper.getFirstItem(this.state.speakerObject))
+    getItemAttributes: function(){
+        return attributesHelper.getItemAttributes(itemsHelper.getFirstItem(this.state.itemObject))
     },
 
-    getSpeakerAttribute: function(attributeName){
-        return attributesHelper.getItemAttributeValue(itemsHelper.getFirstItem(this.state.speakerObject), attributeName)
+    getItemAttribute: function(attributeName){
+        return attributesHelper.getItemAttributeValue(itemsHelper.getFirstItem(this.state.itemObject), attributeName)
     },
 
     onEdit: function(){

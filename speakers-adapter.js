@@ -78,24 +78,24 @@ function destroy(req, res) {
     })
 }
 
-function respondWithItemObject(res, object) {
+function respondWithItemObject(res, itemObject) {
     res.format({
         html: function () {
-            res.render('show', {speakerObject: object})
+            res.render('show', {itemObject: itemObject})
         },
         json: function () {
-            res.send(object)
+            res.send(itemObject)
 
         }
     })
 }
 
-function respondWithCollectionObject(req, res, speakersObject) {
+function respondWithCollectionObject(req, res, collectionObject) {
     if(req.header('accept') == 'application/json'){
-        res.send(speakersObject)
+        res.send(collectionObject)
     } else {
         console.log("SPEAKERS WITH HTML")
-        res.render('index', {speakersObject: speakersObject})
+        res.render('index', {collectionObject: collectionObject})
     }
 }
 

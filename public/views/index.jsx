@@ -11,7 +11,7 @@ var collectionHelper = require('./../../helpers/collectionJson/collection.js')
 var Index = React.createClass({
     getInitialState: function () {
         return {
-            speakersObject: this.props.speakersObject,
+            collectionObject: this.props.collectionObject,
             adding: false
         }
     },
@@ -19,11 +19,11 @@ var Index = React.createClass({
     render: function () {
         var context = this
 
-        function speakers(speakers) {
-            return _.map(speakers, function (speaker) {
+        function items(items) {
+            return _.map(items, function (item) {
                 return (
                     <li>
-                        <a href={speakersHelper.getLink(speaker)}>{speakersHelper.getFullName(speaker)}</a>
+                        <a href={itemsHelper.getLink(item)}>{speakersHelper.getFullName(item)}</a>
                     </li>
                 )
             })
@@ -34,13 +34,13 @@ var Index = React.createClass({
                 <h1>TechTalk</h1>
                 <h3>Speakers</h3>
                 <ul>
-                    {speakers(itemsHelper.getItems(this.state.speakersObject))}
+                    {items(itemsHelper.getItems(this.state.collectionObject))}
                 </ul>
                 { this.state.adding ?
                     <NewForm
                         onCreate={this.onCreate}
                         onCancel={this.onCancel}
-                        template={templateHelper.getTemplate(this.props.speakersObject)}
+                        template={templateHelper.getTemplate(this.props.collectionObject)}
                         href={this.getPrimaryUrl()}/>
                 : <Link onClick={context.onNew} text="New"/> }
             </Page>
@@ -48,11 +48,11 @@ var Index = React.createClass({
     },
 
     getPrimaryUrl: function(){
-       return collectionHelper.getCollectionValue(collectionHelper.getCollection(this.state.speakersObject))
+       return collectionHelper.getCollectionValue(collectionHelper.getCollection(this.state.collectionObject))
     },
 
-    onCreate: function(speakersObject){
-        this.setState({speakersObject: speakersObject})
+    onCreate: function(collectionObject){
+        this.setState({collectionObject: collectionObject})
     },
 
     onNew: function(){
