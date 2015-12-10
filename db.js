@@ -9,7 +9,7 @@ db.once('open', function (callback) {
     console.log('db connected')
 })
 
-var collectionJsonSpeakerSchema = mongoose.Schema(
+var collectionJsonCollectionSchema = mongoose.Schema(
     {
         version: String,
         href: String,
@@ -37,5 +37,5 @@ var collectionJsonItemSchema = mongoose.Schema(
         data: [{name: String, value: mongoose.Schema.Types.Mixed, prompt: String}]
     }
 )
-exports.CollectionJsonSpeaker = mongoose.model('CollectionJsonSpeaker', collectionJsonSpeakerSchema)
+exports.CollectionJsonCollection = mongoose.model('CollectionJsonCollection', collectionJsonCollectionSchema)
 exports.CollectionJsonItem = mongoose.model('Item', collectionJsonItemSchema)
