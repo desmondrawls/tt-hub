@@ -2,6 +2,7 @@ var React = require('react')
 var Page = require('./page.jsx')
 var NewForm = require('./new.jsx')
 var Link = require('./link.jsx')
+var LinkedList = require('./linked-list.jsx')
 var _ = require('lodash')
 var templateHelper = require('./../../helpers/collectionJson/template.js')
 var itemsHelper = require('./../../helpers/collectionJson/items.js')
@@ -17,32 +18,18 @@ var Index = React.createClass({
     },
 
     render: function () {
-        var context = this
-
-        function items(items) {
-            return _.map(items, function (item) {
-                return (
-                    <li>
-                        <a href={itemsHelper.getLink(item)}>{speakersHelper.getFullName(item)}</a>
-                    </li>
-                )
-            })
-        }
-
         return (
             <Page {...this.props}>
                 <h1>TechTalk</h1>
                 <h3>Speakers</h3>
-                <ul>
-                    {items(itemsHelper.getItems(this.state.collectionObject))}
-                </ul>
+                <LinkedList items={itemsHelper.getItems(this.state.collectionObject)} textFormatter={speakersHelper.getFullName}/>
                 { this.state.adding ?
                     <NewForm
                         onCreate={this.onCreate}
                         onCancel={this.onCancel}
                         template={templateHelper.getTemplate(this.props.collectionObject)}
                         href={this.getPrimaryUrl()}/>
-                : <Link onClick={context.onNew} text="New"/> }
+                : <Link onClick={this.onNew} text="New"/> }
             </Page>
         )
     },

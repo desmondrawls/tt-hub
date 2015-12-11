@@ -45279,7 +45279,7 @@ document.addEventListener('DOMContentLoaded', function onLoad(){
     Client.boot(options)
 })
 
-},{"./views/details.jsx":220,"./views/index.jsx":222,"./views/link.jsx":223,"./views/page.jsx":225,"./views/show.jsx":226,"react-engine/lib/client":34}],219:[function(require,module,exports){
+},{"./views/details.jsx":220,"./views/index.jsx":222,"./views/link.jsx":223,"./views/page.jsx":226,"./views/show.jsx":227,"react-engine/lib/client":34}],219:[function(require,module,exports){
 var React = require('react')
 var _ = require('lodash')
 
@@ -45356,6 +45356,7 @@ var React = require('react')
 var Page = require('./page.jsx')
 var NewForm = require('./new.jsx')
 var Link = require('./link.jsx')
+var LinkedList = require('./linked-list.jsx')
 var _ = require('lodash')
 var templateHelper = require('./../../helpers/collectionJson/template.js')
 var itemsHelper = require('./../../helpers/collectionJson/items.js')
@@ -45371,32 +45372,18 @@ var Index = React.createClass({displayName: "Index",
     },
 
     render: function () {
-        var context = this
-
-        function items(items) {
-            return _.map(items, function (item) {
-                return (
-                    React.createElement("li", null, 
-                        React.createElement("a", {href: itemsHelper.getLink(item)}, speakersHelper.getFullName(item))
-                    )
-                )
-            })
-        }
-
         return (
             React.createElement(Page, React.__spread({},  this.props), 
                 React.createElement("h1", null, "TechTalk"), 
                 React.createElement("h3", null, "Speakers"), 
-                React.createElement("ul", null, 
-                    items(itemsHelper.getItems(this.state.collectionObject))
-                ), 
+                React.createElement(LinkedList, {items: itemsHelper.getItems(this.state.collectionObject), textFormatter: speakersHelper.getFullName}), 
                  this.state.adding ?
                     React.createElement(NewForm, {
                         onCreate: this.onCreate, 
                         onCancel: this.onCancel, 
                         template: templateHelper.getTemplate(this.props.collectionObject), 
                         href: this.getPrimaryUrl()})
-                : React.createElement(Link, {onClick: context.onNew, text: "New"})
+                : React.createElement(Link, {onClick: this.onNew, text: "New"})
             )
         )
     },
@@ -45420,7 +45407,7 @@ var Index = React.createClass({displayName: "Index",
 
 module.exports = Index
 
-},{"./../../helpers/collectionJson/collection.js":2,"./../../helpers/collectionJson/items.js":3,"./../../helpers/collectionJson/template.js":4,"./../../helpers/speakers.js":5,"./link.jsx":223,"./new.jsx":224,"./page.jsx":225,"lodash":33,"react":217}],223:[function(require,module,exports){
+},{"./../../helpers/collectionJson/collection.js":2,"./../../helpers/collectionJson/items.js":3,"./../../helpers/collectionJson/template.js":4,"./../../helpers/speakers.js":5,"./link.jsx":223,"./linked-list.jsx":224,"./new.jsx":225,"./page.jsx":226,"lodash":33,"react":217}],223:[function(require,module,exports){
 var React = require('react')
 
 var Link = React.createClass({displayName: "Link",
@@ -45432,6 +45419,32 @@ var Link = React.createClass({displayName: "Link",
 module.exports = Link
 
 },{"react":217}],224:[function(require,module,exports){
+var React = require('react')
+var itemsHelper = require('./../../helpers/collectionJson/items.js')
+var _ = require('lodash')
+
+var LinkedList = React.createClass({displayName: "LinkedList",
+
+    render: function(){
+        var context = this
+        
+        function items(items) {
+            return _.map(items, function (item) {
+                return (
+                    React.createElement("li", null, 
+                        React.createElement("a", {href: itemsHelper.getLink(item)}, context.props.textFormatter(item))
+                    )
+                )
+            })
+        }
+
+        return React.createElement("ul", null, items(this.props.items))
+    }
+})
+
+module.exports = LinkedList
+
+},{"./../../helpers/collectionJson/items.js":3,"lodash":33,"react":217}],225:[function(require,module,exports){
 var React = require('react')
 var _ = require('lodash')
 var Details = require('./details.jsx')
@@ -45487,7 +45500,7 @@ var New = React.createClass({displayName: "New",
 
 module.exports = New
 
-},{"./../../helpers/collectionJson/attributes.js":1,"./details.jsx":220,"./editting-buttons.jsx":221,"lodash":33,"react":217}],225:[function(require,module,exports){
+},{"./../../helpers/collectionJson/attributes.js":1,"./details.jsx":220,"./editting-buttons.jsx":221,"lodash":33,"react":217}],226:[function(require,module,exports){
 var React = require('react')
 
 var Page = React.createClass({displayName: "Page",
@@ -45510,7 +45523,7 @@ var Page = React.createClass({displayName: "Page",
 
 module.exports = Page
 
-},{"react":217}],226:[function(require,module,exports){
+},{"react":217}],227:[function(require,module,exports){
 var React = require('react')
 var Page = require('./page.jsx')
 var Details = require('./details.jsx')
@@ -45602,4 +45615,4 @@ var Show = React.createClass({displayName: "Show",
 
 module.exports = Show
 
-},{"./../../helpers/collectionJson/attributes.js":1,"./../../helpers/collectionJson/collection.js":2,"./../../helpers/collectionJson/items.js":3,"./../../helpers/collectionJson/template.js":4,"./../../helpers/speakers.js":5,"./delete-button.jsx":219,"./details.jsx":220,"./editting-buttons.jsx":221,"./link.jsx":223,"./page.jsx":225,"jquery":32,"lodash":33,"react":217}]},{},[218]);
+},{"./../../helpers/collectionJson/attributes.js":1,"./../../helpers/collectionJson/collection.js":2,"./../../helpers/collectionJson/items.js":3,"./../../helpers/collectionJson/template.js":4,"./../../helpers/speakers.js":5,"./delete-button.jsx":219,"./details.jsx":220,"./editting-buttons.jsx":221,"./link.jsx":223,"./page.jsx":226,"jquery":32,"lodash":33,"react":217}]},{},[218]);

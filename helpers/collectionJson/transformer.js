@@ -10,10 +10,21 @@ function layout(url, items, template) {
                 {rel: 'root', href: 'http://localhost:4000/'}
             ],
             items: items,
-            queries: [],
+            queries: queries(),
             template: template
         }
     })
+}
+
+function queries() {
+    return [
+        {"href" : 'http://localhost:4000/speakers/search', "rel" : "booked", "prompt" : "Find booked speakers", "name" : "booked",
+            "data" :
+                [
+                    {"name" : "booked", "value" : true, "type": "boolean"}
+                ]
+        }
+    ]
 }
 
 exports.layout = layout
