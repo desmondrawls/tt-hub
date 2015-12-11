@@ -18,10 +18,16 @@ function layout(url, items, template) {
 
 function queries() {
     return [
-        {"href" : 'http://localhost:4000/speakers/search', "rel" : "booked", "prompt" : "Find booked speakers", "name" : "booked",
-            "data" :
+        {'href': 'http://localhost:4000/speakers/search', 'rel': 'booked', 'prompt': 'Find booked speakers', 'name': 'booked',
+            'data':
                 [
-                    {"name" : "booked", "value" : true, "type": "boolean"}
+                    {'name': 'booked', 'value': true, 'type': 'boolean'}
+                ]
+        },
+        {'href': 'http://localhost:4000/speakers/search', 'rel': 'name', 'prompt': 'Search by name', 'name': 'name',
+            'data':
+                [
+                    {'name': 'name', 'value': '', 'type': 'text'}
                 ]
         }
     ]

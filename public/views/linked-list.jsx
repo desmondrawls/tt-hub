@@ -6,7 +6,7 @@ var LinkedList = React.createClass({
 
     render: function(){
         var context = this
-        
+
         function items(items) {
             return _.map(items, function (item) {
                 return (

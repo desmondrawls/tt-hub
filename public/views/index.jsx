@@ -3,6 +3,7 @@ var Page = require('./page.jsx')
 var NewForm = require('./new.jsx')
 var Link = require('./link.jsx')
 var LinkedList = require('./linked-list.jsx')
+var SearchBar = require('./search-bar.jsx')
 var _ = require('lodash')
 var templateHelper = require('./../../helpers/collectionJson/template.js')
 var itemsHelper = require('./../../helpers/collectionJson/items.js')
@@ -22,6 +23,7 @@ var Index = React.createClass({
             <Page {...this.props}>
                 <h1>TechTalk</h1>
                 <h3>Speakers</h3>
+                <SearchBar queries={this.getQueries()}/>
                 <LinkedList items={itemsHelper.getItems(this.state.collectionObject)} textFormatter={speakersHelper.getFullName}/>
                 { this.state.adding ?
                     <NewForm
@@ -35,7 +37,11 @@ var Index = React.createClass({
     },
 
     getPrimaryUrl: function(){
-       return collectionHelper.getCollectionValue(collectionHelper.getCollection(this.state.collectionObject))
+       return collectionHelper.getCollectionValue(collectionHelper.getCollection(this.state.collectionObject), 'href')
+    },
+
+    getQueries: function(){
+        return collectionHelper.getCollectionValue(collectionHelper.getCollection(this.state.collectionObject), 'queries')
     },
 
     onCreate: function(collectionObject){
