@@ -45330,7 +45330,7 @@ document.addEventListener('DOMContentLoaded', function onLoad(){
     Client.boot(options)
 })
 
-},{"./views/delete-button.jsx":220,"./views/details.jsx":221,"./views/editting-buttons.jsx":222,"./views/index.jsx":223,"./views/link.jsx":224,"./views/linked-list.jsx":225,"./views/new.jsx":226,"./views/page.jsx":227,"./views/search-bar.jsx":229,"./views/show.jsx":230,"react-engine/lib/client":35}],220:[function(require,module,exports){
+},{"./views/delete-button.jsx":220,"./views/details.jsx":221,"./views/editting-buttons.jsx":222,"./views/index.jsx":223,"./views/link.jsx":224,"./views/linked-list.jsx":225,"./views/new.jsx":226,"./views/page.jsx":227,"./views/search-bar.jsx":230,"./views/show.jsx":231,"react-engine/lib/client":35}],220:[function(require,module,exports){
 var React = require('react')
 var _ = require('lodash')
 
@@ -45464,7 +45464,7 @@ var Index = React.createClass({displayName: "Index",
 
 module.exports = Index
 
-},{"./../../helpers/collectionJson/collection.js":2,"./../../helpers/collectionJson/items.js":3,"./../../helpers/collectionJson/template.js":5,"./../../helpers/speakers.js":6,"./link.jsx":224,"./linked-list.jsx":225,"./new.jsx":226,"./page.jsx":227,"./search-bar.jsx":229,"lodash":34,"react":218}],224:[function(require,module,exports){
+},{"./../../helpers/collectionJson/collection.js":2,"./../../helpers/collectionJson/items.js":3,"./../../helpers/collectionJson/template.js":5,"./../../helpers/speakers.js":6,"./link.jsx":224,"./linked-list.jsx":225,"./new.jsx":226,"./page.jsx":227,"./search-bar.jsx":230,"lodash":34,"react":218}],224:[function(require,module,exports){
 var React = require('react')
 
 var Link = React.createClass({displayName: "Link",
@@ -45626,9 +45626,52 @@ module.exports = QueryCheckbox
 
 },{"./../../helpers/collectionJson/queries.js":4,"react":218}],229:[function(require,module,exports){
 var React = require('react')
+var queriesHelper = require('./../../helpers/collectionJson/queries.js')
+
+var QueryTextbox = React.createClass({displayName: "QueryTextbox",
+    getInitialState: function() {
+        return {queryData: this.props.queryData}
+    },
+
+    render: function(){
+        return (
+            React.createElement("span", null, 
+                React.createElement("label", null, this.getName, " : "), 
+                React.createElement("input", {
+                    type: "text", 
+                    name: this.getName(), 
+                    onChange: this.onChange})
+            )
+        )
+    },
+
+    onChange: function(event) {
+        var newQueryData = queriesHelper.copyDataWithValue(this.state.queryData, event.target.value)
+        this.setState({queryData: newQueryData})
+        this.props.onChange(newQueryData)
+    },
+
+    getName: function() {
+        return queriesHelper.getDataName(this.state.queryData)
+    },
+
+    getValue: function() {
+        return queriesHelper.getDataValue(this.state.queryData)
+    },
+
+    getDefaultValue: function() {
+        return queriesHelper.getDataValue(this.props.queryData)
+    }
+})
+
+module.exports = QueryTextbox
+
+},{"./../../helpers/collectionJson/queries.js":4,"react":218}],230:[function(require,module,exports){
+var React = require('react')
 var _ = require('lodash')
 var queriesHelper = require('./../../helpers/collectionJson/queries.js')
 var QueryCheckbox = require('./query-checkbox.jsx')
+var QueryTextbox = require('./query-textbox.jsx')
 
 var SearchBar = React.createClass({displayName: "SearchBar",
     render: function(){
@@ -45641,15 +45684,7 @@ var SearchBar = React.createClass({displayName: "SearchBar",
                         return React.createElement(QueryCheckbox, {queryData: queriesHelper.getData(query)[0], onChange: context.onChange})
                     }
                     case 'text': {
-                        return (
-                            React.createElement("span", null, 
-                                React.createElement("label", null, queriesHelper.getDataName(queriesHelper.getData(query)[0]), " : "), 
-                                React.createElement("input", {
-                                    type: "text", 
-                                    name: queriesHelper.getDataName(queriesHelper.getData(query)[0])}
-                                )
-                            )
-                        )
+                        return React.createElement(QueryTextbox, {queryData: queriesHelper.getData(query)[0], onChange: context.onChange})
                     }
                     default: {
                         return (
@@ -45672,7 +45707,7 @@ var SearchBar = React.createClass({displayName: "SearchBar",
 
 module.exports = SearchBar
 
-},{"./../../helpers/collectionJson/queries.js":4,"./query-checkbox.jsx":228,"lodash":34,"react":218}],230:[function(require,module,exports){
+},{"./../../helpers/collectionJson/queries.js":4,"./query-checkbox.jsx":228,"./query-textbox.jsx":229,"lodash":34,"react":218}],231:[function(require,module,exports){
 var React = require('react')
 var Page = require('./page.jsx')
 var Details = require('./details.jsx')

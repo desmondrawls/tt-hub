@@ -2,6 +2,7 @@ var React = require('react')
 var _ = require('lodash')
 var queriesHelper = require('./../../helpers/collectionJson/queries.js')
 var QueryCheckbox = require('./query-checkbox.jsx')
+var QueryTextbox = require('./query-textbox.jsx')
 
 var SearchBar = React.createClass({
     render: function(){
@@ -14,15 +15,7 @@ var SearchBar = React.createClass({
                         return <QueryCheckbox queryData={queriesHelper.getData(query)[0]} onChange={context.onChange}/>
                     }
                     case 'text': {
-                        return (
-                            <span>
-                                <label>{queriesHelper.getDataName(queriesHelper.getData(query)[0])} : </label>
-                                <input
-                                    type="text"
-                                    name={queriesHelper.getDataName(queriesHelper.getData(query)[0])}
-                                />
-                            </span>
-                        )
+                        return <QueryTextbox queryData={queriesHelper.getData(query)[0]} onChange={context.onChange}/>
                     }
                     default: {
                         return (
