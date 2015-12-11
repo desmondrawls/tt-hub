@@ -45318,7 +45318,7 @@ module.exports = require('./lib/React');
 
 var Client = require('react-engine/lib/client')
 
-require('./views/delete-button.jsx');require('./views/details.jsx');require('./views/editting-buttons.jsx');require('./views/index.jsx');require('./views/link.jsx');require('./views/linked-list.jsx');require('./views/new.jsx');require('./views/page.jsx');require('./views/search-bar.jsx');require('./views/show.jsx')
+require('./views/delete-button.jsx');require('./views/details.jsx');require('./views/editting-buttons.jsx');require('./views/index.jsx');require('./views/link.jsx');require('./views/linked-list.jsx');require('./views/new.jsx');require('./views/page.jsx');require('./views/query-checkbox.jsx');require('./views/query-textbox.jsx');require('./views/search-bar.jsx');require('./views/show.jsx')
 
 var options = {
     viewResolver: function(viewName){
@@ -45330,7 +45330,41 @@ document.addEventListener('DOMContentLoaded', function onLoad(){
     Client.boot(options)
 })
 
-},{"./views/delete-button.jsx":220,"./views/details.jsx":221,"./views/editting-buttons.jsx":222,"./views/index.jsx":223,"./views/link.jsx":224,"./views/linked-list.jsx":225,"./views/new.jsx":226,"./views/page.jsx":227,"./views/search-bar.jsx":230,"./views/show.jsx":231,"react-engine/lib/client":35}],220:[function(require,module,exports){
+},{"./views/delete-button.jsx":221,"./views/details.jsx":222,"./views/editting-buttons.jsx":223,"./views/index.jsx":224,"./views/link.jsx":225,"./views/linked-list.jsx":226,"./views/new.jsx":227,"./views/page.jsx":228,"./views/query-checkbox.jsx":229,"./views/query-textbox.jsx":230,"./views/search-bar.jsx":231,"./views/show.jsx":232,"react-engine/lib/client":35}],220:[function(require,module,exports){
+'use strict'
+
+var _ = require('lodash')
+
+var Object = function(object) {
+    this.object = object
+    this.listeners = []
+}
+
+Object.prototype.fetch = function() {
+    return this.object
+}
+
+Object.prototype.update = function(object){
+    this.object = object
+    this.trigger()
+}
+
+Object.prototype.addListener = function(listener){
+    this.listeners = this.listeners.concat(listener)
+    console.log("Added a listener. Now: ", this.listeners)
+}
+
+Object.prototype.trigger = function(){
+    var context = this
+    _.each(this.listeners, function(listener){
+        console.log('triggering with', context.object)
+        listener(context.object)
+    })
+}
+
+exports.Object = Object
+
+},{"lodash":34}],221:[function(require,module,exports){
 var React = require('react')
 var _ = require('lodash')
 
@@ -45346,7 +45380,7 @@ var DeleteButton = React.createClass({displayName: "DeleteButton",
 
 module.exports = DeleteButton
 
-},{"lodash":34,"react":218}],221:[function(require,module,exports){
+},{"lodash":34,"react":218}],222:[function(require,module,exports){
 var React = require('react')
 var _ = require('lodash')
 var attributesHelper = require('./../../helpers/collectionJson/attributes.js')
@@ -45385,7 +45419,7 @@ var Details = React.createClass({displayName: "Details",
 
 module.exports = Details
 
-},{"./../../helpers/collectionJson/attributes.js":1,"lodash":34,"react":218}],222:[function(require,module,exports){
+},{"./../../helpers/collectionJson/attributes.js":1,"lodash":34,"react":218}],223:[function(require,module,exports){
 var React = require('react')
 var _ = require('lodash')
 
@@ -45402,7 +45436,7 @@ var FormButtons = React.createClass({displayName: "FormButtons",
 
 module.exports = FormButtons
 
-},{"lodash":34,"react":218}],223:[function(require,module,exports){
+},{"lodash":34,"react":218}],224:[function(require,module,exports){
 var React = require('react')
 var Page = require('./page.jsx')
 var NewForm = require('./new.jsx')
@@ -45414,13 +45448,23 @@ var templateHelper = require('./../../helpers/collectionJson/template.js')
 var itemsHelper = require('./../../helpers/collectionJson/items.js')
 var speakersHelper = require('./../../helpers/speakers.js')
 var collectionHelper = require('./../../helpers/collectionJson/collection.js')
+var Store = require('./../stores/object.js')
 
 var Index = React.createClass({displayName: "Index",
     getInitialState: function () {
+        this.store = new Store.Object(this.props.collectionObject)
         return {
-            collectionObject: this.props.collectionObject,
+            collectionObject: this.store.fetch(),
             adding: false
         }
+    },
+
+    componentWillMount: function () {
+        this.store.addListener(this.onStoreUpdate)
+    },
+
+    onStoreUpdate: function(collectionObject) {
+        this.setState({collectionObject: collectionObject})
     },
 
     render: function () {
@@ -45428,7 +45472,7 @@ var Index = React.createClass({displayName: "Index",
             React.createElement(Page, React.__spread({},  this.props), 
                 React.createElement("h1", null, "TechTalk"), 
                 React.createElement("h3", null, "Speakers"), 
-                React.createElement(SearchBar, {queries: this.getQueries()}), 
+                React.createElement(SearchBar, {store: this.store, queries: this.getQueries(this.state.collectionObject)}), 
                 React.createElement(LinkedList, {items: itemsHelper.getItems(this.state.collectionObject), textFormatter: speakersHelper.getFullName}), 
                  this.state.adding ?
                     React.createElement(NewForm, {
@@ -45445,12 +45489,15 @@ var Index = React.createClass({displayName: "Index",
        return collectionHelper.getCollectionValue(collectionHelper.getCollection(this.state.collectionObject), 'href')
     },
 
-    getQueries: function(){
-        return collectionHelper.getCollectionValue(collectionHelper.getCollection(this.state.collectionObject), 'queries')
+
+    getQueries: function(collectionObject){
+        var queries = collectionHelper.getCollectionValue(collectionHelper.getCollection(collectionObject), 'queries')
+        console.log("passing down queries", queries[1].data[0])
+        return queries
     },
 
     onCreate: function(collectionObject){
-        this.setState({collectionObject: collectionObject})
+        this.setState({collectionObject: new Store.Object(this.props.collectionObject)})
     },
 
     onNew: function(){
@@ -45464,7 +45511,7 @@ var Index = React.createClass({displayName: "Index",
 
 module.exports = Index
 
-},{"./../../helpers/collectionJson/collection.js":2,"./../../helpers/collectionJson/items.js":3,"./../../helpers/collectionJson/template.js":5,"./../../helpers/speakers.js":6,"./link.jsx":224,"./linked-list.jsx":225,"./new.jsx":226,"./page.jsx":227,"./search-bar.jsx":230,"lodash":34,"react":218}],224:[function(require,module,exports){
+},{"./../../helpers/collectionJson/collection.js":2,"./../../helpers/collectionJson/items.js":3,"./../../helpers/collectionJson/template.js":5,"./../../helpers/speakers.js":6,"./../stores/object.js":220,"./link.jsx":225,"./linked-list.jsx":226,"./new.jsx":227,"./page.jsx":228,"./search-bar.jsx":231,"lodash":34,"react":218}],225:[function(require,module,exports){
 var React = require('react')
 
 var Link = React.createClass({displayName: "Link",
@@ -45475,7 +45522,7 @@ var Link = React.createClass({displayName: "Link",
 
 module.exports = Link
 
-},{"react":218}],225:[function(require,module,exports){
+},{"react":218}],226:[function(require,module,exports){
 var React = require('react')
 var itemsHelper = require('./../../helpers/collectionJson/items.js')
 var _ = require('lodash')
@@ -45501,7 +45548,7 @@ var LinkedList = React.createClass({displayName: "LinkedList",
 
 module.exports = LinkedList
 
-},{"./../../helpers/collectionJson/items.js":3,"lodash":34,"react":218}],226:[function(require,module,exports){
+},{"./../../helpers/collectionJson/items.js":3,"lodash":34,"react":218}],227:[function(require,module,exports){
 var React = require('react')
 var _ = require('lodash')
 var Details = require('./details.jsx')
@@ -45557,7 +45604,7 @@ var New = React.createClass({displayName: "New",
 
 module.exports = New
 
-},{"./../../helpers/collectionJson/attributes.js":1,"./details.jsx":221,"./editting-buttons.jsx":222,"lodash":34,"react":218}],227:[function(require,module,exports){
+},{"./../../helpers/collectionJson/attributes.js":1,"./details.jsx":222,"./editting-buttons.jsx":223,"lodash":34,"react":218}],228:[function(require,module,exports){
 var React = require('react')
 
 var Page = React.createClass({displayName: "Page",
@@ -45580,23 +45627,21 @@ var Page = React.createClass({displayName: "Page",
 
 module.exports = Page
 
-},{"react":218}],228:[function(require,module,exports){
+},{"react":218}],229:[function(require,module,exports){
 var React = require('react')
 var queriesHelper = require('./../../helpers/collectionJson/queries.js')
+var _ = require('lodash')
 
 var QueryCheckbox = React.createClass({displayName: "QueryCheckbox",
-    getInitialState: function() {
-        return {queryData: this.props.queryData}
-    },
-
     render: function(){
+        console.log("BOTTOM DEETS", this.props.queryData)
         return (
             React.createElement("span", null, 
                 React.createElement("input", {
                     type: "checkbox", 
                     name: this.getName(), 
                     defaultValue: this.getDefaultValue(), 
-                    checked: this.state.value ? "checked" : null, 
+                    checked: this.getValue() ? "checked" : null, 
                     onClick: this.onClick}), 
                 React.createElement("span", null, this.getName())
             )
@@ -45604,17 +45649,20 @@ var QueryCheckbox = React.createClass({displayName: "QueryCheckbox",
     },
 
     onClick: function(event) {
-        var newQueryData = queriesHelper.copyDataWithValue(this.state.queryData, event.target.checked)
-        this.setState({queryData: newQueryData})
-        this.props.onChange(newQueryData)
+        var context = this
+        var newObject = _.clone(context.props.store.fetch(), true)
+        var newQueryData = queriesHelper.copyDataWithValue(this.props.queryData, event.target.checked)
+        var queryToChange = _.find(newObject.collection.queries, function(query){ return query.name == context.props.query.name })
+        queryToChange.data[0] = newQueryData
+        this.props.store.update(newObject)
     },
 
     getName: function() {
-        return queriesHelper.getDataName(this.state.queryData)
+        return queriesHelper.getDataName(this.props.queryData)
     },
 
     getValue: function() {
-        return queriesHelper.getDataValue(this.state.queryData)
+        return queriesHelper.getDataValue(this.props.queryData)
     },
 
     getDefaultValue: function() {
@@ -45624,19 +45672,16 @@ var QueryCheckbox = React.createClass({displayName: "QueryCheckbox",
 
 module.exports = QueryCheckbox
 
-},{"./../../helpers/collectionJson/queries.js":4,"react":218}],229:[function(require,module,exports){
+},{"./../../helpers/collectionJson/queries.js":4,"lodash":34,"react":218}],230:[function(require,module,exports){
 var React = require('react')
 var queriesHelper = require('./../../helpers/collectionJson/queries.js')
+var _ = require('lodash')
 
 var QueryTextbox = React.createClass({displayName: "QueryTextbox",
-    getInitialState: function() {
-        return {queryData: this.props.queryData}
-    },
-
     render: function(){
         return (
             React.createElement("span", null, 
-                React.createElement("label", null, this.getName, " : "), 
+                React.createElement("label", null, this.getName(), " : "), 
                 React.createElement("input", {
                     type: "text", 
                     name: this.getName(), 
@@ -45646,13 +45691,16 @@ var QueryTextbox = React.createClass({displayName: "QueryTextbox",
     },
 
     onChange: function(event) {
-        var newQueryData = queriesHelper.copyDataWithValue(this.state.queryData, event.target.value)
-        this.setState({queryData: newQueryData})
-        this.props.onChange(newQueryData)
+        var context = this
+        var newObject = _.clone(context.props.store.fetch(), true)
+        var newQueryData = queriesHelper.copyDataWithValue(this.props.queryData, event.target.value)
+        var queryToChange = _.find(newObject.collection.queries, function(query){ return query.name == context.props.query.name })
+        queryToChange.data[0] = newQueryData
+        this.props.store.update(newObject)
     },
 
     getName: function() {
-        return queriesHelper.getDataName(this.state.queryData)
+        return queriesHelper.getDataName(this.props.queryData)
     },
 
     getValue: function() {
@@ -45666,14 +45714,16 @@ var QueryTextbox = React.createClass({displayName: "QueryTextbox",
 
 module.exports = QueryTextbox
 
-},{"./../../helpers/collectionJson/queries.js":4,"react":218}],230:[function(require,module,exports){
+},{"./../../helpers/collectionJson/queries.js":4,"lodash":34,"react":218}],231:[function(require,module,exports){
 var React = require('react')
 var _ = require('lodash')
 var queriesHelper = require('./../../helpers/collectionJson/queries.js')
 var QueryCheckbox = require('./query-checkbox.jsx')
 var QueryTextbox = require('./query-textbox.jsx')
+var collectionHelper = require('./../../helpers/collectionJson/collection.js')
 
 var SearchBar = React.createClass({displayName: "SearchBar",
+
     render: function(){
         var context = this
 
@@ -45681,10 +45731,10 @@ var SearchBar = React.createClass({displayName: "SearchBar",
             return _.map(queries, function(query){
                 switch (queriesHelper.getDataType(queriesHelper.getData(query)[0])) {
                     case 'boolean': {
-                        return React.createElement(QueryCheckbox, {queryData: queriesHelper.getData(query)[0], onChange: context.onChange})
+                        return React.createElement(QueryCheckbox, {query: query, queryData: queriesHelper.getData(query)[0], store: context.props.store})
                     }
                     case 'text': {
-                        return React.createElement(QueryTextbox, {queryData: queriesHelper.getData(query)[0], onChange: context.onChange})
+                        return React.createElement(QueryTextbox, {query: query, queryData: queriesHelper.getData(query)[0], store: context.props.store})
                     }
                     default: {
                         return (
@@ -45697,17 +45747,24 @@ var SearchBar = React.createClass({displayName: "SearchBar",
             })
         }
 
-        return React.createElement("div", null, queries(this.props.queries))
+        return React.createElement("div", null, queries(this.props.queries), React.createElement("button", {onClick: this.onSearch}, "SEARCH"))
     },
 
-    onChange: function(data){
-        console.log("CHANGE:", data)
+    onSearch: function(){
+        var params = _.reduce(this.props.queries, function(current, nextQuery){
+            var nextParams = _.map(queriesHelper.getData(nextQuery), function(dataItem){
+                return _.pick(dataItem, ['name', 'value'])
+            })
+            return current.concat(nextParams)
+        },[])
+        console.log("PARAMS", params)
+        window.location = this.props.queries[0].href + '?' + $.param(params)
     }
 })
 
 module.exports = SearchBar
 
-},{"./../../helpers/collectionJson/queries.js":4,"./query-checkbox.jsx":228,"./query-textbox.jsx":229,"lodash":34,"react":218}],231:[function(require,module,exports){
+},{"./../../helpers/collectionJson/collection.js":2,"./../../helpers/collectionJson/queries.js":4,"./query-checkbox.jsx":229,"./query-textbox.jsx":230,"lodash":34,"react":218}],232:[function(require,module,exports){
 var React = require('react')
 var Page = require('./page.jsx')
 var Details = require('./details.jsx')
@@ -45799,4 +45856,4 @@ var Show = React.createClass({displayName: "Show",
 
 module.exports = Show
 
-},{"./../../helpers/collectionJson/attributes.js":1,"./../../helpers/collectionJson/collection.js":2,"./../../helpers/collectionJson/items.js":3,"./../../helpers/collectionJson/template.js":5,"./../../helpers/speakers.js":6,"./delete-button.jsx":220,"./details.jsx":221,"./editting-buttons.jsx":222,"./link.jsx":224,"./page.jsx":227,"jquery":33,"lodash":34,"react":218}]},{},[219]);
+},{"./../../helpers/collectionJson/attributes.js":1,"./../../helpers/collectionJson/collection.js":2,"./../../helpers/collectionJson/items.js":3,"./../../helpers/collectionJson/template.js":5,"./../../helpers/speakers.js":6,"./delete-button.jsx":221,"./details.jsx":222,"./editting-buttons.jsx":223,"./link.jsx":225,"./page.jsx":228,"jquery":33,"lodash":34,"react":218}]},{},[219]);

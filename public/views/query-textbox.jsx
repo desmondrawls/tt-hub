@@ -1,15 +1,12 @@
 var React = require('react')
 var queriesHelper = require('./../../helpers/collectionJson/queries.js')
+var _ = require('lodash')
 
 var QueryTextbox = React.createClass({
-    getInitialState: function() {
-        return {queryData: this.props.queryData}
-    },
-
     render: function(){
         return (
             <span>
-                <label>{this.getName} : </label>
+                <label>{this.getName()} : </label>
                 <input
                     type="text"
                     name={this.getName()}
@@ -19,13 +16,16 @@ var QueryTextbox = React.createClass({
     },
 
     onChange: function(event) {
-        var newQueryData = queriesHelper.copyDataWithValue(this.state.queryData, event.target.value)
-        this.setState({queryData: newQueryData})
-        this.props.onChange(newQueryData)
+        var context = this
+        var newObject = _.clone(context.props.store.fetch(), true)
+        var newQueryData = queriesHelper.copyDataWithValue(this.props.queryData, event.target.value)
+        var queryToChange = _.find(newObject.collection.queries, function(query){ return query.name == context.props.query.name })
+        queryToChange.data[0] = newQueryData
+        this.props.store.update(newObject)
     },
 
     getName: function() {
-        return queriesHelper.getDataName(this.state.queryData)
+        return queriesHelper.getDataName(this.props.queryData)
     },
 
     getValue: function() {

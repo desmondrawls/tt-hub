@@ -9,13 +9,23 @@ var templateHelper = require('./../../helpers/collectionJson/template.js')
 var itemsHelper = require('./../../helpers/collectionJson/items.js')
 var speakersHelper = require('./../../helpers/speakers.js')
 var collectionHelper = require('./../../helpers/collectionJson/collection.js')
+var Store = require('./../stores/object.js')
 
 var Index = React.createClass({
     getInitialState: function () {
+        this.store = new Store.Object(this.props.collectionObject)
         return {
-            collectionObject: this.props.collectionObject,
+            collectionObject: this.store.fetch(),
             adding: false
         }
+    },
+
+    componentWillMount: function () {
+        this.store.addListener(this.onStoreUpdate)
+    },
+
+    onStoreUpdate: function(collectionObject) {
+        this.setState({collectionObject: collectionObject})
     },
 
     render: function () {
@@ -23,7 +33,7 @@ var Index = React.createClass({
             <Page {...this.props}>
                 <h1>TechTalk</h1>
                 <h3>Speakers</h3>
-                <SearchBar queries={this.getQueries()}/>
+                <SearchBar store={this.store} queries={this.getQueries(this.state.collectionObject)}/>
                 <LinkedList items={itemsHelper.getItems(this.state.collectionObject)} textFormatter={speakersHelper.getFullName}/>
                 { this.state.adding ?
                     <NewForm
@@ -40,12 +50,15 @@ var Index = React.createClass({
        return collectionHelper.getCollectionValue(collectionHelper.getCollection(this.state.collectionObject), 'href')
     },
 
-    getQueries: function(){
-        return collectionHelper.getCollectionValue(collectionHelper.getCollection(this.state.collectionObject), 'queries')
+
+    getQueries: function(collectionObject){
+        var queries = collectionHelper.getCollectionValue(collectionHelper.getCollection(collectionObject), 'queries')
+        console.log("passing down queries", queries[1].data[0])
+        return queries
     },
 
     onCreate: function(collectionObject){
-        this.setState({collectionObject: collectionObject})
+        this.setState({collectionObject: new Store.Object(this.props.collectionObject)})
     },
 
     onNew: function(){
