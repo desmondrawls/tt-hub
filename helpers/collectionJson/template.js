@@ -1,5 +1,6 @@
 var _ = require('lodash')
 var attributesHelper = require('./attributes.js')
+var collectionsHelper = require('./collection.js')
 
 function getPopulatedTemplate(template, item){
     _.each(attributesHelper.getItemAttributes(template), function(attribute){
@@ -8,8 +9,8 @@ function getPopulatedTemplate(template, item){
     return template;
 }
 
-function getTemplate(collectionObject){
-    return collectionObject.collection.template
+function getTemplate(collectionJson){
+    return collectionsHelper.getCollection(collectionJson).template
 }
 
 exports.getPopulatedTemplate = getPopulatedTemplate

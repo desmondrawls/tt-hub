@@ -18,13 +18,12 @@ Object.prototype.update = function(object){
 
 Object.prototype.addListener = function(listener){
     this.listeners = this.listeners.concat(listener)
-    console.log("Added a listener. Now: ", this.listeners)
 }
 
 Object.prototype.trigger = function(){
     var context = this
     _.each(this.listeners, function(listener){
-        console.log('triggering with', context.object)
+        console.log('triggering object update with', context.object)
         listener(context.object)
     })
 }

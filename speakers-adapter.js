@@ -3,6 +3,9 @@ var Client = require('node-rest-client').Client
 var debug = require('./app').debug
 var immigrationsHelper = require('./helpers/collectionJson/immigrations.js')
 var jsonTransformer = require('./helpers/collectionJson/transformer.js')
+var queriesHelper = require('./helpers/collectionJson/queries.js')
+var itemsHelper = require('./helpers/collectionJson/items.js')
+var templateHelper = require('./helpers/collectionJson/template.js')
 var _ = require('lodash')
 var Q = require('q');
 
@@ -25,17 +28,13 @@ function index(req, res) {
         var clearTemplate = Template.remove({}).exec()
         var clearQueries = Query.remove({}).exec()
         var clearItems = Item.remove({}).exec()
-        var addTemplate = new Template(object.collection.template).save()
-        var queryPromises = _.map(object.collection.queries, function (query) {
-            return new Query(query).save()
-        })
-        var itemPromises = _.map(object.collection.items, function (item) {
-            return new Item(item).save()
-        })
+        var addTemplate = new Template(templateHelper.getTemplate(object)).save()
+        var addQueries = _.map(queriesHelper.getQueries(object), function (query) {return new Query(query).save()})
+        var addItems = _.map(itemsHelper.getItems(object), function (item) {return new Item(item).save()})
         Q.all([clearTemplate, clearQueries, clearItems])
             .then(Q.when(addTemplate)
-                .then(Q.all(queryPromises).done())
-                .then(Q.all(itemPromises)
+                .then(Q.all(addQueries).done())
+                .then(Q.all(addItems)
                     .then(function (items) {
                         var partiallyDomesticatedObject = immigrationsHelper.domesticateObjectItems(object, items, hostUrl)
                         respondWithCollectionObject(req, res, immigrationsHelper.domesticateObject(hostUrl, partiallyDomesticatedObject))
@@ -48,23 +47,21 @@ function index(req, res) {
 
 function search(req, res) {
     var response = function (template, items) {
-        console.log("SEARCHED ITEMS:", items)
-        respondWithCollectionObject(req, res, jsonTransformer.layout(hostUrl, items, template))
-    }
+        console.log("RESPONDING TO SEARCH WITH ", items)
+        var domesticatedItems = immigrationsHelper.domesticateItems(hostUrl, items);
+        respondWithCollectionObject(req, res, jsonTransformer.layout(hostUrl, domesticatedItems, template)
+    )}
     var template = Template.find({}).exec()
     var items = Item.find().elemMatch('data', function (elem) {
-        _.each(req.query, function (value, name) {
-            elem.where('value').equals(value).where('name').equals(name)
-        })
+        _.each(req.query, function (value, name) {elem.where('value').equals(value).where('name').equals(name)})
     }).exec()
     Q.spread([template, items], function (templates, items) {
-        console.log("TEMPLATES:", templates)
         response(templates[0], items)
     })
 }
 
 function create(req, res) {
-    console.log("creating speaker ", "with " + req.body)
+    console.log("creating item ", "with " + req.body)
     var args = {
         data: req.body,
         headers: {"Content-Type": "application/json", "Accept": "application/json"}
@@ -88,7 +85,7 @@ function show(req, res) {
 }
 
 function update(req, res) {
-    console.log("updating speaker " + req.params.id, "with " + req.body)
+    console.log("updating item " + req.params.id, "with " + req.body)
     Collection.findById(req.params.id, function (err, itemObject) {
         var args = {
             data: req.body,
@@ -101,7 +98,7 @@ function update(req, res) {
 }
 
 function destroy(req, res) {
-    console.log("destroying speaker " + req.params.id)
+    console.log("destroying item " + req.params.id)
     Collection.findById(req.params.id, function (err, itemObject) {
         var args = {
             headers: {"Content-Type": "application/json", "Accept": "application/json"}
@@ -128,7 +125,6 @@ function respondWithCollectionObject(req, res, collectionObject) {
     if (req.header('accept') == 'application/json') {
         res.send(collectionObject)
     } else {
-        console.log("SPEAKERS WITH HTML")
         res.render('index', {collectionObject: collectionObject})
     }
 }

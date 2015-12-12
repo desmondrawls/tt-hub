@@ -54,9 +54,10 @@ exports.getCollectionValue = getCollectionValue
 },{"lodash":34}],3:[function(require,module,exports){
 var _ = require('lodash')
 var attributesHelper = require('./attributes.js')
+var collectionsHelper = require('./collection.js')
 
 function getItems(collectionJson){
-    return collectionJson.collection.items
+    return collectionsHelper.getCollection(collectionJson).items
 }
 
 function getFirstItem(collectionJson){
@@ -76,7 +77,7 @@ exports.getItems = getItems
 exports.getFirstItem = getFirstItem
 exports.getFirst = getFirst
 
-},{"./attributes.js":1,"lodash":34}],4:[function(require,module,exports){
+},{"./attributes.js":1,"./collection.js":2,"lodash":34}],4:[function(require,module,exports){
 var _ = require('lodash')
 var collectionsHelper = require('./collection.js')
 
@@ -130,6 +131,7 @@ exports.copyDataWithValue = copyDataWithValue
 },{"./collection.js":2,"lodash":34}],5:[function(require,module,exports){
 var _ = require('lodash')
 var attributesHelper = require('./attributes.js')
+var collectionsHelper = require('./collection.js')
 
 function getPopulatedTemplate(template, item){
     _.each(attributesHelper.getItemAttributes(template), function(attribute){
@@ -138,14 +140,14 @@ function getPopulatedTemplate(template, item){
     return template;
 }
 
-function getTemplate(collectionObject){
-    return collectionObject.collection.template
+function getTemplate(collectionJson){
+    return collectionsHelper.getCollection(collectionJson).template
 }
 
 exports.getPopulatedTemplate = getPopulatedTemplate
 exports.getTemplate = getTemplate
 
-},{"./attributes.js":1,"lodash":34}],6:[function(require,module,exports){
+},{"./attributes.js":1,"./collection.js":2,"lodash":34}],6:[function(require,module,exports){
 var attributesHelper = require('./collectionJson/attributes.js')
 var itemsHelper = require('./collectionJson/items.js')
 
@@ -45351,13 +45353,12 @@ Object.prototype.update = function(object){
 
 Object.prototype.addListener = function(listener){
     this.listeners = this.listeners.concat(listener)
-    console.log("Added a listener. Now: ", this.listeners)
 }
 
 Object.prototype.trigger = function(){
     var context = this
     _.each(this.listeners, function(listener){
-        console.log('triggering with', context.object)
+        console.log('triggering object update with', context.object)
         listener(context.object)
     })
 }

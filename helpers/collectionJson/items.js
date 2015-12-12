@@ -1,8 +1,9 @@
 var _ = require('lodash')
 var attributesHelper = require('./attributes.js')
+var collectionsHelper = require('./collection.js')
 
 function getItems(collectionJson){
-    return collectionJson.collection.items
+    return collectionsHelper.getCollection(collectionJson).items
 }
 
 function getFirstItem(collectionJson){

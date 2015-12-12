@@ -10,6 +10,10 @@ function domesticateObjectItems(object, items, url){
     return object
 }
 
+function domesticateItems(url, items){
+    return _.map(items, function(item){ return domesticateItem(url + item.id, item) })
+}
+
 function domesticateItem(url, item){
     return _.merge(item, {href: url})
 }
@@ -23,4 +27,5 @@ function registerItem(item){
 exports.domesticateObject = domesticateObject
 exports.domesticateObjectItems = domesticateObjectItems
 exports.domesticateItem = domesticateItem
+exports.domesticateItems = domesticateItems
 exports.registerItem = registerItem
