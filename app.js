@@ -7,7 +7,6 @@ var renderer = require('react-engine')
 var _ = require('lodash')
 var app = express()
 var engine = renderer.server.create()
-var speakersAdapter = require('./speakers-adapter')
 var middleware = require('./middleware')
 var bodyParser = require('body-parser')
 var methodOverride = require('method-override')
@@ -28,28 +27,23 @@ app.use('/jquery', express.static(__dirname + '/node_modules/jquery/dist/'));
 app.use(middleware.logRequest)
 app.use(middleware.logResponse)
 
-app.get('/speakers/', speakersAdapter.index)
-app.get('/speakers/search', speakersAdapter.search)
-app.post('/speakers/', speakersAdapter.create)
-app.get('/speakers/:id', speakersAdapter.show)
-app.put('/speakers/:id', speakersAdapter.update)
-app.delete('/speakers/:id', speakersAdapter.destroy)
-app.delete('/speakers/:id', speakersAdapter.destroy)
+var speakersController = require('./speakers-controller')
+app.get('/speakers/', speakersController.index)
+app.get('/speakers/search', speakersController.search)
+app.post('/speakers/', speakersController.create)
+app.get('/speakers/:id', speakersController.show)
+app.put('/speakers/:id', speakersController.update)
+app.delete('/speakers/:id', speakersController.destroy)
+app.delete('/speakers/:id', speakersController.destroy)
 
-var daysHostUrl = 'http://localhost:4000/days/'
-var daysServerUrl = 'http://localhost:3001/'
-var daysHostPath = '/days/'
-var daysAdapter = require('./days-adapter')
-
-app.get('/days/', daysAdapter.index)
-app.get('/days/search', daysAdapter.search)
-app.post('/days/', daysAdapter.create)
-app.get('/days/:id', daysAdapter.show)
-app.put('/days/:id', daysAdapter.update)
-app.delete('/days/:id', daysAdapter.destroy)
-app.delete('/days/:id', daysAdapter.destroy)
-
-app.get('/', daysAdapter.index)
+var daysController = require('./days-controller')
+app.get('/days/', daysController.index)
+app.get('/days/search', daysController.search)
+app.post('/days/', daysController.create)
+app.get('/days/:id', daysController.show)
+app.put('/days/:id', daysController.update)
+app.delete('/days/:id', daysController.destroy)
+app.delete('/days/:id', daysController.destroy)
 
 app.listen(4000);
 

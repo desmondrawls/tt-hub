@@ -23,7 +23,7 @@ var Adapter = function(hostUrl, serverUrl, hostPath){
     this.hostPath = hostPath
 }
 
-Adapter.prototype.index = function(req, res, done) {
+Adapter.prototype.index = function(req, res, resolver) {
     var context = this
     var args = {
         headers: {"Content-Type": "application/json", "Accept": "application/json"}
@@ -42,19 +42,20 @@ Adapter.prototype.index = function(req, res, done) {
                 .then(Q.all(addItems)
                     .then(function (items) {
                         var partiallyDomesticatedObject = immigrationsHelper.domesticateObjectItems(object, items, context.hostUrl)
-                        done(req, res, immigrationsHelper.domesticateObject(context.hostUrl, context.hostUrl, partiallyDomesticatedObject))
+                        resolver.resolve(immigrationsHelper.domesticateObject(context.hostUrl, context.hostUrl, partiallyDomesticatedObject))
                     })
                 .done())
             .done())
         .done()
     })
+    return resolver.promise
 }
 
-Adapter.prototype.search = function(req, res, done) {
+Adapter.prototype.search = function(req, res, resolver) {
     var context = this
     var response = function (template, items) {
         var domesticatedItems = immigrationsHelper.domesticateItems(context.hostUrl, items);
-        done(req, res, jsonTransformer.layout(context.hostUrl, context.hostUrl, domesticatedItems, template)
+        resolver.resolve(jsonTransformer.layout(context.hostUrl, context.hostUrl, domesticatedItems, template)
         )}
     var template = Template.find({}).exec()
     var items = Item.find().elemMatch('data', function (elem) {
@@ -63,6 +64,7 @@ Adapter.prototype.search = function(req, res, done) {
     Q.spread([template, items], function (templates, items) {
         response(templates[0], items)
     })
+    return resolver.promise
 }
 
 Adapter.prototype.create = function(req, res) {
@@ -77,7 +79,7 @@ Adapter.prototype.create = function(req, res) {
     })
 }
 
-Adapter.prototype.show = function(req, res, done) {
+Adapter.prototype.show = function(req, res, resolver) {
     var context = this
     Item.findById(req.params.id, function (err, item) {
         var args = {
@@ -85,10 +87,11 @@ Adapter.prototype.show = function(req, res, done) {
         }
         client.get(item.href, args, function (rawObject, response) {
             new Collection(JSON.parse(rawObject).collection).save(function (err, savedObject) {
-                done(req, res, immigrationsHelper.domesticateObject(context.hostUrl, context.hostUrl + savedObject.id, {collection: savedObject}))
+                resolver.resolve(immigrationsHelper.domesticateObject(context.hostUrl, context.hostUrl + savedObject.id, {collection: savedObject}))
             })
         })
     })
+    return resolver.promise
 }
 
 Adapter.prototype.update = function(req, res) {
