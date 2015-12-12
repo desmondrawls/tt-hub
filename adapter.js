@@ -23,7 +23,7 @@ var Adapter = function(hostUrl, serverUrl, hostPath){
     this.hostPath = hostPath
 }
 
-Adapter.prototype.index = function(req, res) {
+Adapter.prototype.index = function(req, res, done) {
     var context = this
     var args = {
         headers: {"Content-Type": "application/json", "Accept": "application/json"}
@@ -42,7 +42,7 @@ Adapter.prototype.index = function(req, res) {
                 .then(Q.all(addItems)
                     .then(function (items) {
                         var partiallyDomesticatedObject = immigrationsHelper.domesticateObjectItems(object, items, context.hostUrl)
-                        respondWithCollectionObject(req, res, immigrationsHelper.domesticateObject(context.hostUrl, context.hostUrl, partiallyDomesticatedObject))
+                        done(req, res, immigrationsHelper.domesticateObject(context.hostUrl, context.hostUrl, partiallyDomesticatedObject))
                     })
                 .done())
             .done())
@@ -50,11 +50,11 @@ Adapter.prototype.index = function(req, res) {
     })
 }
 
-Adapter.prototype.search = function(req, res) {
+Adapter.prototype.search = function(req, res, done) {
     var context = this
     var response = function (template, items) {
         var domesticatedItems = immigrationsHelper.domesticateItems(context.hostUrl, items);
-        respondWithCollectionObject(req, res, jsonTransformer.layout(context.hostUrl, context.hostUrl, domesticatedItems, template)
+        done(req, res, jsonTransformer.layout(context.hostUrl, context.hostUrl, domesticatedItems, template)
         )}
     var template = Template.find({}).exec()
     var items = Item.find().elemMatch('data', function (elem) {
@@ -77,7 +77,7 @@ Adapter.prototype.create = function(req, res) {
     })
 }
 
-Adapter.prototype.show = function(req, res) {
+Adapter.prototype.show = function(req, res, done) {
     var context = this
     Item.findById(req.params.id, function (err, item) {
         var args = {
@@ -85,7 +85,7 @@ Adapter.prototype.show = function(req, res) {
         }
         client.get(item.href, args, function (rawObject, response) {
             new Collection(JSON.parse(rawObject).collection).save(function (err, savedObject) {
-                respondWithItemObject(res, immigrationsHelper.domesticateObject(context.hostUrl, context.hostUrl + savedObject.id, {collection: savedObject}))
+                done(req, res, immigrationsHelper.domesticateObject(context.hostUrl, context.hostUrl + savedObject.id, {collection: savedObject}))
             })
         })
     })
@@ -116,26 +116,6 @@ Adapter.prototype.destroy = function(req, res) {
             res.redirect(context.hostPath)
         })
     })
-}
-
-function respondWithItemObject(res, itemObject) {
-    res.format({
-        html: function () {
-            res.render('show', {itemObject: itemObject})
-        },
-        json: function () {
-            res.send(itemObject)
-
-        }
-    })
-}
-
-function respondWithCollectionObject(req, res, collectionObject) {
-    if (req.header('accept') == 'application/json') {
-        res.send(collectionObject)
-    } else {
-        res.render('index', {collectionObject: collectionObject})
-    }
 }
 
 exports.Adapter = Adapter

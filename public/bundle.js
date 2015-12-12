@@ -45916,8 +45916,8 @@ var collectionHelper = require('./../../helpers/collectionJson/collection.js')
 var Show = React.createClass({displayName: "Show",
     getInitialState: function(){
         return {
-            itemObject: this.props.itemObject,
-            template: templateHelper.getPopulatedTemplate(templateHelper.getTemplate(this.props.itemObject), itemsHelper.getFirstItem(this.props.itemObject)),
+            collectionObject: this.props.collectionObject,
+            template: templateHelper.getPopulatedTemplate(templateHelper.getTemplate(this.props.collectionObject), itemsHelper.getFirstItem(this.props.collectionObject)),
             edit: false
         }
     },
@@ -45937,14 +45937,14 @@ var Show = React.createClass({displayName: "Show",
                  context.state.edit ? React.createElement(EdittingButtons, {onSave: context.onSave, onCancel: context.onCancel}) : null, 
                 React.createElement("p", null, 
                     React.createElement(Link, {onClick: context.onEdit, text: "Edit"}), 
-                    React.createElement(DeleteButton, {action: context.getPrimaryUrl(context.state.itemObject)})
+                    React.createElement(DeleteButton, {action: context.getPrimaryUrl(context.state.collectionObject)})
                 )
             )
         )
     },
 
     getBackLink: function(){
-        return _.find(this.props.itemObject.collection.links, function(link){return link.rel == 'back'}).href
+        return _.find(this.props.collectionObject.collection.links, function(link){return link.rel == 'back'}).href
     },
 
     handleAttributeChange: function(event){
@@ -45957,15 +45957,15 @@ var Show = React.createClass({displayName: "Show",
 
     onSave: function(){
         var context = this
-        $.ajax(collectionHelper.getCollectionValue(collectionHelper.getCollection(context.state.itemObject), 'href'), {
+        $.ajax(collectionHelper.getCollectionValue(collectionHelper.getCollection(context.state.collectionObject), 'href'), {
             method: 'PUT',
             data: {'template': this.state.template},
             success: function(data){
-                var itemObject = JSON.parse(data)
-                context.setState({itemObject: itemObject})
+                var collectionObject = JSON.parse(data)
+                context.setState({collectionObject: collectionObject})
                 context.setState({template: templateHelper.getPopulatedTemplate(
-                                                templateHelper.getTemplate(itemObject),
-                                                itemsHelper.getFirstItem(itemObject))})
+                                                templateHelper.getTemplate(collectionObject),
+                                                itemsHelper.getFirstItem(collectionObject))})
                 context.onCancel()
             }
         })
@@ -45976,11 +45976,11 @@ var Show = React.createClass({displayName: "Show",
     },
 
     getItemAttributes: function(){
-        return attributesHelper.getItemAttributes(itemsHelper.getFirstItem(this.state.itemObject))
+        return attributesHelper.getItemAttributes(itemsHelper.getFirstItem(this.state.collectionObject))
     },
 
     getItemAttribute: function(attributeName){
-        return attributesHelper.getItemAttributeValue(itemsHelper.getFirstItem(this.state.itemObject), attributeName)
+        return attributesHelper.getItemAttributeValue(itemsHelper.getFirstItem(this.state.collectionObject), attributeName)
     },
 
     onEdit: function(){
