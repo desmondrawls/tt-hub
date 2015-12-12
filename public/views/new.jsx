@@ -30,8 +30,8 @@ var New = React.createClass({
                 'Accept': 'application/json'
             },
             data: {'template': this.state.template},
-            success: function(speakersObject){
-                context.props.onCreate(speakersObject)
+            success: function(collectionObject){
+                context.props.store.update(collectionObject)
                 context.onCancel()
             }
         })

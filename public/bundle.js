@@ -45473,10 +45473,11 @@ var Index = React.createClass({displayName: "Index",
                 React.createElement("h1", null, "TechTalk"), 
                 React.createElement("h3", null, "Speakers"), 
                 React.createElement(SearchBar, {store: this.store, queries: this.getQueries(this.state.collectionObject)}), 
+                React.createElement("a", {href: this.getPrimaryUrl()}, "Reset"), 
                 React.createElement(LinkedList, {items: itemsHelper.getItems(this.state.collectionObject), textFormatter: speakersHelper.getFullName}), 
                  this.state.adding ?
                     React.createElement(NewForm, {
-                        onCreate: this.onCreate, 
+                        store: this.store, 
                         onCancel: this.onCancel, 
                         template: templateHelper.getTemplate(this.props.collectionObject), 
                         href: this.getPrimaryUrl()})
@@ -45496,11 +45497,8 @@ var Index = React.createClass({displayName: "Index",
         return queries
     },
 
-    onCreate: function(collectionObject){
-        this.setState({collectionObject: new Store.Object(this.props.collectionObject)})
-    },
-
-    onNew: function(){
+    onNew: function(event){
+        event.preventDefault()
         this.setState({adding: true})
     },
 
@@ -45581,8 +45579,8 @@ var New = React.createClass({displayName: "New",
                 'Accept': 'application/json'
             },
             data: {'template': this.state.template},
-            success: function(speakersObject){
-                context.props.onCreate(speakersObject)
+            success: function(collectionObject){
+                context.props.store.update(collectionObject)
                 context.onCancel()
             }
         })
@@ -45757,7 +45755,6 @@ var SearchBar = React.createClass({displayName: "SearchBar",
             })
             return current.concat(nextParams)
         },[])
-        console.log("PARAMS", params)
         window.location = this.props.queries[0].href + '?' + $.param(params)
     }
 })

@@ -29,9 +29,11 @@ app.use(middleware.logRequest)
 app.use(middleware.logResponse)
 
 app.get('/speakers/', speakersAdapter.index)
+app.get('/speakers/search', speakersAdapter.search)
 app.post('/speakers/', speakersAdapter.create)
 app.get('/speakers/:id', speakersAdapter.show)
 app.put('/speakers/:id', speakersAdapter.update)
+app.delete('/speakers/:id', speakersAdapter.destroy)
 app.delete('/speakers/:id', speakersAdapter.destroy)
 
 app.listen(4000);

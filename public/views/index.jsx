@@ -34,10 +34,11 @@ var Index = React.createClass({
                 <h1>TechTalk</h1>
                 <h3>Speakers</h3>
                 <SearchBar store={this.store} queries={this.getQueries(this.state.collectionObject)}/>
+                <a href={this.getPrimaryUrl()}>Reset</a>
                 <LinkedList items={itemsHelper.getItems(this.state.collectionObject)} textFormatter={speakersHelper.getFullName}/>
                 { this.state.adding ?
                     <NewForm
-                        onCreate={this.onCreate}
+                        store={this.store}
                         onCancel={this.onCancel}
                         template={templateHelper.getTemplate(this.props.collectionObject)}
                         href={this.getPrimaryUrl()}/>
@@ -57,11 +58,8 @@ var Index = React.createClass({
         return queries
     },
 
-    onCreate: function(collectionObject){
-        this.setState({collectionObject: new Store.Object(this.props.collectionObject)})
-    },
-
-    onNew: function(){
+    onNew: function(event){
+        event.preventDefault()
         this.setState({adding: true})
     },
 

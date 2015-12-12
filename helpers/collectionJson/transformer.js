@@ -27,7 +27,7 @@ function queries() {
         {'href': 'http://localhost:4000/speakers/search', 'rel': 'name', 'prompt': 'Search by name', 'name': 'name',
             'data':
                 [
-                    {'name': 'name', 'value': '', 'type': 'text'}
+                    {'name': 'first_name', 'value': '', 'type': 'text'}
                 ]
         }
     ]

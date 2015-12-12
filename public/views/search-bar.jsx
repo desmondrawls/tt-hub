@@ -40,7 +40,6 @@ var SearchBar = React.createClass({
             })
             return current.concat(nextParams)
         },[])
-        console.log("PARAMS", params)
         window.location = this.props.queries[0].href + '?' + $.param(params)
     }
 })
