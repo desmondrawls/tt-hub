@@ -7,38 +7,15 @@ var hostPath = '/speakers/'
 var adapter = new Adapter(hostUrl, serverUrl, hostPath)
 var Responder = require('./responders.js').Responder
 var responder = new Responder()
+var Controller = require('./controller.js').Controller
+var controller = new Controller(adapter, responder)
 
-
-function index(req, res) {
-    adapter.index(req, res, Q.defer())
-        .then(function (collectionObject) {
-            responder.set(collectionObject, Q.defer()).then(responder.respondWithIndex(req, res)).done()
-        })
-        .done()
-}
-function search(req, res) {
-    adapter.search(req, res, Q.defer())
-        .then(function (collectionObject) {
-            responder.set(collectionObject, Q.defer()).then(responder.respondWithIndex(req, res)).done()
-        })
-        .done()
-}
-function show(req, res) {
-    adapter.show(req, res, Q.defer())
-        .then(function(collectionObject){
-            responder.set(collectionObject, Q.defer()).then(responder.respondWithShow(req, res)).done()
-        })
-        .done()
-}
-function create(req, res) {
-    adapter.create(req, res)
-}
-function update(req, res) {
-    adapter.update(req, res)
-}
-function destroy(req, res) {
-    adapter.destroy(req, res)
-}
+function index(req, res)    {controller.index(req, res)}
+function search(req, res)   {controller.search(req, res)}
+function show(req, res)     {controller.show(req, res)}
+function create(req, res)   {controller.create(req, res)}
+function update(req, res)   {controller.update(req, res)}
+function destroy(req, res)  {controller.destroy(req, res)}
 
 exports.index = index
 exports.search = search
