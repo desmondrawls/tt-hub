@@ -4,7 +4,7 @@ var Details = require('./details.jsx')
 var EdittingButtons = require('./editting-buttons.jsx')
 var attributesHelper = require('./../../helpers/collectionJson/attributes.js')
 
-var New = React.createClass({
+var NewForm = React.createClass({
     getInitialState: function () {
         return { template: this.props.template }
     },
@@ -51,4 +51,4 @@ var New = React.createClass({
     }
 })
 
-module.exports = New
+module.exports = NewForm

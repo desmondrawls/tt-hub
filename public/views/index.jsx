@@ -1,7 +1,6 @@
 var React = require('react')
 var Page = require('./page.jsx')
-var NewForm = require('./new.jsx')
-var Link = require('./link.jsx')
+var NewButton = require('./new-button.jsx')
 var LinkedList = require('./linked-list.jsx')
 var SearchBar = require('./search-bar.jsx')
 var _ = require('lodash')
@@ -15,8 +14,7 @@ var Index = React.createClass({
     getInitialState: function () {
         this.store = new Store.Object(this.props.collectionObject)
         return {
-            collectionObject: this.store.fetch(),
-            adding: false
+            collectionObject: this.store.fetch()
         }
     },
 
@@ -36,13 +34,7 @@ var Index = React.createClass({
                 <SearchBar store={this.store} queries={this.getQueries(this.state.collectionObject)}/>
                 <a href={this.getPrimaryUrl()}>Reset</a>
                 <LinkedList items={itemsHelper.getItems(this.state.collectionObject)} textFormatter={speakersHelper.getFullName}/>
-                { this.state.adding ?
-                    <NewForm
-                        store={this.store}
-                        onCancel={this.onCancel}
-                        template={templateHelper.getTemplate(this.props.collectionObject)}
-                        href={this.getPrimaryUrl()}/>
-                : <Link onClick={this.onNew} text="New"/> }
+                <NewButton store={this.store} template={this.getTemplate()} href={this.getPrimaryUrl()}/>
             </Page>
         )
     },
@@ -51,20 +43,12 @@ var Index = React.createClass({
        return collectionHelper.getCollectionValue(collectionHelper.getCollection(this.state.collectionObject), 'href')
     },
 
+    getTemplate: function(){
+        return templateHelper.getTemplate(this.props.collectionObject)
+    },
 
     getQueries: function(collectionObject){
-        var queries = collectionHelper.getCollectionValue(collectionHelper.getCollection(collectionObject), 'queries')
-        console.log("passing down queries", queries[1].data[0])
-        return queries
-    },
-
-    onNew: function(event){
-        event.preventDefault()
-        this.setState({adding: true})
-    },
-
-    onCancel: function(){
-        this.setState({adding: false})
+        return collectionHelper.getCollectionValue(collectionHelper.getCollection(collectionObject), 'queries')
     }
 })
 

@@ -45330,7 +45330,7 @@ document.addEventListener('DOMContentLoaded', function onLoad(){
     Client.boot(options)
 })
 
-},{"./views/delete-button.jsx":221,"./views/details.jsx":222,"./views/editting-buttons.jsx":223,"./views/index.jsx":224,"./views/link.jsx":225,"./views/linked-list.jsx":226,"./views/new.jsx":227,"./views/page.jsx":228,"./views/query-checkbox.jsx":229,"./views/query-textbox.jsx":230,"./views/search-bar.jsx":231,"./views/show.jsx":232,"react-engine/lib/client":35}],220:[function(require,module,exports){
+},{"./views/delete-button.jsx":221,"./views/details.jsx":222,"./views/editting-buttons.jsx":223,"./views/index.jsx":224,"./views/link.jsx":225,"./views/linked-list.jsx":226,"./views/new.jsx":229,"./views/page.jsx":230,"./views/query-checkbox.jsx":231,"./views/query-textbox.jsx":232,"./views/search-bar.jsx":233,"./views/show.jsx":234,"react-engine/lib/client":35}],220:[function(require,module,exports){
 'use strict'
 
 var _ = require('lodash')
@@ -45439,8 +45439,7 @@ module.exports = FormButtons
 },{"lodash":34,"react":218}],224:[function(require,module,exports){
 var React = require('react')
 var Page = require('./page.jsx')
-var NewForm = require('./new.jsx')
-var Link = require('./link.jsx')
+var NewButton = require('./new-button.jsx')
 var LinkedList = require('./linked-list.jsx')
 var SearchBar = require('./search-bar.jsx')
 var _ = require('lodash')
@@ -45454,8 +45453,7 @@ var Index = React.createClass({displayName: "Index",
     getInitialState: function () {
         this.store = new Store.Object(this.props.collectionObject)
         return {
-            collectionObject: this.store.fetch(),
-            adding: false
+            collectionObject: this.store.fetch()
         }
     },
 
@@ -45475,13 +45473,7 @@ var Index = React.createClass({displayName: "Index",
                 React.createElement(SearchBar, {store: this.store, queries: this.getQueries(this.state.collectionObject)}), 
                 React.createElement("a", {href: this.getPrimaryUrl()}, "Reset"), 
                 React.createElement(LinkedList, {items: itemsHelper.getItems(this.state.collectionObject), textFormatter: speakersHelper.getFullName}), 
-                 this.state.adding ?
-                    React.createElement(NewForm, {
-                        store: this.store, 
-                        onCancel: this.onCancel, 
-                        template: templateHelper.getTemplate(this.props.collectionObject), 
-                        href: this.getPrimaryUrl()})
-                : React.createElement(Link, {onClick: this.onNew, text: "New"})
+                React.createElement(NewButton, {store: this.store, template: this.getTemplate(), href: this.getPrimaryUrl()})
             )
         )
     },
@@ -45490,26 +45482,18 @@ var Index = React.createClass({displayName: "Index",
        return collectionHelper.getCollectionValue(collectionHelper.getCollection(this.state.collectionObject), 'href')
     },
 
+    getTemplate: function(){
+        return templateHelper.getTemplate(this.props.collectionObject)
+    },
 
     getQueries: function(collectionObject){
-        var queries = collectionHelper.getCollectionValue(collectionHelper.getCollection(collectionObject), 'queries')
-        console.log("passing down queries", queries[1].data[0])
-        return queries
-    },
-
-    onNew: function(event){
-        event.preventDefault()
-        this.setState({adding: true})
-    },
-
-    onCancel: function(){
-        this.setState({adding: false})
+        return collectionHelper.getCollectionValue(collectionHelper.getCollection(collectionObject), 'queries')
     }
 })
 
 module.exports = Index
 
-},{"./../../helpers/collectionJson/collection.js":2,"./../../helpers/collectionJson/items.js":3,"./../../helpers/collectionJson/template.js":5,"./../../helpers/speakers.js":6,"./../stores/object.js":220,"./link.jsx":225,"./linked-list.jsx":226,"./new.jsx":227,"./page.jsx":228,"./search-bar.jsx":231,"lodash":34,"react":218}],225:[function(require,module,exports){
+},{"./../../helpers/collectionJson/collection.js":2,"./../../helpers/collectionJson/items.js":3,"./../../helpers/collectionJson/template.js":5,"./../../helpers/speakers.js":6,"./../stores/object.js":220,"./linked-list.jsx":226,"./new-button.jsx":227,"./page.jsx":230,"./search-bar.jsx":233,"lodash":34,"react":218}],225:[function(require,module,exports){
 var React = require('react')
 
 var Link = React.createClass({displayName: "Link",
@@ -45547,6 +45531,100 @@ var LinkedList = React.createClass({displayName: "LinkedList",
 module.exports = LinkedList
 
 },{"./../../helpers/collectionJson/items.js":3,"lodash":34,"react":218}],227:[function(require,module,exports){
+var React = require('react')
+var NewForm = require('./new-form.jsx')
+var Link = require('./link.jsx')
+var _ = require('lodash')
+
+var NewButton = React.createClass({displayName: "NewButton",
+    getInitialState: function(){
+        return { isNewing : false}
+    },
+
+    render: function(){
+        return (
+            React.createElement("div", null, 
+                 this.state.isNewing ?
+                    React.createElement(NewForm, {
+                        store: this.props.store, 
+                        onCancel: this.onCancel, 
+                        template: this.props.template, 
+                        href: this.props.href}) :
+                    React.createElement(Link, {onClick: this.onNew, text: "New"})
+                
+            )
+        )
+    },
+
+    onCancel: function(event){
+        this.setState({ isNewing : false })
+    },
+
+    onNew: function(event){
+        event.preventDefault()
+        this.setState({ isNewing : true })
+    }
+})
+
+module.exports = NewButton
+
+},{"./link.jsx":225,"./new-form.jsx":228,"lodash":34,"react":218}],228:[function(require,module,exports){
+var React = require('react')
+var _ = require('lodash')
+var Details = require('./details.jsx')
+var EdittingButtons = require('./editting-buttons.jsx')
+var attributesHelper = require('./../../helpers/collectionJson/attributes.js')
+
+var NewForm = React.createClass({displayName: "NewForm",
+    getInitialState: function () {
+        return { template: this.props.template }
+    },
+
+    render: function () {
+        return (
+            React.createElement("div", null, 
+                React.createElement(Details, {
+                    attributes: attributesHelper.getItemAttributes(this.state.template), 
+                    onChange: this.handleAttributeChange, 
+                    edit: true}
+                ), 
+                React.createElement(EdittingButtons, {onSave: this.onSave, onCancel: this.onCancel})
+            )
+        )
+    },
+
+    onSave: function(){
+        var context = this
+        $.ajax(context.props.href, {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json'
+            },
+            data: {'template': this.state.template},
+            success: function(collectionObject){
+                context.props.store.update(collectionObject)
+                context.onCancel()
+            }
+        })
+    },
+
+    onCancel: function() {
+        this.setState({ template: this.props.template })
+        this.props.onCancel()
+    },
+
+    handleAttributeChange: function(event) {
+        var template = _.clone(this.state.template, true)
+        attributesHelper.updateAttributeValue(
+            attributesHelper.getItemAttribute(template, event.target.name),
+            event.target.value)
+        this.setState({template: template})
+    }
+})
+
+module.exports = NewForm
+
+},{"./../../helpers/collectionJson/attributes.js":1,"./details.jsx":222,"./editting-buttons.jsx":223,"lodash":34,"react":218}],229:[function(require,module,exports){
 var React = require('react')
 var _ = require('lodash')
 var Details = require('./details.jsx')
@@ -45602,7 +45680,7 @@ var New = React.createClass({displayName: "New",
 
 module.exports = New
 
-},{"./../../helpers/collectionJson/attributes.js":1,"./details.jsx":222,"./editting-buttons.jsx":223,"lodash":34,"react":218}],228:[function(require,module,exports){
+},{"./../../helpers/collectionJson/attributes.js":1,"./details.jsx":222,"./editting-buttons.jsx":223,"lodash":34,"react":218}],230:[function(require,module,exports){
 var React = require('react')
 
 var Page = React.createClass({displayName: "Page",
@@ -45625,7 +45703,7 @@ var Page = React.createClass({displayName: "Page",
 
 module.exports = Page
 
-},{"react":218}],229:[function(require,module,exports){
+},{"react":218}],231:[function(require,module,exports){
 var React = require('react')
 var queriesHelper = require('./../../helpers/collectionJson/queries.js')
 var _ = require('lodash')
@@ -45670,7 +45748,7 @@ var QueryCheckbox = React.createClass({displayName: "QueryCheckbox",
 
 module.exports = QueryCheckbox
 
-},{"./../../helpers/collectionJson/queries.js":4,"lodash":34,"react":218}],230:[function(require,module,exports){
+},{"./../../helpers/collectionJson/queries.js":4,"lodash":34,"react":218}],232:[function(require,module,exports){
 var React = require('react')
 var queriesHelper = require('./../../helpers/collectionJson/queries.js')
 var _ = require('lodash')
@@ -45712,7 +45790,7 @@ var QueryTextbox = React.createClass({displayName: "QueryTextbox",
 
 module.exports = QueryTextbox
 
-},{"./../../helpers/collectionJson/queries.js":4,"lodash":34,"react":218}],231:[function(require,module,exports){
+},{"./../../helpers/collectionJson/queries.js":4,"lodash":34,"react":218}],233:[function(require,module,exports){
 var React = require('react')
 var _ = require('lodash')
 var queriesHelper = require('./../../helpers/collectionJson/queries.js')
@@ -45761,7 +45839,7 @@ var SearchBar = React.createClass({displayName: "SearchBar",
 
 module.exports = SearchBar
 
-},{"./../../helpers/collectionJson/collection.js":2,"./../../helpers/collectionJson/queries.js":4,"./query-checkbox.jsx":229,"./query-textbox.jsx":230,"lodash":34,"react":218}],232:[function(require,module,exports){
+},{"./../../helpers/collectionJson/collection.js":2,"./../../helpers/collectionJson/queries.js":4,"./query-checkbox.jsx":231,"./query-textbox.jsx":232,"lodash":34,"react":218}],234:[function(require,module,exports){
 var React = require('react')
 var Page = require('./page.jsx')
 var Details = require('./details.jsx')
@@ -45853,4 +45931,4 @@ var Show = React.createClass({displayName: "Show",
 
 module.exports = Show
 
-},{"./../../helpers/collectionJson/attributes.js":1,"./../../helpers/collectionJson/collection.js":2,"./../../helpers/collectionJson/items.js":3,"./../../helpers/collectionJson/template.js":5,"./../../helpers/speakers.js":6,"./delete-button.jsx":221,"./details.jsx":222,"./editting-buttons.jsx":223,"./link.jsx":225,"./page.jsx":228,"jquery":33,"lodash":34,"react":218}]},{},[219]);
+},{"./../../helpers/collectionJson/attributes.js":1,"./../../helpers/collectionJson/collection.js":2,"./../../helpers/collectionJson/items.js":3,"./../../helpers/collectionJson/template.js":5,"./../../helpers/speakers.js":6,"./delete-button.jsx":221,"./details.jsx":222,"./editting-buttons.jsx":223,"./link.jsx":225,"./page.jsx":230,"jquery":33,"lodash":34,"react":218}]},{},[219]);
