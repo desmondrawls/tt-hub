@@ -8,6 +8,7 @@ var _ = require('lodash')
 var app = express()
 var engine = renderer.server.create()
 var speakersAdapter = require('./speakers-adapter')
+var daysAdapter = require('./days-adapter')
 var middleware = require('./middleware')
 var bodyParser = require('body-parser')
 var methodOverride = require('method-override')
@@ -35,6 +36,14 @@ app.get('/speakers/:id', speakersAdapter.show)
 app.put('/speakers/:id', speakersAdapter.update)
 app.delete('/speakers/:id', speakersAdapter.destroy)
 app.delete('/speakers/:id', speakersAdapter.destroy)
+
+app.get('/days/', daysAdapter.index)
+app.get('/days/search', daysAdapter.search)
+app.post('/days/', daysAdapter.create)
+app.get('/days/:id', daysAdapter.show)
+app.put('/days/:id', daysAdapter.update)
+app.delete('/days/:id', daysAdapter.destroy)
+app.delete('/days/:id', daysAdapter.destroy)
 
 app.listen(4000);
 

@@ -151,11 +151,70 @@ exports.getTemplate = getTemplate
 var attributesHelper = require('./collectionJson/attributes.js')
 var itemsHelper = require('./collectionJson/items.js')
 
+function getItemIdentifier(item){
+    if(item.href.indexOf('speakers') > -1){
+        return getFullName(item)
+    }
+    if(item.href.indexOf('days') > -1){
+        return getDate(item)
+    }
+}
+
 function getFullName(speaker) {
     return attributesHelper.getItemAttributeValue(speaker, 'first_name') + ' ' + attributesHelper.getItemAttributeValue(speaker, 'last_name')
 }
 
-exports.getFullName = getFullName
+function getDate(day) {
+    return attributesHelper.getItemAttributeValue(day, 'date')
+}
+
+function getQueries(url){
+    if(url.indexOf('speakers') > -1){
+        return getSpeakerQueries(url)
+    }
+    if(url.indexOf('days') > -1){
+        return getDayQueries(url)
+    }
+}
+
+function getSpeakerQueries(url){
+    return [
+        {'href': url + 'search', 'rel': 'booked', 'prompt': 'Find booked speakers', 'name': 'booked',
+            'data':
+                [
+                    {'name': 'booked', 'value': true, 'type': 'boolean'}
+                ]
+        },
+        {'href': url + 'search', 'rel': 'name', 'prompt': 'Search by name', 'name': 'name',
+            'data':
+                [
+                    {'name': 'first_name', 'value': '', 'type': 'text'}
+                ]
+        }
+    ]
+}
+
+
+function getDayQueries(url){
+    return [
+        {'href': url + 'search', 'rel': 'conflict', 'prompt': 'Find days with conflicts', 'name': 'conflict',
+            'data':
+                [
+                    {'name': 'conflict', 'value': true, 'type': 'boolean'}
+                ]
+        },
+        {'href': url + 'search', 'rel': 'host', 'prompt': 'Search by host', 'name': 'host',
+            'data':
+                [
+                    {'name': 'host', 'value': '', 'type': 'text'}
+                ]
+        }
+    ]
+}
+
+
+exports.getItemIdentifier = getItemIdentifier
+exports.getQueries = getQueries
 
 },{"./collectionJson/attributes.js":1,"./collectionJson/items.js":3}],7:[function(require,module,exports){
 // shim for using process in browser
@@ -45446,7 +45505,7 @@ var SearchBar = require('./search-bar.jsx')
 var _ = require('lodash')
 var templateHelper = require('./../../helpers/collectionJson/template.js')
 var itemsHelper = require('./../../helpers/collectionJson/items.js')
-var speakersHelper = require('./../../helpers/speakers.js')
+var typeHelper = require('./../../helpers/types.js')
 var collectionHelper = require('./../../helpers/collectionJson/collection.js')
 var Store = require('./../stores/object.js')
 
@@ -45473,7 +45532,7 @@ var Index = React.createClass({displayName: "Index",
                 React.createElement("h3", null, "Speakers"), 
                 React.createElement(SearchBar, {store: this.store, queries: this.getQueries(this.state.collectionObject)}), 
                 React.createElement("a", {href: this.getPrimaryUrl()}, "Reset"), 
-                React.createElement(LinkedList, {items: itemsHelper.getItems(this.state.collectionObject), textFormatter: speakersHelper.getFullName}), 
+                React.createElement(LinkedList, {items: itemsHelper.getItems(this.state.collectionObject), textFormatter: typeHelper.getItemIdentifier}), 
                 React.createElement(NewButton, {store: this.store, template: this.getTemplate(), href: this.getPrimaryUrl()})
             )
         )
@@ -45494,7 +45553,7 @@ var Index = React.createClass({displayName: "Index",
 
 module.exports = Index
 
-},{"./../../helpers/collectionJson/collection.js":2,"./../../helpers/collectionJson/items.js":3,"./../../helpers/collectionJson/template.js":5,"./../../helpers/speakers.js":6,"./../stores/object.js":220,"./linked-list.jsx":226,"./new-button.jsx":227,"./page.jsx":230,"./search-bar.jsx":233,"lodash":34,"react":218}],225:[function(require,module,exports){
+},{"./../../helpers/collectionJson/collection.js":2,"./../../helpers/collectionJson/items.js":3,"./../../helpers/collectionJson/template.js":5,"./../../helpers/types.js":6,"./../stores/object.js":220,"./linked-list.jsx":226,"./new-button.jsx":227,"./page.jsx":230,"./search-bar.jsx":233,"lodash":34,"react":218}],225:[function(require,module,exports){
 var React = require('react')
 
 var Link = React.createClass({displayName: "Link",
@@ -45852,7 +45911,6 @@ var $ = require('jquery')
 var attributesHelper = require('./../../helpers/collectionJson/attributes.js')
 var itemsHelper = require('./../../helpers/collectionJson/items.js')
 var templateHelper = require('./../../helpers/collectionJson/template.js')
-var speakersHelper = require('./../../helpers/speakers.js')
 var collectionHelper = require('./../../helpers/collectionJson/collection.js')
 
 var Show = React.createClass({displayName: "Show",
@@ -45869,7 +45927,7 @@ var Show = React.createClass({displayName: "Show",
 
         return (
             React.createElement(Page, React.__spread({},  context.props), 
-                React.createElement("a", {href: "/speakers/"}, "Back to all speakers"), 
+                React.createElement("a", {href: this.getBackLink()}, "Back to index"), 
                 React.createElement("h1", null, "Speaker"), 
                 React.createElement(Details, {
                     attributes: context.getItemAttributes(), 
@@ -45883,6 +45941,10 @@ var Show = React.createClass({displayName: "Show",
                 )
             )
         )
+    },
+
+    getBackLink: function(){
+        return _.find(this.props.itemObject.collection.links, function(link){return link.rel == 'back'}).href
     },
 
     handleAttributeChange: function(event){
@@ -45932,4 +45994,4 @@ var Show = React.createClass({displayName: "Show",
 
 module.exports = Show
 
-},{"./../../helpers/collectionJson/attributes.js":1,"./../../helpers/collectionJson/collection.js":2,"./../../helpers/collectionJson/items.js":3,"./../../helpers/collectionJson/template.js":5,"./../../helpers/speakers.js":6,"./delete-button.jsx":221,"./details.jsx":222,"./editting-buttons.jsx":223,"./link.jsx":225,"./page.jsx":230,"jquery":33,"lodash":34,"react":218}]},{},[219]);
+},{"./../../helpers/collectionJson/attributes.js":1,"./../../helpers/collectionJson/collection.js":2,"./../../helpers/collectionJson/items.js":3,"./../../helpers/collectionJson/template.js":5,"./delete-button.jsx":221,"./details.jsx":222,"./editting-buttons.jsx":223,"./link.jsx":225,"./page.jsx":230,"jquery":33,"lodash":34,"react":218}]},{},[219]);

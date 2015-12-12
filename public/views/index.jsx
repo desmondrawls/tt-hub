@@ -6,7 +6,7 @@ var SearchBar = require('./search-bar.jsx')
 var _ = require('lodash')
 var templateHelper = require('./../../helpers/collectionJson/template.js')
 var itemsHelper = require('./../../helpers/collectionJson/items.js')
-var speakersHelper = require('./../../helpers/speakers.js')
+var typeHelper = require('./../../helpers/types.js')
 var collectionHelper = require('./../../helpers/collectionJson/collection.js')
 var Store = require('./../stores/object.js')
 
@@ -33,7 +33,7 @@ var Index = React.createClass({
                 <h3>Speakers</h3>
                 <SearchBar store={this.store} queries={this.getQueries(this.state.collectionObject)}/>
                 <a href={this.getPrimaryUrl()}>Reset</a>
-                <LinkedList items={itemsHelper.getItems(this.state.collectionObject)} textFormatter={speakersHelper.getFullName}/>
+                <LinkedList items={itemsHelper.getItems(this.state.collectionObject)} textFormatter={typeHelper.getItemIdentifier}/>
                 <NewButton store={this.store} template={this.getTemplate()} href={this.getPrimaryUrl()}/>
             </Page>
         )

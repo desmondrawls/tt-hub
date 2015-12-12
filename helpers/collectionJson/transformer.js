@@ -1,36 +1,22 @@
 var _ = require('lodash')
+var typesHelper = require('./../types.js')
 
-function layout(url, items, template) {
+function layout(backUrl, url, items, template) {
     return (
     {
         collection: {
             version: '1.0',
             href: url,
             links: [
-                {rel: 'root', href: 'http://localhost:4000/'}
+                {rel: 'back', href: backUrl}
             ],
             items: items,
-            queries: queries(),
+            queries: typesHelper.getQueries(url),
             template: template
         }
     })
 }
 
-function queries() {
-    return [
-        {'href': 'http://localhost:4000/speakers/search', 'rel': 'booked', 'prompt': 'Find booked speakers', 'name': 'booked',
-            'data':
-                [
-                    {'name': 'booked', 'value': true, 'type': 'boolean'}
-                ]
-        },
-        {'href': 'http://localhost:4000/speakers/search', 'rel': 'name', 'prompt': 'Search by name', 'name': 'name',
-            'data':
-                [
-                    {'name': 'first_name', 'value': '', 'type': 'text'}
-                ]
-        }
-    ]
-}
+
 
 exports.layout = layout

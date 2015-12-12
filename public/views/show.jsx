@@ -9,7 +9,6 @@ var $ = require('jquery')
 var attributesHelper = require('./../../helpers/collectionJson/attributes.js')
 var itemsHelper = require('./../../helpers/collectionJson/items.js')
 var templateHelper = require('./../../helpers/collectionJson/template.js')
-var speakersHelper = require('./../../helpers/speakers.js')
 var collectionHelper = require('./../../helpers/collectionJson/collection.js')
 
 var Show = React.createClass({
@@ -26,7 +25,7 @@ var Show = React.createClass({
 
         return (
             <Page {...context.props}>
-                <a href="/speakers/">Back to all speakers</a>
+                <a href={this.getBackLink()}>Back to index</a>
                 <h1>Speaker</h1>
                 <Details
                     attributes={context.getItemAttributes()}
@@ -40,6 +39,10 @@ var Show = React.createClass({
                 </p>
             </Page>
         )
+    },
+
+    getBackLink: function(){
+        return _.find(this.props.itemObject.collection.links, function(link){return link.rel == 'back'}).href
     },
 
     handleAttributeChange: function(event){

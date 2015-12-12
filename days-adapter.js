@@ -16,9 +16,9 @@ var Collection = require('./db').CollectionJsonCollection
 var Item = require('./db').CollectionJsonItem
 var Template = require('./db').CollectionJsonTemplate
 var Query = require('./db').CollectionJsonQuery
-var hostUrl = 'http://localhost:4000/speakers/'
-var serverUrl = 'http://localhost:3000/'
-var hostPath = '/speakers/'
+var hostUrl = 'http://localhost:4000/days/'
+var serverUrl = 'http://localhost:3001/'
+var hostPath = '/days/'
 
 function index(req, res) {
     var args = {
@@ -40,9 +40,9 @@ function index(req, res) {
                         var partiallyDomesticatedObject = immigrationsHelper.domesticateObjectItems(object, items, hostUrl)
                         respondWithCollectionObject(req, res, immigrationsHelper.domesticateObject(hostUrl, hostUrl, partiallyDomesticatedObject))
                     })
+                    .done())
                 .done())
-            .done())
-        .done()
+            .done()
     })
 }
 
@@ -51,7 +51,7 @@ function search(req, res) {
         console.log("RESPONDING TO SEARCH WITH ", items)
         var domesticatedItems = immigrationsHelper.domesticateItems(hostUrl, items);
         respondWithCollectionObject(req, res, jsonTransformer.layout(hostUrl, hostUrl, domesticatedItems, template)
-    )}
+        )}
     var template = Template.find({}).exec()
     var items = Item.find().elemMatch('data', function (elem) {
         _.each(req.query, function (value, name) {elem.where('value').equals(value).where('name').equals(name)})
