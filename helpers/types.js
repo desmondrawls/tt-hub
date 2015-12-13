@@ -41,12 +41,6 @@ function getQueries(url){
 }
 function getSpeakerQueries(url){
     return [
-        {'href': url + 'search', 'rel': 'booked', 'prompt': 'Find booked speakers', 'name': 'booked',
-            'data':
-                [
-                    {'name': 'booked', 'value': true, 'type': 'boolean'}
-                ]
-        },
         {'href': url + 'search', 'rel': 'name', 'prompt': 'Search by name', 'name': 'name',
             'data':
                 [

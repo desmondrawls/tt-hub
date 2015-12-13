@@ -30,7 +30,17 @@ var SearchBar = React.createClass({
             })
         }
 
-        return <div>{queries(this.props.queries)}<button onClick={this.onSearch}>SEARCH</button></div>
+        return (
+            <div>
+                {queries(context.props.queries)}
+                <button onClick={context.onReset}>RESET</button>
+                <button onClick={context.onSearch}>SEARCH</button>
+            </div>
+        )
+    },
+
+    onReset: function(){
+        this.updateFromSearch('')
     },
 
     onSearch: function(){

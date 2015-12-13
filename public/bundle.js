@@ -239,12 +239,6 @@ function getQueries(url){
 }
 function getSpeakerQueries(url){
     return [
-        {'href': url + 'search', 'rel': 'booked', 'prompt': 'Find booked speakers', 'name': 'booked',
-            'data':
-                [
-                    {'name': 'booked', 'value': true, 'type': 'boolean'}
-                ]
-        },
         {'href': url + 'search', 'rel': 'name', 'prompt': 'Search by name', 'name': 'name',
             'data':
                 [
@@ -47747,7 +47741,6 @@ var Index = React.createClass({displayName: "Index",
             React.createElement(Page, React.__spread({},  this.props), 
                 React.createElement("h2", null, typeHelper.getType(this.state.collectionObject)), 
                 React.createElement(SearchBar, {store: this.store, queries: this.getQueries(this.state.collectionObject)}), 
-                React.createElement("a", {href: this.getPrimaryUrl()}, "Reset"), 
                 React.createElement(LinkedList, {items: itemsHelper.getItems(this.state.collectionObject), textFormatter: typeHelper.getItemIdentifier}), 
                 React.createElement(NewButton, {store: this.store, template: this.getTemplate(), href: this.getPrimaryUrl()})
             )
@@ -48043,7 +48036,17 @@ var SearchBar = React.createClass({displayName: "SearchBar",
             })
         }
 
-        return React.createElement("div", null, queries(this.props.queries), React.createElement("button", {onClick: this.onSearch}, "SEARCH"))
+        return (
+            React.createElement("div", null, 
+                queries(context.props.queries), 
+                React.createElement("button", {onClick: context.onReset}, "RESET"), 
+                React.createElement("button", {onClick: context.onSearch}, "SEARCH")
+            )
+        )
+    },
+
+    onReset: function(){
+        this.updateFromSearch('')
     },
 
     onSearch: function(){
