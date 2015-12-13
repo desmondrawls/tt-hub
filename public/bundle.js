@@ -48053,7 +48053,21 @@ var SearchBar = React.createClass({displayName: "SearchBar",
             })
             return current.concat(nextParams)
         },[])
-        window.location = this.props.queries[0].href + '?' + $.param(params)
+        this.updateFromSearch(params)
+    },
+
+    updateFromSearch: function(params){
+        var context = this
+        var url = this.props.queries[0].href + '?' + $.param(params)
+        $.ajax(url, {
+            method: 'GET',
+            headers: {
+                'Accept': 'application/json'
+            },
+            success: function(collectionObject){
+                context.props.store.update(collectionObject)
+            }
+        })
     }
 })
 
