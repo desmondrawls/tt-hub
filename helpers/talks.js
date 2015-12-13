@@ -11,8 +11,8 @@ function getTemplate(){
 
 function getLinks(url, backUrl){
     return [
-        {rel: 'speakers', href: url + '/speakers/'},
-        {rel: 'days', href: url + '/days/'}
+        {rel: 'resource', href: url + 'speakers/'},
+        {rel: 'resource', href: url + 'days/'}
     ]
 }
 

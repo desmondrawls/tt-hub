@@ -8,6 +8,6 @@ var responder = new Responder()
 var Controller = require('./controller.js').Controller
 var controller = new Controller(adapter, responder)
 
-function index(req, res)    {controller.oneToOne(req, res)}
+function index(req, res)    {controller.double(req, res)}
 
 exports.index = index

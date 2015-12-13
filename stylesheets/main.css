@@ -28,3 +28,12 @@ dd {
     margin-left: 0;
     line-height: 1.5;
 }
+
+.left-half {
+    float: left;
+    width: 50%;
+}
+.right-half {
+    float: right;
+    width: 50%;
+}

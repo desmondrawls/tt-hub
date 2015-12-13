@@ -2,6 +2,7 @@ var attributesHelper = require('./collectionJson/attributes.js')
 var talksHelper = require('./talks.js')
 
 function getType(collectionObject){
+    console.log("COLLECTIONOBJ", collectionObject)
     if(collectionObject.collection.href.indexOf('speakers') > -1){
         return 'speakers'
     }
@@ -74,10 +75,13 @@ function getDayQueries(url){
 
 
 function getLinks(url, backUrl){
-    if(url.indexOf('talks') > -1){
-        return talksHelper.getLinks(url, backUrl)
+    if(url.indexOf('speakers') > -1){
+        return [{rel: 'back', href: backUrl}]
     }
-    return [{rel: 'back', href: backUrl}]
+    if(url.indexOf('days') > -1){
+        return [{rel: 'back', href: backUrl}]
+    }
+    return talksHelper.getLinks(url, backUrl)
 }
 
 

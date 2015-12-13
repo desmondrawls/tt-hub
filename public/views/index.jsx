@@ -29,8 +29,7 @@ var Index = React.createClass({
     render: function () {
         return (
             <Page {...this.props}>
-                <h1>TechTalk</h1>
-                <h3>{typeHelper.getType(this.state.collectionObject)}</h3>
+                <h2>{typeHelper.getType(this.state.collectionObject)}</h2>
                 <SearchBar store={this.store} queries={this.getQueries(this.state.collectionObject)}/>
                 <a href={this.getPrimaryUrl()}>Reset</a>
                 <LinkedList items={itemsHelper.getItems(this.state.collectionObject)} textFormatter={typeHelper.getItemIdentifier}/>

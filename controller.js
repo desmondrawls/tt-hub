@@ -5,11 +5,11 @@ var Controller = function(adapter, responder){
     this.responder = responder
 }
 
-Controller.prototype.oneToOne = function(req, res) {
+Controller.prototype.double = function(req, res) {
     var context = this
     context.adapter.index(req, res, Q.defer())
         .then(function (collectionObject) {
-            context.responder.set(collectionObject, Q.defer()).then(context.responder.oneToOne(req, res)).done()
+            context.responder.set(collectionObject, Q.defer()).then(context.responder.double(req, res)).done()
         })
         .done()
 }
