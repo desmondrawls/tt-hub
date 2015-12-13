@@ -38,6 +38,11 @@ function copyDataWithValue(queryData, value){
     return _.merge(newQueryData, {value: value})
 }
 
+function mergeData(existingQueryData, newQueryData){
+    var withoutOldData = _.reject(existingQueryData, function(data) {return data.name == newQueryData.name})
+    return withoutOldData.concat(newQueryData)
+}
+
 exports.getQueries = getQueries
 exports.getPrompt = getPrompt
 exports.getData = getData
@@ -47,3 +52,4 @@ exports.getDataValue = getDataValue
 exports.takesInput = takesInput
 exports.getDataType = getDataType
 exports.copyDataWithValue = copyDataWithValue
+exports.mergeData = mergeData

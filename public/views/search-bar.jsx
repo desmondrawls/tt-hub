@@ -4,35 +4,47 @@ var queriesHelper = require('./../../helpers/collectionJson/queries.js')
 var QueryCheckbox = require('./query-checkbox.jsx')
 var QueryTextbox = require('./query-textbox.jsx')
 var collectionHelper = require('./../../helpers/collectionJson/collection.js')
+var Store = require('./../stores/object.js')
 
 var SearchBar = React.createClass({
+    getInitialState: function(){
+        this.store = new Store.Object(this.getSearchQuery())
+        return {query: this.store.fetch()}
+    },
+
+    componentWillMount: function () {
+        this.store.addListener(this.onStoreUpdate)
+    },
+
+    getSearchQuery: function(){
+        var searchQuery = _.find(this.props.queries, function(query){ return query.rel == 'search' })
+        return searchQuery
+    },
+
+    onStoreUpdate: function(query) {
+        this.setState({query: query})
+    },
+
+    getParams: function(){
+        return queriesHelper.getData(this.state.query)
+    },
 
     render: function(){
         var context = this
 
-        function queries(queries) {
-            return _.map(queries, function(query){
-                switch (queriesHelper.getDataType(queriesHelper.getData(query)[0])) {
-                    case 'boolean': {
-                        return <QueryCheckbox query={query} queryData={queriesHelper.getData(query)[0]} store={context.props.store}/>
-                    }
-                    case 'text': {
-                        return <QueryTextbox query={query} queryData={queriesHelper.getData(query)[0]} store={context.props.store}/>
-                    }
-                    default: {
-                        return (
-                            <span>
-                                <a href={queriesHelper.getHref(query)}>{queriesHelper.getPrompt(query)}</a>
-                            </span>
-                        )
-                    }
+        function queryBuilder() {
+            return _.map(context.getParams(), function(param){
+                switch (queriesHelper.getDataType(param)) {
+                    case 'boolean': { return <QueryCheckbox param={param} store={context.store}/> }
+                    case 'text': { return <QueryTextbox param={param} store={context.store}/> }
+                    default: {return (<span>UNREGISTERED PARAM TYPE</span>)}
                 }
             })
         }
 
         return (
             <div>
-                {queries(context.props.queries)}
+                {queryBuilder()}
                 <button onClick={context.onReset}>RESET</button>
                 <button onClick={context.onSearch}>SEARCH</button>
             </div>
@@ -43,13 +55,8 @@ var SearchBar = React.createClass({
         this.updateFromSearch('')
     },
 
-    onSearch: function(){
-        var params = _.reduce(this.props.queries, function(current, nextQuery){
-            var nextParams = _.map(queriesHelper.getData(nextQuery), function(dataItem){
-                return _.pick(dataItem, ['name', 'value'])
-            })
-            return current.concat(nextParams)
-        },[])
+    onSearch: function() {
+        var params = _.map(this.getParams(), function (param) {return _.pick(param, ['name', 'value'])})
         this.updateFromSearch(params)
     },
 

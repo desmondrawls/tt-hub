@@ -16,24 +16,14 @@ var QueryTextbox = React.createClass({
     },
 
     onChange: function(event) {
-        var context = this
-        var newObject = _.clone(context.props.store.fetch(), true)
-        var newQueryData = queriesHelper.copyDataWithValue(this.props.queryData, event.target.value)
-        var queryToChange = _.find(newObject.collection.queries, function(query){ return query.name == context.props.query.name })
-        queryToChange.data[0] = newQueryData
-        this.props.store.update(newObject)
+        var query = _.clone(this.props.store.fetch(), true)
+        var newQueryData = queriesHelper.copyDataWithValue(this.props.param, event.target.value)
+        query.data = queriesHelper.mergeData(queriesHelper.getData(query), newQueryData)
+        this.props.store.update(query)
     },
 
     getName: function() {
-        return queriesHelper.getDataName(this.props.queryData)
-    },
-
-    getValue: function() {
-        return queriesHelper.getDataValue(this.state.queryData)
-    },
-
-    getDefaultValue: function() {
-        return queriesHelper.getDataValue(this.props.queryData)
+        return queriesHelper.getDataName(this.props.param)
     }
 })
 

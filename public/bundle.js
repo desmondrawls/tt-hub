@@ -118,6 +118,11 @@ function copyDataWithValue(queryData, value){
     return _.merge(newQueryData, {value: value})
 }
 
+function mergeData(existingQueryData, newQueryData){
+    var withoutOldData = _.reject(existingQueryData, function(data) {return data.name == newQueryData.name})
+    return withoutOldData.concat(newQueryData)
+}
+
 exports.getQueries = getQueries
 exports.getPrompt = getPrompt
 exports.getData = getData
@@ -127,6 +132,7 @@ exports.getDataValue = getDataValue
 exports.takesInput = takesInput
 exports.getDataType = getDataType
 exports.copyDataWithValue = copyDataWithValue
+exports.mergeData = mergeData
 
 },{"./collection.js":2,"lodash":35}],5:[function(require,module,exports){
 var _ = require('lodash')
@@ -200,7 +206,6 @@ var attributesHelper = require('./collectionJson/attributes.js')
 var talksHelper = require('./talks.js')
 
 function getType(collectionObject){
-    console.log("COLLECTIONOBJ", collectionObject)
     if(collectionObject.collection.href.indexOf('speakers') > -1){
         return 'speakers'
     }
@@ -239,7 +244,7 @@ function getQueries(url){
 }
 function getSpeakerQueries(url){
     return [
-        {'href': url + 'search', 'rel': 'name', 'prompt': 'Search by name', 'name': 'name',
+        {'href': url + 'search', 'rel': 'search', 'prompt': 'Search speakers by', 'name': 'search',
             'data':
                 [
                     {'name': 'first_name', 'value': '', 'type': 'text'}
@@ -250,15 +255,10 @@ function getSpeakerQueries(url){
 
 function getDayQueries(url){
     return [
-        {'href': url + 'search', 'rel': 'conflict', 'prompt': 'Find days with conflicts', 'name': 'conflict',
+        {'href': url + 'search', 'rel': 'search', 'prompt': 'Search days by', 'name': 'conflict',
             'data':
                 [
-                    {'name': 'conflict', 'value': true, 'type': 'boolean'}
-                ]
-        },
-        {'href': url + 'search', 'rel': 'host', 'prompt': 'Search by host', 'name': 'host',
-            'data':
-                [
+                    {'name': 'conflict', 'value': true, 'type': 'boolean'},
                     {'name': 'host', 'value': '', 'type': 'text'}
                 ]
         }
@@ -47923,13 +47923,11 @@ var _ = require('lodash')
 
 var QueryCheckbox = React.createClass({displayName: "QueryCheckbox",
     render: function(){
-        console.log("BOTTOM DEETS", this.props.queryData)
         return (
             React.createElement("span", null, 
                 React.createElement("input", {
                     type: "checkbox", 
                     name: this.getName(), 
-                    defaultValue: this.getDefaultValue(), 
                     checked: this.getValue() ? "checked" : null, 
                     onClick: this.onClick}), 
                 React.createElement("span", null, this.getName())
@@ -47938,24 +47936,18 @@ var QueryCheckbox = React.createClass({displayName: "QueryCheckbox",
     },
 
     onClick: function(event) {
-        var context = this
-        var newObject = _.clone(context.props.store.fetch(), true)
-        var newQueryData = queriesHelper.copyDataWithValue(this.props.queryData, event.target.checked)
-        var queryToChange = _.find(newObject.collection.queries, function(query){ return query.name == context.props.query.name })
-        queryToChange.data[0] = newQueryData
-        this.props.store.update(newObject)
+        var query = _.clone(this.props.store.fetch(), true)
+        var newQueryData = queriesHelper.copyDataWithValue(this.props.param, event.target.checked)
+        query.data = queriesHelper.mergeData(queriesHelper.getData(query), newQueryData)
+        this.props.store.update(query)
     },
 
     getName: function() {
-        return queriesHelper.getDataName(this.props.queryData)
+        return queriesHelper.getDataName(this.props.param)
     },
 
     getValue: function() {
-        return queriesHelper.getDataValue(this.props.queryData)
-    },
-
-    getDefaultValue: function() {
-        return queriesHelper.getDataValue(this.props.queryData)
+        return queriesHelper.getDataValue(this.props.param)
     }
 })
 
@@ -47980,24 +47972,14 @@ var QueryTextbox = React.createClass({displayName: "QueryTextbox",
     },
 
     onChange: function(event) {
-        var context = this
-        var newObject = _.clone(context.props.store.fetch(), true)
-        var newQueryData = queriesHelper.copyDataWithValue(this.props.queryData, event.target.value)
-        var queryToChange = _.find(newObject.collection.queries, function(query){ return query.name == context.props.query.name })
-        queryToChange.data[0] = newQueryData
-        this.props.store.update(newObject)
+        var query = _.clone(this.props.store.fetch(), true)
+        var newQueryData = queriesHelper.copyDataWithValue(this.props.param, event.target.value)
+        query.data = queriesHelper.mergeData(queriesHelper.getData(query), newQueryData)
+        this.props.store.update(query)
     },
 
     getName: function() {
-        return queriesHelper.getDataName(this.props.queryData)
-    },
-
-    getValue: function() {
-        return queriesHelper.getDataValue(this.state.queryData)
-    },
-
-    getDefaultValue: function() {
-        return queriesHelper.getDataValue(this.props.queryData)
+        return queriesHelper.getDataName(this.props.param)
     }
 })
 
@@ -48010,35 +47992,47 @@ var queriesHelper = require('./../../helpers/collectionJson/queries.js')
 var QueryCheckbox = require('./query-checkbox.jsx')
 var QueryTextbox = require('./query-textbox.jsx')
 var collectionHelper = require('./../../helpers/collectionJson/collection.js')
+var Store = require('./../stores/object.js')
 
 var SearchBar = React.createClass({displayName: "SearchBar",
+    getInitialState: function(){
+        this.store = new Store.Object(this.getSearchQuery())
+        return {query: this.store.fetch()}
+    },
+
+    componentWillMount: function () {
+        this.store.addListener(this.onStoreUpdate)
+    },
+
+    getSearchQuery: function(){
+        var searchQuery = _.find(this.props.queries, function(query){ return query.rel == 'search' })
+        return searchQuery
+    },
+
+    onStoreUpdate: function(query) {
+        this.setState({query: query})
+    },
+
+    getParams: function(){
+        return queriesHelper.getData(this.state.query)
+    },
 
     render: function(){
         var context = this
 
-        function queries(queries) {
-            return _.map(queries, function(query){
-                switch (queriesHelper.getDataType(queriesHelper.getData(query)[0])) {
-                    case 'boolean': {
-                        return React.createElement(QueryCheckbox, {query: query, queryData: queriesHelper.getData(query)[0], store: context.props.store})
-                    }
-                    case 'text': {
-                        return React.createElement(QueryTextbox, {query: query, queryData: queriesHelper.getData(query)[0], store: context.props.store})
-                    }
-                    default: {
-                        return (
-                            React.createElement("span", null, 
-                                React.createElement("a", {href: queriesHelper.getHref(query)}, queriesHelper.getPrompt(query))
-                            )
-                        )
-                    }
+        function queryBuilder() {
+            return _.map(context.getParams(), function(param){
+                switch (queriesHelper.getDataType(param)) {
+                    case 'boolean': { return React.createElement(QueryCheckbox, {param: param, store: context.store}) }
+                    case 'text': { return React.createElement(QueryTextbox, {param: param, store: context.store}) }
+                    default: {return (React.createElement("span", null, "UNREGISTERED PARAM TYPE"))}
                 }
             })
         }
 
         return (
             React.createElement("div", null, 
-                queries(context.props.queries), 
+                queryBuilder(), 
                 React.createElement("button", {onClick: context.onReset}, "RESET"), 
                 React.createElement("button", {onClick: context.onSearch}, "SEARCH")
             )
@@ -48049,13 +48043,8 @@ var SearchBar = React.createClass({displayName: "SearchBar",
         this.updateFromSearch('')
     },
 
-    onSearch: function(){
-        var params = _.reduce(this.props.queries, function(current, nextQuery){
-            var nextParams = _.map(queriesHelper.getData(nextQuery), function(dataItem){
-                return _.pick(dataItem, ['name', 'value'])
-            })
-            return current.concat(nextParams)
-        },[])
+    onSearch: function() {
+        var params = _.map(this.getParams(), function (param) {return _.pick(param, ['name', 'value'])})
         this.updateFromSearch(params)
     },
 
@@ -48076,7 +48065,7 @@ var SearchBar = React.createClass({displayName: "SearchBar",
 
 module.exports = SearchBar
 
-},{"./../../helpers/collectionJson/collection.js":2,"./../../helpers/collectionJson/queries.js":4,"./query-checkbox.jsx":233,"./query-textbox.jsx":234,"lodash":35,"react":220}],236:[function(require,module,exports){
+},{"./../../helpers/collectionJson/collection.js":2,"./../../helpers/collectionJson/queries.js":4,"./../stores/object.js":222,"./query-checkbox.jsx":233,"./query-textbox.jsx":234,"lodash":35,"react":220}],236:[function(require,module,exports){
 var React = require('react')
 var Page = require('./page.jsx')
 var Details = require('./details.jsx')

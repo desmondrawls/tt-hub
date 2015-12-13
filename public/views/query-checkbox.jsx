@@ -4,13 +4,11 @@ var _ = require('lodash')
 
 var QueryCheckbox = React.createClass({
     render: function(){
-        console.log("BOTTOM DEETS", this.props.queryData)
         return (
             <span>
                 <input
                     type="checkbox"
                     name={this.getName()}
-                    defaultValue={this.getDefaultValue()}
                     checked={this.getValue() ? "checked" : null}
                     onClick={this.onClick}/>
                 <span>{this.getName()}</span>
@@ -19,24 +17,18 @@ var QueryCheckbox = React.createClass({
     },
 
     onClick: function(event) {
-        var context = this
-        var newObject = _.clone(context.props.store.fetch(), true)
-        var newQueryData = queriesHelper.copyDataWithValue(this.props.queryData, event.target.checked)
-        var queryToChange = _.find(newObject.collection.queries, function(query){ return query.name == context.props.query.name })
-        queryToChange.data[0] = newQueryData
-        this.props.store.update(newObject)
+        var query = _.clone(this.props.store.fetch(), true)
+        var newQueryData = queriesHelper.copyDataWithValue(this.props.param, event.target.checked)
+        query.data = queriesHelper.mergeData(queriesHelper.getData(query), newQueryData)
+        this.props.store.update(query)
     },
 
     getName: function() {
-        return queriesHelper.getDataName(this.props.queryData)
+        return queriesHelper.getDataName(this.props.param)
     },
 
     getValue: function() {
-        return queriesHelper.getDataValue(this.props.queryData)
-    },
-
-    getDefaultValue: function() {
-        return queriesHelper.getDataValue(this.props.queryData)
+        return queriesHelper.getDataValue(this.props.param)
     }
 })
 

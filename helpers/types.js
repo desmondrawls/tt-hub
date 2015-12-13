@@ -2,7 +2,6 @@ var attributesHelper = require('./collectionJson/attributes.js')
 var talksHelper = require('./talks.js')
 
 function getType(collectionObject){
-    console.log("COLLECTIONOBJ", collectionObject)
     if(collectionObject.collection.href.indexOf('speakers') > -1){
         return 'speakers'
     }
@@ -41,7 +40,7 @@ function getQueries(url){
 }
 function getSpeakerQueries(url){
     return [
-        {'href': url + 'search', 'rel': 'name', 'prompt': 'Search by name', 'name': 'name',
+        {'href': url + 'search', 'rel': 'search', 'prompt': 'Search speakers by', 'name': 'search',
             'data':
                 [
                     {'name': 'first_name', 'value': '', 'type': 'text'}
@@ -52,15 +51,10 @@ function getSpeakerQueries(url){
 
 function getDayQueries(url){
     return [
-        {'href': url + 'search', 'rel': 'conflict', 'prompt': 'Find days with conflicts', 'name': 'conflict',
+        {'href': url + 'search', 'rel': 'search', 'prompt': 'Search days by', 'name': 'conflict',
             'data':
                 [
-                    {'name': 'conflict', 'value': true, 'type': 'boolean'}
-                ]
-        },
-        {'href': url + 'search', 'rel': 'host', 'prompt': 'Search by host', 'name': 'host',
-            'data':
-                [
+                    {'name': 'conflict', 'value': true, 'type': 'boolean'},
                     {'name': 'host', 'value': '', 'type': 'text'}
                 ]
         }
