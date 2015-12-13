@@ -17,7 +17,7 @@ var SearchBar = React.createClass({
     },
 
     getSearchQuery: function(){
-        var searchQuery = _.find(this.props.queries, function(query){ return query.rel == 'search' })
+        var searchQuery = _.clone(_.find(this.props.queries, function(query){ return query.rel == 'search' }))
         return searchQuery
     },
 
@@ -53,6 +53,7 @@ var SearchBar = React.createClass({
 
     onReset: function(){
         this.updateFromSearch('')
+        this.setState({query: this.getSearchQuery()})
     },
 
     onSearch: function() {

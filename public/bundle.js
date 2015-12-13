@@ -47966,6 +47966,7 @@ var QueryTextbox = React.createClass({displayName: "QueryTextbox",
                 React.createElement("input", {
                     type: "text", 
                     name: this.getName(), 
+                    value: this.props.param.value, 
                     onChange: this.onChange})
             )
         )
@@ -48005,7 +48006,7 @@ var SearchBar = React.createClass({displayName: "SearchBar",
     },
 
     getSearchQuery: function(){
-        var searchQuery = _.find(this.props.queries, function(query){ return query.rel == 'search' })
+        var searchQuery = _.clone(_.find(this.props.queries, function(query){ return query.rel == 'search' }))
         return searchQuery
     },
 
@@ -48041,6 +48042,7 @@ var SearchBar = React.createClass({displayName: "SearchBar",
 
     onReset: function(){
         this.updateFromSearch('')
+        this.setState({query: this.getSearchQuery()})
     },
 
     onSearch: function() {

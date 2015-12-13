@@ -10,6 +10,7 @@ var QueryTextbox = React.createClass({
                 <input
                     type="text"
                     name={this.getName()}
+                    value={this.props.param.value}
                     onChange={this.onChange}/>
             </span>
         )
