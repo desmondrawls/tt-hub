@@ -7,9 +7,7 @@ function layout(backUrl, url, items, template) {
         collection: {
             version: '1.0',
             href: url,
-            links: [
-                {rel: 'back', href: backUrl}
-            ],
+            links: typesHelper.getLinks(url, backUrl),
             items: items,
             queries: typesHelper.getQueries(url),
             template: template

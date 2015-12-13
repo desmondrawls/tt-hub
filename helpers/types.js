@@ -1,5 +1,17 @@
 var attributesHelper = require('./collectionJson/attributes.js')
-var itemsHelper = require('./collectionJson/items.js')
+var talksHelper = require('./talks.js')
+
+function getType(collectionObject){
+    if(collectionObject.collection.href.indexOf('speakers') > -1){
+        return 'speakers'
+    }
+    if(collectionObject.collection.href.indexOf('days') > -1){
+        return 'days'
+    }
+    if(collectionObject.collection.href.indexOf('talks') > -1){
+        return 'talks'
+    }
+}
 
 function getItemIdentifier(item){
     if(item.href.indexOf('speakers') > -1){
@@ -26,7 +38,6 @@ function getQueries(url){
         return getDayQueries(url)
     }
 }
-
 function getSpeakerQueries(url){
     return [
         {'href': url + 'search', 'rel': 'booked', 'prompt': 'Find booked speakers', 'name': 'booked',
@@ -43,7 +54,6 @@ function getSpeakerQueries(url){
         }
     ]
 }
-
 
 function getDayQueries(url){
     return [
@@ -63,5 +73,15 @@ function getDayQueries(url){
 }
 
 
+function getLinks(url, backUrl){
+    if(url.indexOf('talks') > -1){
+        return talksHelper.getLinks(url, backUrl)
+    }
+    return [{rel: 'back', href: backUrl}]
+}
+
+
 exports.getItemIdentifier = getItemIdentifier
 exports.getQueries = getQueries
+exports.getType = getType
+exports.getLinks = getLinks

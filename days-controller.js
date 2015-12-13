@@ -1,4 +1,3 @@
-var _ = require('lodash')
 var Adapter = require('./adapter.js').Adapter
 var hostUrl = 'http://localhost:4000/days/'
 var serverUrl = 'http://localhost:3001/'

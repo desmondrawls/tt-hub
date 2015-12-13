@@ -1,5 +1,3 @@
-var _ = require('lodash')
-var Q = require('q');
 var Adapter = require('./adapter.js').Adapter
 var hostUrl = 'http://localhost:4000/speakers/'
 var serverUrl = 'http://localhost:3000/'

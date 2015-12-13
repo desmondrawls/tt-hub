@@ -20,7 +20,7 @@ app.set('view', renderer.expressView)
 
 // override with POST having ?_method=DELETE
 app.use(methodOverride('_method'))
-app.use(bodyParser.urlencoded({ extended: true }))
+app.use(bodyParser.urlencoded({extended: true}))
 app.use(express.static(__dirname + '/public'))
 app.use('/stylesheets', express.static('stylesheets'));
 app.use('/jquery', express.static(__dirname + '/node_modules/jquery/dist/'));
@@ -34,7 +34,6 @@ app.post('/speakers/', speakersController.create)
 app.get('/speakers/:id', speakersController.show)
 app.put('/speakers/:id', speakersController.update)
 app.delete('/speakers/:id', speakersController.destroy)
-app.delete('/speakers/:id', speakersController.destroy)
 
 var daysController = require('./days-controller')
 app.get('/days/', daysController.index)
@@ -43,7 +42,9 @@ app.post('/days/', daysController.create)
 app.get('/days/:id', daysController.show)
 app.put('/days/:id', daysController.update)
 app.delete('/days/:id', daysController.destroy)
-app.delete('/days/:id', daysController.destroy)
+
+var talksController = require('./talks-controller')
+app.get('/', talksController.index)
 
 app.listen(4000);
 

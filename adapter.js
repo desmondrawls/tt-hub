@@ -12,10 +12,10 @@ var _ = require('lodash')
 var Q = require('q');
 var client = new Client()
 
-var Collection = require('./db').CollectionJsonCollection
-var Item = require('./db').CollectionJsonItem
-var Template = require('./db').CollectionJsonTemplate
-var Query = require('./db').CollectionJsonQuery
+var Collection = require('./cache').CollectionJsonCollection
+var Item = require('./cache').CollectionJsonItem
+var Template = require('./cache').CollectionJsonTemplate
+var Query = require('./cache').CollectionJsonQuery
 
 var Adapter = function(hostUrl, serverUrl, hostPath){
     this.hostUrl = hostUrl
