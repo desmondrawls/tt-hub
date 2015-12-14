@@ -17,10 +17,10 @@ var Item = require('./cache').CollectionJsonItem
 var Template = require('./cache').CollectionJsonTemplate
 var Query = require('./cache').CollectionJsonQuery
 
-var Adapter = function(hostUrl, serverUrl, hostPath){
-    this.hostUrl = hostUrl
-    this.serverUrl = serverUrl
+var Adapter = function(hostRoot, hostPath, serverUrl){
+    this.hostRoot = hostRoot
     this.hostPath = hostPath
+    this.serverUrl = serverUrl
 }
 
 Adapter.prototype.index = function(req, res, resolver) {
@@ -41,8 +41,8 @@ Adapter.prototype.index = function(req, res, resolver) {
                 .then(Q.all(addQueries).done())
                 .then(Q.all(addItems)
                     .then(function (items) {
-                        var partiallyDomesticatedObject = immigrationsHelper.domesticateObjectItems(object, items, context.hostUrl)
-                        resolver.resolve(immigrationsHelper.domesticateObject(context.hostUrl, context.hostUrl, partiallyDomesticatedObject))
+                        var partiallyDomesticatedObject = immigrationsHelper.domesticateObjectItems(object, items, context.hostRoot)
+                        resolver.resolve(immigrationsHelper.domesticateObject(context.hostRoot + context.hostPath, context.hostRoot + context.hostPath, partiallyDomesticatedObject))
                     })
                 .done())
             .done())
@@ -54,8 +54,8 @@ Adapter.prototype.index = function(req, res, resolver) {
 Adapter.prototype.search = function(req, res, resolver) {
     var context = this
     var response = function (template, items) {
-        var domesticatedItems = immigrationsHelper.domesticateItems(context.hostUrl, items);
-        resolver.resolve(jsonTransformer.layout(context.hostUrl, context.hostUrl, domesticatedItems, template)
+        var domesticatedItems = immigrationsHelper.domesticateItems(context.hostRoot, items);
+        resolver.resolve(jsonTransformer.layout(context.hostRoot + context.hostPath, context.hostRoot + context.hostPath, domesticatedItems, template)
         )}
     var template = Template.find({}).exec()
     var items = Item.find().elemMatch('data', function (elem) {
@@ -87,7 +87,7 @@ Adapter.prototype.show = function(req, res, resolver) {
         }
         client.get(item.href, args, function (rawObject, response) {
             new Collection(JSON.parse(rawObject).collection).save(function (err, savedObject) {
-                resolver.resolve(immigrationsHelper.domesticateObject(context.hostUrl, context.hostUrl + savedObject.id, {collection: savedObject}))
+                resolver.resolve(immigrationsHelper.domesticateObject(context.hostRoot + context.hostPath, context.hostRoot + context.hostPath + savedObject.id, {collection: savedObject}))
             })
         })
     })

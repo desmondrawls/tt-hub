@@ -1,8 +1,8 @@
 var Adapter = require('./adapter.js').Adapter
-var hostUrl = 'http://localhost:4000/days/'
+var hostRoot = 'http://localhost:4000'
 var serverUrl = 'http://localhost:3001/'
 var hostPath = '/days/'
-var adapter = new Adapter(hostUrl, serverUrl, hostPath)
+var adapter = new Adapter(hostRoot, hostPath, serverUrl)
 var Responder = require('./responders.js').Responder
 var responder = new Responder()
 var Controller = require('./controller.js').Controller
