@@ -12,15 +12,14 @@ var _ = require('lodash')
 var Q = require('q');
 var client = new Client()
 
-var Collection = require('./cache').CollectionJsonCollection
-var Item = require('./cache').CollectionJsonItem
-var Template = require('./cache').CollectionJsonTemplate
-var Query = require('./cache').CollectionJsonQuery
-
-var Adapter = function(hostRoot, hostPath, serverUrl){
+var Adapter = function(hostRoot, hostPath, serverUrl, collectionModel, itemModel, templateModel, queryModel){
     this.hostRoot = hostRoot
     this.hostPath = hostPath
     this.serverUrl = serverUrl
+    this.CollectionModel = collectionModel
+    this.ItemModel = itemModel
+    this.TemplateModel = templateModel
+    this.QueryModel = queryModel
 }
 
 Adapter.prototype.index = function(req, res, resolver) {
@@ -30,12 +29,12 @@ Adapter.prototype.index = function(req, res, resolver) {
     }
     client.get(context.serverUrl, args, function (rawObject, response) {
         var object = JSON.parse(rawObject);
-        var clearTemplate = Template.remove({}).exec()
-        var clearQueries = Query.remove({}).exec()
-        var clearItems = Item.remove({}).exec()
-        var addTemplate = new Template(templateHelper.getTemplate(object)).save()
-        var addQueries = _.map(queriesHelper.getQueries(object), function (query) {return new Query(query).save()})
-        var addItems = _.map(itemsHelper.getItems(object), function (item) {return new Item(item).save()})
+        var clearTemplate = context.TemplateModel.remove({}).exec()
+        var clearQueries = context.QueryModel.remove({}).exec()
+        var clearItems = context.ItemModel.remove({}).exec()
+        var addTemplate = new context.TemplateModel(templateHelper.getTemplate(object)).save()
+        var addQueries = _.map(queriesHelper.getQueries(object), function (query) {return new context.QueryModel(query).save()})
+        var addItems = _.map(itemsHelper.getItems(object), function (item) {return new context.ItemModel(item).save()})
         Q.all([clearTemplate, clearQueries, clearItems])
             .then(Q.when(addTemplate)
                 .then(Q.all(addQueries).done())
@@ -57,8 +56,8 @@ Adapter.prototype.search = function(req, res, resolver) {
         var domesticatedItems = immigrationsHelper.domesticateItems(context.hostRoot + context.hostPath, items);
         resolver.resolve(jsonTransformer.layout(context.hostRoot, context.hostRoot + context.hostPath, domesticatedItems, template)
         )}
-    var template = Template.find({}).exec()
-    var items = Item.find().elemMatch('data', function (elem) {
+    var template = context.TemplateModel.find({}).exec()
+    var items = context.ItemModel.find().elemMatch('data', function (elem) {
         _.each(req.query, function (value, name) {elem.where('value').equals(value).where('name').equals(name)})
     }).exec()
     Q.spread([template, items], function (templates, items) {
@@ -81,12 +80,12 @@ Adapter.prototype.create = function(req, res) {
 
 Adapter.prototype.show = function(req, res, resolver) {
     var context = this
-    Item.findById(req.params.id, function (err, item) {
+    context.ItemModel.findById(req.params.id, function (err, item) {
         var args = {
             headers: {"Content-Type": "application/json", "Accept": "application/json"}
         }
         client.get(item.href, args, function (rawObject, response) {
-            new Collection(JSON.parse(rawObject).collection).save(function (err, savedObject) {
+            new this.CollectionModel(JSON.parse(rawObject).collection).save(function (err, savedObject) {
                 resolver.resolve(immigrationsHelper.domesticateObject(context.hostRoot, context.hostRoot + context.hostPath + savedObject.id, {collection: savedObject}))
             })
         })
@@ -97,7 +96,7 @@ Adapter.prototype.show = function(req, res, resolver) {
 Adapter.prototype.update = function(req, res) {
     var context = this
     console.log("updating item " + req.params.id, "with " + req.body)
-    Collection.findById(req.params.id, function (err, itemObject) {
+    this.CollectionModel.findById(req.params.id, function (err, itemObject) {
         var args = {
             data: req.body,
             headers: {"Content-Type": "application/json", "Accept": "application/json"}
@@ -111,7 +110,7 @@ Adapter.prototype.update = function(req, res) {
 Adapter.prototype.destroy = function(req, res) {
     var context = this
     console.log("destroying item " + req.params.id)
-    Collection.findById(req.params.id, function (err, itemObject) {
+    this.CollectionModel.findById(req.params.id, function (err, itemObject) {
         var args = {
             headers: {"Content-Type": "application/json", "Accept": "application/json"}
         }

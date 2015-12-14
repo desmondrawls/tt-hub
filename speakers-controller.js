@@ -2,7 +2,13 @@ var Adapter = require('./adapter.js').Adapter
 var hostRoot = 'http://localhost:4000'
 var serverUrl = 'http://localhost:3000/'
 var hostPath = '/speakers/'
-var adapter = new Adapter(hostRoot, hostPath, serverUrl)
+
+var Collection = require('./cache').SpeakersCollectionJsonCollection
+var Item = require('./cache').SpeakersCollectionJsonItem
+var Template = require('./cache').SpeakersCollectionJsonTemplate
+var Query = require('./cache').SpeakersCollectionJsonQuery
+
+var adapter = new Adapter(hostRoot, hostPath, serverUrl, Collection, Item, Template, Query)
 var Responder = require('./responders.js').Responder
 var responder = new Responder()
 var Controller = require('./controller.js').Controller

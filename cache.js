@@ -52,7 +52,12 @@ var collectionJsonQuerySchema = mongoose.Schema(
     }
 )
 
-exports.CollectionJsonCollection = mongoose.model('CollectionJsonCollection', collectionJsonCollectionSchema)
-exports.CollectionJsonItem = mongoose.model('Item', collectionJsonItemSchema)
-exports.CollectionJsonTemplate = mongoose.model('Template', collectionJsonTemplateSchema)
-exports.CollectionJsonQuery = mongoose.model('Query', collectionJsonQuerySchema)
+exports.DayCollectionJsonCollection = mongoose.model('DayCollectionJsonCollection', collectionJsonCollectionSchema)
+exports.DayCollectionJsonItem = mongoose.model('DayItem', collectionJsonItemSchema)
+exports.DayCollectionJsonTemplate = mongoose.model('DayTemplate', collectionJsonTemplateSchema)
+exports.DayCollectionJsonQuery = mongoose.model('DayQuery', collectionJsonQuerySchema)
+
+exports.SpeakersCollectionJsonCollection = mongoose.model('SpeakerCollectionJsonCollection', collectionJsonCollectionSchema)
+exports.SpeakersCollectionJsonItem = mongoose.model('SpeakerItem', collectionJsonItemSchema)
+exports.SpeakersCollectionJsonTemplate = mongoose.model('SpeakerTemplate', collectionJsonTemplateSchema)
+exports.SpeakersCollectionJsonQuery = mongoose.model('SpeakerQuery', collectionJsonQuerySchema)

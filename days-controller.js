@@ -2,7 +2,13 @@ var Adapter = require('./adapter.js').Adapter
 var hostRoot = 'http://localhost:4000'
 var serverUrl = 'http://localhost:3001/'
 var hostPath = '/days/'
-var adapter = new Adapter(hostRoot, hostPath, serverUrl)
+
+var Collection = require('./cache').DayCollectionJsonCollection
+var Item = require('./cache').DayCollectionJsonItem
+var Template = require('./cache').DayCollectionJsonTemplate
+var Query = require('./cache').DayCollectionJsonQuery
+
+var adapter = new Adapter(hostRoot, hostPath, serverUrl, Collection, Item, Template, Query)
 var Responder = require('./responders.js').Responder
 var responder = new Responder()
 var Controller = require('./controller.js').Controller
