@@ -31,7 +31,6 @@ var LinkedList = React.createClass({
     },
 
     getItemAttributes: function(item){
-        console.log("ITEM TO SHOW", item)
         return attributesHelper.getItemAttributes(item)
     }
 })

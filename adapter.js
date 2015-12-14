@@ -41,8 +41,8 @@ Adapter.prototype.index = function(req, res, resolver) {
                 .then(Q.all(addQueries).done())
                 .then(Q.all(addItems)
                     .then(function (items) {
-                        var partiallyDomesticatedObject = immigrationsHelper.domesticateObjectItems(object, items, context.hostRoot)
-                        resolver.resolve(immigrationsHelper.domesticateObject(context.hostRoot + context.hostPath, context.hostRoot + context.hostPath, partiallyDomesticatedObject))
+                        var partiallyDomesticatedObject = immigrationsHelper.domesticateObjectItems(object, items, context.hostRoot + context.hostPath)
+                        resolver.resolve(immigrationsHelper.domesticateObject(context.hostRoot, context.hostRoot + context.hostPath, partiallyDomesticatedObject))
                     })
                 .done())
             .done())
@@ -54,8 +54,8 @@ Adapter.prototype.index = function(req, res, resolver) {
 Adapter.prototype.search = function(req, res, resolver) {
     var context = this
     var response = function (template, items) {
-        var domesticatedItems = immigrationsHelper.domesticateItems(context.hostRoot, items);
-        resolver.resolve(jsonTransformer.layout(context.hostRoot + context.hostPath, context.hostRoot + context.hostPath, domesticatedItems, template)
+        var domesticatedItems = immigrationsHelper.domesticateItems(context.hostRoot + context.hostPath, items);
+        resolver.resolve(jsonTransformer.layout(context.hostRoot, context.hostRoot + context.hostPath, domesticatedItems, template)
         )}
     var template = Template.find({}).exec()
     var items = Item.find().elemMatch('data', function (elem) {
@@ -87,7 +87,7 @@ Adapter.prototype.show = function(req, res, resolver) {
         }
         client.get(item.href, args, function (rawObject, response) {
             new Collection(JSON.parse(rawObject).collection).save(function (err, savedObject) {
-                resolver.resolve(immigrationsHelper.domesticateObject(context.hostRoot + context.hostPath, context.hostRoot + context.hostPath + savedObject.id, {collection: savedObject}))
+                resolver.resolve(immigrationsHelper.domesticateObject(context.hostRoot, context.hostRoot + context.hostPath + savedObject.id, {collection: savedObject}))
             })
         })
     })
