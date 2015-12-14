@@ -31,7 +31,6 @@ var Double = React.createClass({
     },
 
     componentDidMount: function(){
-        console.log("FETCHED RESOURCES", this.fetchResources())
         this.fetchResources()
     },
 

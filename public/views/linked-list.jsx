@@ -13,7 +13,7 @@ var LinkedList = React.createClass({
             return _.map(items, function (item) {
                 return (
                     <li className="tt-item">
-                        <a href={itemsHelper.getLink(item)}>{context.props.textFormatter(item)}</a>
+                        <a href={itemsHelper.getLink(item)}>{item.href}</a>
                         <Details
                             attributes={context.getItemAttributes(item)}
                             onChange={context.handleAttributeChange}

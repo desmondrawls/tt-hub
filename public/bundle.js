@@ -47632,7 +47632,6 @@ var Double = React.createClass({displayName: "Double",
     },
 
     componentDidMount: function(){
-        console.log("FETCHED RESOURCES", this.fetchResources())
         this.fetchResources()
     },
 
@@ -47790,7 +47789,7 @@ var LinkedList = React.createClass({displayName: "LinkedList",
             return _.map(items, function (item) {
                 return (
                     React.createElement("li", {className: "tt-item"}, 
-                        React.createElement("a", {href: itemsHelper.getLink(item)}, context.props.textFormatter(item)), 
+                        React.createElement("a", {href: itemsHelper.getLink(item)}, item.href), 
                         React.createElement(Details, {
                             attributes: context.getItemAttributes(item), 
                             onChange: context.handleAttributeChange, 

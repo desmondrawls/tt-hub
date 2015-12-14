@@ -85,7 +85,7 @@ Adapter.prototype.show = function(req, res, resolver) {
             headers: {"Content-Type": "application/json", "Accept": "application/json"}
         }
         client.get(item.href, args, function (rawObject, response) {
-            new this.CollectionModel(JSON.parse(rawObject).collection).save(function (err, savedObject) {
+            new context.CollectionModel(JSON.parse(rawObject).collection).save(function (err, savedObject) {
                 resolver.resolve(immigrationsHelper.domesticateObject(context.hostRoot, context.hostRoot + context.hostPath + savedObject.id, {collection: savedObject}))
             })
         })
