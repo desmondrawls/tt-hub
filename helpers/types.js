@@ -51,7 +51,7 @@ function getSpeakerQueries(url){
 
 function getDayQueries(url){
     return [
-        {'href': url + 'search', 'rel': 'search', 'prompt': 'Search days by', 'name': 'conflict',
+        {'href': url + 'search', 'rel': 'search', 'prompt': 'Search days by', 'name': 'search',
             'data':
                 [
                     {'name': 'conflict', 'value': false, 'type': 'boolean'},

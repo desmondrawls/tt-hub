@@ -7,7 +7,6 @@ function domesticateObject(backUrl, url, object){
 
 function domesticateObjectItems(object, items, url){
     object.collection.items = _.map(items, function(item){
-        console.log("DOMESTICATING WITH ID:", item.id)
         return domesticateItem(url + item.id, item)})
     return object
 }

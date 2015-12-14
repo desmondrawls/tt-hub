@@ -7,7 +7,6 @@ var Details = React.createClass({
         var context = this
 
         function attributesList(attributes){
-            console.log("ATTRIBUTES", attributes)
             return _.map(attributes, function(attribute){
                 return(
                     <span>

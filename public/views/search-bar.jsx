@@ -8,7 +8,7 @@ var Store = require('./../stores/object.js')
 
 var SearchBar = React.createClass({
     getInitialState: function(){
-        this.store = new Store.Object(this.getSearchQuery())
+        this.store = new Store.Object(this.getDisabledSearchQuery())
         return {query: this.store.fetch()}
     },
 
@@ -16,8 +16,9 @@ var SearchBar = React.createClass({
         this.store.addListener(this.onStoreUpdate)
     },
 
-    getSearchQuery: function(){
-        var searchQuery = _.clone(_.find(this.props.queries, function(query){ return query.rel == 'search' }))
+    getDisabledSearchQuery: function(){
+        var searchQuery = _.clone(this.props.query, true)
+        searchQuery.data = _.map(searchQuery.data, function(dataItem) { return _.merge(dataItem, {disabled: true})})
         return searchQuery
     },
 
@@ -53,17 +54,19 @@ var SearchBar = React.createClass({
 
     onReset: function(){
         this.updateFromSearch('')
-        this.setState({query: this.getSearchQuery()})
+        this.setState({query: this.props.query})
     },
 
     onSearch: function() {
-        var params = _.map(this.getParams(), function (param) {return _.pick(param, ['name', 'value'])})
-        this.updateFromSearch(params)
+        var enabledParams = _.filter(this.getParams(), function(param){return param.enabled == true})
+        var formattedEnabledParams = _.map(enabledParams, function (param) {return _.pick(param, ['name', 'value'])})
+        this.updateFromSearch(formattedEnabledParams)
     },
 
     updateFromSearch: function(params){
+        if(params.length == 0){return}
         var context = this
-        var url = this.props.queries[0].href + '?' + $.param(params)
+        var url = this.props.query.href + '?' + $.param(params)
         $.ajax(url, {
             method: 'GET',
             headers: {

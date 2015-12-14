@@ -255,7 +255,7 @@ function getSpeakerQueries(url){
 
 function getDayQueries(url){
     return [
-        {'href': url + 'search', 'rel': 'search', 'prompt': 'Search days by', 'name': 'conflict',
+        {'href': url + 'search', 'rel': 'search', 'prompt': 'Search days by', 'name': 'search',
             'data':
                 [
                     {'name': 'conflict', 'value': false, 'type': 'boolean'},
@@ -47568,7 +47568,6 @@ var Details = React.createClass({displayName: "Details",
         var context = this
 
         function attributesList(attributes){
-            console.log("ATTRIBUTES", attributes)
             return _.map(attributes, function(attribute){
                 return(
                     React.createElement("span", null, 
@@ -47740,11 +47739,15 @@ var Index = React.createClass({displayName: "Index",
         return (
             React.createElement(Page, React.__spread({},  this.props), 
                 React.createElement("h2", null, typeHelper.getType(this.state.collectionObject)), 
-                React.createElement(SearchBar, {store: this.store, queries: this.getQueries(this.state.collectionObject)}), 
+                React.createElement(SearchBar, {store: this.store, query: this.getSearchQuery()}), 
                 React.createElement(NewButton, {store: this.store, template: this.getTemplate(), href: this.getPrimaryUrl()}), 
                 React.createElement(LinkedList, {items: itemsHelper.getItems(this.state.collectionObject), textFormatter: typeHelper.getItemIdentifier})
             )
         )
+    },
+
+    getSearchQuery: function(){
+        return _.find(this.getQueries(this.state.collectionObject), function(query){ return query.rel == 'search' })
     },
 
     getPrimaryUrl: function(){
@@ -47944,9 +47947,17 @@ var QueryCheckbox = React.createClass({displayName: "QueryCheckbox",
                     name: this.getName(), 
                     checked: this.getValue() ? "checked" : null, 
                     onClick: this.onClick}), 
-                React.createElement("span", null, this.getName())
+                React.createElement("span", null, this.getName()), 
+                React.createElement("span", {onClick: this.toggleEnabled}, this.props.param.enabled ? 'Disable ' : ' Enable')
             )
         )
+    },
+
+    toggleEnabled: function(){
+        var query = _.clone(this.props.store.fetch(), true)
+        var newQueryData = _.merge(this.props.param, {enabled: !this.props.param.enabled})
+        query.data = queriesHelper.mergeData(queriesHelper.getData(query), newQueryData)
+        this.props.store.update(query)
     },
 
     onClick: function(event) {
@@ -47981,9 +47992,17 @@ var QueryTextbox = React.createClass({displayName: "QueryTextbox",
                     type: "text", 
                     name: this.getName(), 
                     value: this.props.param.value, 
-                    onChange: this.onChange})
+                    onChange: this.onChange}), 
+                React.createElement("span", {onClick: this.toggleEnabled}, this.props.param.enabled ? 'Disable ' : ' Enable')
             )
         )
+    },
+
+    toggleEnabled: function(){
+        var query = _.clone(this.props.store.fetch(), true)
+        var newQueryData = _.merge(this.props.param, {enabled: !this.props.param.enabled})
+        query.data = queriesHelper.mergeData(queriesHelper.getData(query), newQueryData)
+        this.props.store.update(query)
     },
 
     onChange: function(event) {
@@ -48011,7 +48030,7 @@ var Store = require('./../stores/object.js')
 
 var SearchBar = React.createClass({displayName: "SearchBar",
     getInitialState: function(){
-        this.store = new Store.Object(this.getSearchQuery())
+        this.store = new Store.Object(this.getDisabledSearchQuery())
         return {query: this.store.fetch()}
     },
 
@@ -48019,8 +48038,9 @@ var SearchBar = React.createClass({displayName: "SearchBar",
         this.store.addListener(this.onStoreUpdate)
     },
 
-    getSearchQuery: function(){
-        var searchQuery = _.clone(_.find(this.props.queries, function(query){ return query.rel == 'search' }))
+    getDisabledSearchQuery: function(){
+        var searchQuery = _.clone(this.props.query, true)
+        searchQuery.data = _.map(searchQuery.data, function(dataItem) { return _.merge(dataItem, {disabled: true})})
         return searchQuery
     },
 
@@ -48056,17 +48076,19 @@ var SearchBar = React.createClass({displayName: "SearchBar",
 
     onReset: function(){
         this.updateFromSearch('')
-        this.setState({query: this.getSearchQuery()})
+        this.setState({query: this.props.query})
     },
 
     onSearch: function() {
-        var params = _.map(this.getParams(), function (param) {return _.pick(param, ['name', 'value'])})
-        this.updateFromSearch(params)
+        var enabledParams = _.filter(this.getParams(), function(param){return param.enabled == true})
+        var formattedEnabledParams = _.map(enabledParams, function (param) {return _.pick(param, ['name', 'value'])})
+        this.updateFromSearch(formattedEnabledParams)
     },
 
     updateFromSearch: function(params){
+        if(params.length == 0){return}
         var context = this
-        var url = this.props.queries[0].href + '?' + $.param(params)
+        var url = this.props.query.href + '?' + $.param(params)
         $.ajax(url, {
             method: 'GET',
             headers: {
