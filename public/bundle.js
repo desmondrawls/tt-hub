@@ -258,7 +258,7 @@ function getDayQueries(url){
         {'href': url + 'search', 'rel': 'search', 'prompt': 'Search days by', 'name': 'conflict',
             'data':
                 [
-                    {'name': 'conflict', 'value': true, 'type': 'boolean'},
+                    {'name': 'conflict', 'value': false, 'type': 'boolean'},
                     {'name': 'host', 'value': '', 'type': 'text'}
                 ]
         }
@@ -47568,6 +47568,7 @@ var Details = React.createClass({displayName: "Details",
         var context = this
 
         function attributesList(attributes){
+            console.log("ATTRIBUTES", attributes)
             return _.map(attributes, function(attribute){
                 return(
                     React.createElement("span", null, 
@@ -47669,10 +47670,10 @@ var Double = React.createClass({displayName: "Double",
         function resources(){
             return(
                 React.createElement("div", null, 
-                    React.createElement("div", {className: "left-half"}, 
+                    React.createElement("div", {className: "tt-column left-half"}, 
                         React.createElement(Index, {collectionObject: context.state.resources[0]})
                     ), 
-                    React.createElement("div", {className: "right-half"}, 
+                    React.createElement("div", {className: "tt-column right-half"}, 
                         React.createElement(Index, {collectionObject: context.state.resources[1]})
                     )
                 )
@@ -47741,8 +47742,8 @@ var Index = React.createClass({displayName: "Index",
             React.createElement(Page, React.__spread({},  this.props), 
                 React.createElement("h2", null, typeHelper.getType(this.state.collectionObject)), 
                 React.createElement(SearchBar, {store: this.store, queries: this.getQueries(this.state.collectionObject)}), 
-                React.createElement(LinkedList, {items: itemsHelper.getItems(this.state.collectionObject), textFormatter: typeHelper.getItemIdentifier}), 
-                React.createElement(NewButton, {store: this.store, template: this.getTemplate(), href: this.getPrimaryUrl()})
+                React.createElement(NewButton, {store: this.store, template: this.getTemplate(), href: this.getPrimaryUrl()}), 
+                React.createElement(LinkedList, {items: itemsHelper.getItems(this.state.collectionObject), textFormatter: typeHelper.getItemIdentifier})
             )
         )
     },
@@ -47776,7 +47777,9 @@ module.exports = Link
 },{"react":220}],229:[function(require,module,exports){
 var React = require('react')
 var itemsHelper = require('./../../helpers/collectionJson/items.js')
+var attributesHelper = require('./../../helpers/collectionJson/attributes.js')
 var _ = require('lodash')
+var Details = require('./details.jsx')
 
 var LinkedList = React.createClass({displayName: "LinkedList",
 
@@ -47786,20 +47789,33 @@ var LinkedList = React.createClass({displayName: "LinkedList",
         function items(items) {
             return _.map(items, function (item) {
                 return (
-                    React.createElement("li", null, 
-                        React.createElement("a", {href: itemsHelper.getLink(item)}, context.props.textFormatter(item))
+                    React.createElement("li", {className: "tt-item"}, 
+                        React.createElement("a", {href: itemsHelper.getLink(item)}, context.props.textFormatter(item)), 
+                        React.createElement(Details, {
+                            attributes: context.getItemAttributes(item), 
+                            onChange: context.handleAttributeChange, 
+                            edit: false}
+                        )
                     )
                 )
             })
         }
 
         return React.createElement("ul", null, items(this.props.items))
+    },
+
+    handleAttributeChange: function(){
+    },
+
+    getItemAttributes: function(item){
+        console.log("ITEM TO SHOW", item)
+        return attributesHelper.getItemAttributes(item)
     }
 })
 
 module.exports = LinkedList
 
-},{"./../../helpers/collectionJson/items.js":3,"lodash":35,"react":220}],230:[function(require,module,exports){
+},{"./../../helpers/collectionJson/attributes.js":1,"./../../helpers/collectionJson/items.js":3,"./details.jsx":224,"lodash":35,"react":220}],230:[function(require,module,exports){
 var React = require('react')
 var NewForm = require('./new-form.jsx')
 var Link = require('./link.jsx')

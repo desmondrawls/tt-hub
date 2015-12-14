@@ -54,7 +54,7 @@ function getDayQueries(url){
         {'href': url + 'search', 'rel': 'search', 'prompt': 'Search days by', 'name': 'conflict',
             'data':
                 [
-                    {'name': 'conflict', 'value': true, 'type': 'boolean'},
+                    {'name': 'conflict', 'value': false, 'type': 'boolean'},
                     {'name': 'host', 'value': '', 'type': 'text'}
                 ]
         }

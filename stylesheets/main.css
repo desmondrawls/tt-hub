@@ -35,15 +35,15 @@ dd {
 }
 .right-half {
     float: right;
-    width: 50%;
+    width: 40%;
 }
 .query-param {
     margin: 20px;
 }
 .search-bar {
     background-color: #ddeeff;
-    margin-right: 30px;
-    padding: 10px;
+    padding-top: 10px;
+    padding-bottom: 10px;
 }
 .tt-button {
     margin-left: 10px;
@@ -55,4 +55,13 @@ dd {
 }
 .left {
     float: left;
+}
+.tt-item {
+    padding: 20px;
+    list-style: none;
+    border-style: solid;
+    border-width: 1px;
+}
+.tt-column {
+    padding-right: 5%;
 }

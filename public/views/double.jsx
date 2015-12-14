@@ -69,10 +69,10 @@ var Double = React.createClass({
         function resources(){
             return(
                 <div>
-                    <div className='left-half'>
+                    <div className='tt-column left-half'>
                         <Index collectionObject={context.state.resources[0]}/>
                     </div>
-                    <div className='right-half'>
+                    <div className='tt-column right-half'>
                         <Index collectionObject={context.state.resources[1]}/>
                     </div>
                 </div>
