@@ -5,7 +5,7 @@ var _ = require('lodash')
 var QueryTextbox = React.createClass({
     render: function(){
         return (
-            <span>
+            <span className="query-param">
                 <label>{this.getName()} : </label>
                 <input
                     type="text"

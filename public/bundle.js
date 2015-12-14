@@ -47924,7 +47924,7 @@ var _ = require('lodash')
 var QueryCheckbox = React.createClass({displayName: "QueryCheckbox",
     render: function(){
         return (
-            React.createElement("span", null, 
+            React.createElement("span", {className: "query-param"}, 
                 React.createElement("input", {
                     type: "checkbox", 
                     name: this.getName(), 
@@ -47961,7 +47961,7 @@ var _ = require('lodash')
 var QueryTextbox = React.createClass({displayName: "QueryTextbox",
     render: function(){
         return (
-            React.createElement("span", null, 
+            React.createElement("span", {className: "query-param"}, 
                 React.createElement("label", null, this.getName(), " : "), 
                 React.createElement("input", {
                     type: "text", 
@@ -48032,10 +48032,10 @@ var SearchBar = React.createClass({displayName: "SearchBar",
         }
 
         return (
-            React.createElement("div", null, 
+            React.createElement("div", {className: "search-bar"}, 
                 queryBuilder(), 
-                React.createElement("button", {onClick: context.onReset}, "RESET"), 
-                React.createElement("button", {onClick: context.onSearch}, "SEARCH")
+                React.createElement("button", {className: "tt-button", onClick: context.onReset}, "RESET"), 
+                React.createElement("button", {className: "tt-button", onClick: context.onSearch}, "SEARCH")
             )
         )
     },

@@ -5,7 +5,7 @@ var _ = require('lodash')
 var QueryCheckbox = React.createClass({
     render: function(){
         return (
-            <span>
+            <span className="query-param">
                 <input
                     type="checkbox"
                     name={this.getName()}

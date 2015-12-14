@@ -43,10 +43,10 @@ var SearchBar = React.createClass({
         }
 
         return (
-            <div>
+            <div className="search-bar">
                 {queryBuilder()}
-                <button onClick={context.onReset}>RESET</button>
-                <button onClick={context.onSearch}>SEARCH</button>
+                <button className="tt-button" onClick={context.onReset}>RESET</button>
+                <button className="tt-button" onClick={context.onSearch}>SEARCH</button>
             </div>
         )
     },

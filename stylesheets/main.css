@@ -37,3 +37,22 @@ dd {
     float: right;
     width: 50%;
 }
+.query-param {
+    margin: 20px;
+}
+.search-bar {
+    background-color: #ddeeff;
+    margin-right: 30px;
+    padding: 10px;
+}
+.tt-button {
+    margin-left: 10px;
+    margin-right: 10px;
+    float: right;
+}
+.right {
+    float: right;
+}
+.left {
+    float: left;
+}
