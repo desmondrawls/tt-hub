@@ -32,7 +32,11 @@ var Index = React.createClass({
                 <h2>{typeHelper.getType(this.state.molecule)}</h2>
                 <SearchBar store={this.store} query={this.getSearchQuery()}/>
                 <NewButton store={this.store} template={this.getTemplate()} href={this.getPrimaryUrl()}/>
-                <LinkedList items={itemsHelper.getItems(this.state.molecule)} textFormatter={typeHelper.getItemIdentifier}/>
+                <LinkedList
+                    chain={this.props.chain}
+                    templateInput={this.props.templateInput}
+                    items={itemsHelper.getItems(this.state.molecule)}
+                    textFormatter={typeHelper.getItemIdentifier}/>
             </Page>
         )
     },

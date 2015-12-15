@@ -39,8 +39,10 @@ function copyDataWithValue(queryData, value){
 }
 
 function mergeData(existingQueryData, newQueryData){
-    var withoutOldData = _.reject(existingQueryData, function(data) {return data.name == newQueryData.name})
-    return withoutOldData.concat(newQueryData)
+    var index = _.indexOf(existingQueryData, _.find(existingQueryData, function(input){return input.name == newQueryData.name}));
+    var workingCopy = _.clone(existingQueryData, true)
+    workingCopy.splice(index, 1, newQueryData)
+    return workingCopy
 }
 
 exports.getQueries = getQueries

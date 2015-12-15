@@ -13,5 +13,18 @@ function getTemplate(molecule){
     return collectionsHelper.getCollection(molecule).template
 }
 
+function getTemplateData(molecule){
+    return getTemplate(molecule).data
+}
+
+function mergeTemplateData(existingTemplateData, newTemplateData){
+    var index = _.indexOf(existingTemplateData, _.find(existingTemplateData, function(input){return input.name == newTemplateData.name}));
+    var workingCopy = _.clone(existingTemplateData, true)
+    workingCopy.splice(index, 1, newTemplateData)
+    return workingCopy
+}
+
 exports.getPopulatedTemplate = getPopulatedTemplate
 exports.getTemplate = getTemplate
+exports.getTemplateData = getTemplateData
+exports.mergeTemplateData = mergeTemplateData

@@ -1,15 +1,10 @@
 var React = require('react')
 var Page = require('./page.jsx')
 var Index = require('./index.jsx')
-var NewButton = require('./new-button.jsx')
-var LinkedList = require('./linked-list.jsx')
-var SearchBar = require('./search-bar.jsx')
+var MatchSelector = require('./match-selector.jsx')
 var _ = require('lodash')
 var Q = require('q');
 var templateHelper = require('../../collectionJsonHelpers/extractors/template.js')
-var itemsHelper = require('../../collectionJsonHelpers/extractors/items.js')
-var typeHelper = require('./../../collectionJsonHelpers/domain/types.js')
-var collectionHelper = require('../../collectionJsonHelpers/extractors/collection.js')
 var Store = require('./../stores/crystal.js')
 
 var Double = React.createClass({
@@ -57,6 +52,10 @@ var Double = React.createClass({
         })
     },
 
+    getTemplateInputs: function(){
+        return templateHelper.getTemplateData(this.state.molecule)
+    },
+
     render: function () {
         var context = this
 
@@ -64,10 +63,10 @@ var Double = React.createClass({
             return(
                 <div>
                     <div className='tt-column left-half'>
-                        <Index molecule={context.state.resources[0]}/>
+                        <Index chain={context.store} templateInput={context.getTemplateInputs()[0]} molecule={context.state.resources[0]}/>
                     </div>
                     <div className='tt-column right-half'>
-                        <Index molecule={context.state.resources[1]}/>
+                        <Index chain={context.store} templateInput={context.getTemplateInputs()[1]} molecule={context.state.resources[1]}/>
                     </div>
                 </div>
             )
@@ -76,7 +75,8 @@ var Double = React.createClass({
         return (
             <Page {...this.props}>
                 <h1>TechTalk</h1>
-                {this.state.loaded ? resources() : null}
+                <MatchSelector templateInputs={context.getTemplateInputs()}/>
+                {context.state.loaded ? resources() : null}
             </Page>
         )
     }

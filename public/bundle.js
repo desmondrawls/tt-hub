@@ -248,8 +248,10 @@ function copyDataWithValue(queryData, value){
 }
 
 function mergeData(existingQueryData, newQueryData){
-    var withoutOldData = _.reject(existingQueryData, function(data) {return data.name == newQueryData.name})
-    return withoutOldData.concat(newQueryData)
+    var index = _.indexOf(existingQueryData, _.find(existingQueryData, function(input){return input.name == newQueryData.name}));
+    var workingCopy = _.clone(existingQueryData, true)
+    workingCopy.splice(index, 1, newQueryData)
+    return workingCopy
 }
 
 exports.getQueries = getQueries
@@ -279,8 +281,21 @@ function getTemplate(molecule){
     return collectionsHelper.getCollection(molecule).template
 }
 
+function getTemplateData(molecule){
+    return getTemplate(molecule).data
+}
+
+function mergeTemplateData(existingTemplateData, newTemplateData){
+    var index = _.indexOf(existingTemplateData, _.find(existingTemplateData, function(input){return input.name == newTemplateData.name}));
+    var workingCopy = _.clone(existingTemplateData, true)
+    workingCopy.splice(index, 1, newTemplateData)
+    return workingCopy
+}
+
 exports.getPopulatedTemplate = getPopulatedTemplate
 exports.getTemplate = getTemplate
+exports.getTemplateData = getTemplateData
+exports.mergeTemplateData = mergeTemplateData
 
 },{"./attributes.js":3,"./collection.js":4,"lodash":35}],8:[function(require,module,exports){
 // shim for using process in browser
@@ -47509,7 +47524,7 @@ document.addEventListener('DOMContentLoaded', function onLoad(){
     Client.boot(options)
 })
 
-},{"./views/delete-button.jsx":223,"./views/details.jsx":224,"./views/double.jsx":225,"./views/editting-buttons.jsx":226,"./views/index.jsx":227,"./views/link.jsx":228,"./views/linked-list.jsx":229,"./views/new-button.jsx":230,"./views/new-form.jsx":231,"./views/page.jsx":232,"./views/query-checkbox.jsx":233,"./views/query-textbox.jsx":234,"./views/search-bar.jsx":235,"./views/show.jsx":236,"react-engine/lib/client":37}],222:[function(require,module,exports){
+},{"./views/delete-button.jsx":223,"./views/details.jsx":224,"./views/double.jsx":225,"./views/editting-buttons.jsx":226,"./views/index.jsx":227,"./views/link.jsx":228,"./views/linked-list.jsx":229,"./views/new-button.jsx":232,"./views/new-form.jsx":233,"./views/page.jsx":234,"./views/query-checkbox.jsx":235,"./views/query-textbox.jsx":236,"./views/search-bar.jsx":237,"./views/show.jsx":238,"react-engine/lib/client":37}],222:[function(require,module,exports){
 'use strict'
 
 var _ = require('lodash')
@@ -47601,15 +47616,10 @@ module.exports = Details
 var React = require('react')
 var Page = require('./page.jsx')
 var Index = require('./index.jsx')
-var NewButton = require('./new-button.jsx')
-var LinkedList = require('./linked-list.jsx')
-var SearchBar = require('./search-bar.jsx')
+var MatchSelector = require('./match-selector.jsx')
 var _ = require('lodash')
 var Q = require('q');
 var templateHelper = require('../../collectionJsonHelpers/extractors/template.js')
-var itemsHelper = require('../../collectionJsonHelpers/extractors/items.js')
-var typeHelper = require('./../../collectionJsonHelpers/domain/types.js')
-var collectionHelper = require('../../collectionJsonHelpers/extractors/collection.js')
 var Store = require('./../stores/crystal.js')
 
 var Double = React.createClass({displayName: "Double",
@@ -47657,6 +47667,10 @@ var Double = React.createClass({displayName: "Double",
         })
     },
 
+    getTemplateInputs: function(){
+        return templateHelper.getTemplateData(this.state.molecule)
+    },
+
     render: function () {
         var context = this
 
@@ -47664,10 +47678,10 @@ var Double = React.createClass({displayName: "Double",
             return(
                 React.createElement("div", null, 
                     React.createElement("div", {className: "tt-column left-half"}, 
-                        React.createElement(Index, {molecule: context.state.resources[0]})
+                        React.createElement(Index, {chain: context.store, templateInput: context.getTemplateInputs()[0], molecule: context.state.resources[0]})
                     ), 
                     React.createElement("div", {className: "tt-column right-half"}, 
-                        React.createElement(Index, {molecule: context.state.resources[1]})
+                        React.createElement(Index, {chain: context.store, templateInput: context.getTemplateInputs()[1], molecule: context.state.resources[1]})
                     )
                 )
             )
@@ -47676,7 +47690,8 @@ var Double = React.createClass({displayName: "Double",
         return (
             React.createElement(Page, React.__spread({},  this.props), 
                 React.createElement("h1", null, "TechTalk"), 
-                this.state.loaded ? resources() : null
+                React.createElement(MatchSelector, {templateInputs: context.getTemplateInputs()}), 
+                context.state.loaded ? resources() : null
             )
         )
     }
@@ -47684,7 +47699,7 @@ var Double = React.createClass({displayName: "Double",
 
 module.exports = Double
 
-},{"../../collectionJsonHelpers/extractors/collection.js":4,"../../collectionJsonHelpers/extractors/items.js":5,"../../collectionJsonHelpers/extractors/template.js":7,"./../../collectionJsonHelpers/domain/types.js":2,"./../stores/crystal.js":222,"./index.jsx":227,"./linked-list.jsx":229,"./new-button.jsx":230,"./page.jsx":232,"./search-bar.jsx":235,"lodash":35,"q":36,"react":220}],226:[function(require,module,exports){
+},{"../../collectionJsonHelpers/extractors/template.js":7,"./../stores/crystal.js":222,"./index.jsx":227,"./match-selector.jsx":231,"./page.jsx":234,"lodash":35,"q":36,"react":220}],226:[function(require,module,exports){
 var React = require('react')
 var _ = require('lodash')
 
@@ -47736,7 +47751,11 @@ var Index = React.createClass({displayName: "Index",
                 React.createElement("h2", null, typeHelper.getType(this.state.molecule)), 
                 React.createElement(SearchBar, {store: this.store, query: this.getSearchQuery()}), 
                 React.createElement(NewButton, {store: this.store, template: this.getTemplate(), href: this.getPrimaryUrl()}), 
-                React.createElement(LinkedList, {items: itemsHelper.getItems(this.state.molecule), textFormatter: typeHelper.getItemIdentifier})
+                React.createElement(LinkedList, {
+                    chain: this.props.chain, 
+                    templateInput: this.props.templateInput, 
+                    items: itemsHelper.getItems(this.state.molecule), 
+                    textFormatter: typeHelper.getItemIdentifier})
             )
         )
     },
@@ -47760,7 +47779,7 @@ var Index = React.createClass({displayName: "Index",
 
 module.exports = Index
 
-},{"../../collectionJsonHelpers/domain/types.js":2,"../../collectionJsonHelpers/extractors/collection.js":4,"../../collectionJsonHelpers/extractors/items.js":5,"../../collectionJsonHelpers/extractors/template.js":7,"./../stores/crystal.js":222,"./linked-list.jsx":229,"./new-button.jsx":230,"./page.jsx":232,"./search-bar.jsx":235,"lodash":35,"react":220}],228:[function(require,module,exports){
+},{"../../collectionJsonHelpers/domain/types.js":2,"../../collectionJsonHelpers/extractors/collection.js":4,"../../collectionJsonHelpers/extractors/items.js":5,"../../collectionJsonHelpers/extractors/template.js":7,"./../stores/crystal.js":222,"./linked-list.jsx":229,"./new-button.jsx":232,"./page.jsx":234,"./search-bar.jsx":237,"lodash":35,"react":220}],228:[function(require,module,exports){
 var React = require('react')
 
 var Link = React.createClass({displayName: "Link",
@@ -47773,45 +47792,90 @@ module.exports = Link
 
 },{"react":220}],229:[function(require,module,exports){
 var React = require('react')
-var itemsHelper = require('../../collectionJsonHelpers/extractors/items.js')
-var attributesHelper = require('../../collectionJsonHelpers/extractors/attributes.js')
+var ListItem = require('./list-item.jsx')
 var _ = require('lodash')
-var Details = require('./details.jsx')
 
 var LinkedList = React.createClass({displayName: "LinkedList",
-
     render: function(){
         var context = this
 
         function items(items) {
             return _.map(items, function (item) {
                 return (
-                    React.createElement("li", {className: "tt-item"}, 
-                        React.createElement("a", {href: itemsHelper.getLink(item)}, item.href), 
-                        React.createElement(Details, {
-                            attributes: context.getItemAttributes(item), 
-                            onChange: context.handleAttributeChange, 
-                            edit: false}
-                        )
-                    )
+                    React.createElement(ListItem, {item: item, chain: context.props.chain, templateInput: context.props.templateInput})
                 )
             })
         }
 
-        return React.createElement("ul", null, items(this.props.items))
-    },
-
-    handleAttributeChange: function(){
-    },
-
-    getItemAttributes: function(item){
-        return attributesHelper.getItemAttributes(item)
+        return React.createElement("ul", null, items(context.props.items))
     }
 })
 
 module.exports = LinkedList
 
-},{"../../collectionJsonHelpers/extractors/attributes.js":3,"../../collectionJsonHelpers/extractors/items.js":5,"./details.jsx":224,"lodash":35,"react":220}],230:[function(require,module,exports){
+},{"./list-item.jsx":230,"lodash":35,"react":220}],230:[function(require,module,exports){
+var React = require('react')
+var itemsHelper = require('../../collectionJsonHelpers/extractors/items.js')
+var templateHelper = require('../../collectionJsonHelpers/extractors/template.js')
+var attributesHelper = require('../../collectionJsonHelpers/extractors/attributes.js')
+var _ = require('lodash')
+var Details = require('./details.jsx')
+
+var ListItem = React.createClass({displayName: "ListItem",
+    render: function () {
+        var context = this
+        return (
+            React.createElement("li", {className: "tt-item", onClick: context.onClick}, 
+                React.createElement("a", {href: itemsHelper.getLink(context.props.item)}, context.props.item.href), 
+                React.createElement(Details, {
+                    attributes: context.getItemAttributes(context.props.item), 
+                    onChange: context.handleAttributeChange, 
+                    edit: false})
+            )
+        )
+    },
+
+    onClick: function () {
+        var context = this
+        var molecule = _.clone(context.props.chain.fetch(), true)
+        var newTemplateInput = _.merge(_.clone(context.props.templateInput), {value: attributesHelper.getItemAttributeValue(context.props.item, 'id')})
+        molecule.collection.template.data = templateHelper.mergeTemplateData(templateHelper.getTemplateData(molecule), newTemplateInput)
+        this.props.chain.update(molecule)
+    },
+
+    handleAttributeChange: function () {
+    },
+
+    getItemAttributes: function (item) {
+        return attributesHelper.getItemAttributes(item)
+    }
+})
+
+module.exports = ListItem
+
+},{"../../collectionJsonHelpers/extractors/attributes.js":3,"../../collectionJsonHelpers/extractors/items.js":5,"../../collectionJsonHelpers/extractors/template.js":7,"./details.jsx":224,"lodash":35,"react":220}],231:[function(require,module,exports){
+var React = require('react')
+var _ = require('lodash')
+
+var MatchSelector = React.createClass({displayName: "MatchSelector",
+    render: function(){
+        var context = this
+        function selections(){
+            return _.map(context.props.templateInputs, function(selection){
+                return React.createElement("span", {className: "talk-selection"}, selection.value)
+            })
+        }
+        return(
+            React.createElement("div", {className: "talk-selector"}, 
+                selections()
+            )
+        )
+    }
+})
+
+module.exports = MatchSelector
+
+},{"lodash":35,"react":220}],232:[function(require,module,exports){
 var React = require('react')
 var NewForm = require('./new-form.jsx')
 var Link = require('./link.jsx')
@@ -47849,7 +47913,7 @@ var NewButton = React.createClass({displayName: "NewButton",
 
 module.exports = NewButton
 
-},{"./link.jsx":228,"./new-form.jsx":231,"lodash":35,"react":220}],231:[function(require,module,exports){
+},{"./link.jsx":228,"./new-form.jsx":233,"lodash":35,"react":220}],233:[function(require,module,exports){
 var React = require('react')
 var _ = require('lodash')
 var Details = require('./details.jsx')
@@ -47905,7 +47969,7 @@ var NewForm = React.createClass({displayName: "NewForm",
 
 module.exports = NewForm
 
-},{"../../collectionJsonHelpers/extractors/attributes.js":3,"./details.jsx":224,"./editting-buttons.jsx":226,"lodash":35,"react":220}],232:[function(require,module,exports){
+},{"../../collectionJsonHelpers/extractors/attributes.js":3,"./details.jsx":224,"./editting-buttons.jsx":226,"lodash":35,"react":220}],234:[function(require,module,exports){
 var React = require('react')
 
 var Page = React.createClass({displayName: "Page",
@@ -47928,7 +47992,7 @@ var Page = React.createClass({displayName: "Page",
 
 module.exports = Page
 
-},{"react":220}],233:[function(require,module,exports){
+},{"react":220}],235:[function(require,module,exports){
 var React = require('react')
 var queriesHelper = require('../../collectionJsonHelpers/extractors/queries.js')
 var _ = require('lodash')
@@ -47973,7 +48037,7 @@ var QueryCheckbox = React.createClass({displayName: "QueryCheckbox",
 
 module.exports = QueryCheckbox
 
-},{"../../collectionJsonHelpers/extractors/queries.js":6,"lodash":35,"react":220}],234:[function(require,module,exports){
+},{"../../collectionJsonHelpers/extractors/queries.js":6,"lodash":35,"react":220}],236:[function(require,module,exports){
 var React = require('react')
 var queriesHelper = require('../../collectionJsonHelpers/extractors/queries.js')
 var _ = require('lodash')
@@ -48014,7 +48078,7 @@ var QueryTextbox = React.createClass({displayName: "QueryTextbox",
 
 module.exports = QueryTextbox
 
-},{"../../collectionJsonHelpers/extractors/queries.js":6,"lodash":35,"react":220}],235:[function(require,module,exports){
+},{"../../collectionJsonHelpers/extractors/queries.js":6,"lodash":35,"react":220}],237:[function(require,module,exports){
 var React = require('react')
 var _ = require('lodash')
 var queriesHelper = require('../../collectionJsonHelpers/extractors/queries.js')
@@ -48097,7 +48161,7 @@ var SearchBar = React.createClass({displayName: "SearchBar",
 
 module.exports = SearchBar
 
-},{"../../collectionJsonHelpers/extractors/collection.js":4,"../../collectionJsonHelpers/extractors/queries.js":6,"./../stores/crystal.js":222,"./query-checkbox.jsx":233,"./query-textbox.jsx":234,"lodash":35,"react":220}],236:[function(require,module,exports){
+},{"../../collectionJsonHelpers/extractors/collection.js":4,"../../collectionJsonHelpers/extractors/queries.js":6,"./../stores/crystal.js":222,"./query-checkbox.jsx":235,"./query-textbox.jsx":236,"lodash":35,"react":220}],238:[function(require,module,exports){
 var React = require('react')
 var Page = require('./page.jsx')
 var Details = require('./details.jsx')
@@ -48194,4 +48258,4 @@ var Show = React.createClass({displayName: "Show",
 
 module.exports = Show
 
-},{"../../collectionJsonHelpers/extractors/attributes.js":3,"../../collectionJsonHelpers/extractors/collection.js":4,"../../collectionJsonHelpers/extractors/items.js":5,"../../collectionJsonHelpers/extractors/template.js":7,"./delete-button.jsx":223,"./details.jsx":224,"./editting-buttons.jsx":226,"./link.jsx":228,"./page.jsx":232,"jquery":34,"lodash":35,"react":220}]},{},[221]);
+},{"../../collectionJsonHelpers/extractors/attributes.js":3,"../../collectionJsonHelpers/extractors/collection.js":4,"../../collectionJsonHelpers/extractors/items.js":5,"../../collectionJsonHelpers/extractors/template.js":7,"./delete-button.jsx":223,"./details.jsx":224,"./editting-buttons.jsx":226,"./link.jsx":228,"./page.jsx":234,"jquery":34,"lodash":35,"react":220}]},{},[221]);
