@@ -1,5 +1,5 @@
 var _ = require('lodash')
-var transformer = require('./transformer.js')
+var transformer = require('./layout.js')
 
 function domesticateObject(backUrl, url, object){
     return transformer.layout(backUrl, url, object.collection.items, object.collection.template)

@@ -21,6 +21,7 @@ app.set('view', renderer.expressView)
 // override with POST having ?_method=DELETE
 app.use(methodOverride('_method'))
 app.use(bodyParser.urlencoded({extended: true}))
+app.use(bodyParser.json())
 app.use(express.static(__dirname + '/public'))
 app.use('/stylesheets', express.static('stylesheets'));
 app.use('/jquery', express.static(__dirname + '/node_modules/jquery/dist/'));
@@ -45,6 +46,7 @@ app.delete('/days/:id', daysController.destroy)
 
 var talksController = require('./local/talks-controller')
 app.get('/', talksController.index)
+app.post('/', talksController.create)
 
 app.listen(4000);
 

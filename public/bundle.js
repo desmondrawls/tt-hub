@@ -19,7 +19,7 @@ function getLinks(url, backUrl){
 
 function formatTalks(talks) {
     return _.reduce(talks, function(current, next){
-        current.push(talk(next))
+        current.push(formatTalk(next))
         return current
     }, [])
 }
@@ -48,7 +48,7 @@ exports.formatTalks = formatTalks
 
 },{"lodash":35}],2:[function(require,module,exports){
 var attributesHelper = require('../extractors/attributes.js')
-var talksHelper = require('./talks.js')
+var talksHelper = require('./talks-transformer.js')
 
 function getType(collectionObject){
     if(collectionObject.collection.href.indexOf('speakers') > -1){
@@ -127,7 +127,7 @@ exports.getQueries = getQueries
 exports.getType = getType
 exports.getLinks = getLinks
 
-},{"../extractors/attributes.js":3,"./talks.js":1}],3:[function(require,module,exports){
+},{"../extractors/attributes.js":3,"./talks-transformer.js":1}],3:[function(require,module,exports){
 var _ = require('lodash')
 
 function getAttributeValue(attribute){

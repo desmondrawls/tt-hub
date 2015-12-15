@@ -1,5 +1,5 @@
 var attributesHelper = require('../extractors/attributes.js')
-var talksHelper = require('./talks.js')
+var talksHelper = require('./talks-transformer.js')
 
 function getType(collectionObject){
     if(collectionObject.collection.href.indexOf('speakers') > -1){

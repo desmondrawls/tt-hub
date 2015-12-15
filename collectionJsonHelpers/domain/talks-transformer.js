@@ -18,7 +18,7 @@ function getLinks(url, backUrl){
 
 function formatTalks(talks) {
     return _.reduce(talks, function(current, next){
-        current.push(talk(next))
+        current.push(formatTalk(next))
         return current
     }, [])
 }

@@ -2,9 +2,8 @@
 
 var express = require('express')
 var Client = require('node-rest-client').Client
-var debug = require('./../app').debug
 var immigrationsHelper = require('../collectionJsonHelpers/converters/immigrations.js')
-var jsonTransformer = require('../collectionJsonHelpers/converters/transformer.js')
+var jsonTransformer = require('../collectionJsonHelpers/converters/layout.js')
 var queriesHelper = require('../collectionJsonHelpers/extractors/queries.js')
 var itemsHelper = require('../collectionJsonHelpers/extractors/items.js')
 var templateHelper = require('../collectionJsonHelpers/extractors/template.js')

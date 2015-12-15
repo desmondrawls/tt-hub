@@ -9,5 +9,7 @@ var Controller = require('./../controller.js').Controller
 var controller = new Controller(adapter, responder)
 
 function index(req, res)    {controller.index(req, res)}
+function create(req, res)    {controller.create(req, res)}
 
 exports.index = index
+exports.create = create
