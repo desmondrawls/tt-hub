@@ -12,7 +12,7 @@ var _ = require('lodash')
 var Q = require('q');
 var client = new Client()
 
-var Adapter = function(hostRoot, hostPath, serverUrl, collectionModel, itemModel, templateModel, queryModel){
+var RemoteAdapter = function(hostRoot, hostPath, serverUrl, collectionModel, itemModel, templateModel, queryModel){
     this.hostRoot = hostRoot
     this.hostPath = hostPath
     this.serverUrl = serverUrl
@@ -22,7 +22,7 @@ var Adapter = function(hostRoot, hostPath, serverUrl, collectionModel, itemModel
     this.QueryModel = queryModel
 }
 
-Adapter.prototype.index = function(req, res, resolver) {
+RemoteAdapter.prototype.index = function(req, res, resolver) {
     var context = this
     var args = {
         headers: {"Content-Type": "application/json", "Accept": "application/json"}
@@ -50,7 +50,7 @@ Adapter.prototype.index = function(req, res, resolver) {
     return resolver.promise
 }
 
-Adapter.prototype.search = function(req, res, resolver) {
+RemoteAdapter.prototype.search = function(req, res, resolver) {
     var context = this
     var response = function (template, items) {
         var domesticatedItems = immigrationsHelper.domesticateItems(context.hostRoot + context.hostPath, items);
@@ -66,7 +66,7 @@ Adapter.prototype.search = function(req, res, resolver) {
     return resolver.promise
 }
 
-Adapter.prototype.create = function(req, res) {
+RemoteAdapter.prototype.create = function(req, res) {
     var context = this
     console.log("creating item ", "with " + req.body)
     var args = {
@@ -78,7 +78,7 @@ Adapter.prototype.create = function(req, res) {
     })
 }
 
-Adapter.prototype.show = function(req, res, resolver) {
+RemoteAdapter.prototype.show = function(req, res, resolver) {
     var context = this
     context.ItemModel.findById(req.params.id, function (err, item) {
         var args = {
@@ -93,7 +93,7 @@ Adapter.prototype.show = function(req, res, resolver) {
     return resolver.promise
 }
 
-Adapter.prototype.update = function(req, res) {
+RemoteAdapter.prototype.update = function(req, res) {
     var context = this
     console.log("updating item " + req.params.id, "with " + req.body)
     this.CollectionModel.findById(req.params.id, function (err, itemObject) {
@@ -107,7 +107,7 @@ Adapter.prototype.update = function(req, res) {
     })
 }
 
-Adapter.prototype.destroy = function(req, res) {
+RemoteAdapter.prototype.destroy = function(req, res) {
     var context = this
     console.log("destroying item " + req.params.id)
     this.CollectionModel.findById(req.params.id, function (err, itemObject) {
@@ -120,4 +120,4 @@ Adapter.prototype.destroy = function(req, res) {
     })
 }
 
-exports.Adapter = Adapter
+exports.RemoteAdapter = RemoteAdapter

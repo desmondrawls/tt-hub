@@ -1,4 +1,4 @@
-var Adapter = require('./adapter.js').Adapter
+var Adapter = require('./remote-adapter.js').RemoteAdapter
 var hostRoot = 'http://localhost:4000'
 var serverUrl = 'http://localhost:3001/'
 var hostPath = '/days/'
@@ -9,7 +9,7 @@ var Template = require('./cache').DayCollectionJsonTemplate
 var Query = require('./cache').DayCollectionJsonQuery
 
 var adapter = new Adapter(hostRoot, hostPath, serverUrl, Collection, Item, Template, Query)
-var Responder = require('./responders.js').Responder
+var Responder = require('./remote-responder.js').RemoteResponder
 var responder = new Responder()
 var Controller = require('./controller.js').Controller
 var controller = new Controller(adapter, responder)
