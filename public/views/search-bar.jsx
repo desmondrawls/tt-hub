@@ -60,11 +60,10 @@ var SearchBar = React.createClass({
     onSearch: function() {
         var enabledParams = _.filter(this.getParams(), function(param){return param.enabled == true})
         var formattedEnabledParams = _.map(enabledParams, function (param) {return _.pick(param, ['name', 'value'])})
-        this.updateFromSearch(formattedEnabledParams)
+        if(formattedEnabledParams.length > 0){this.updateFromSearch(formattedEnabledParams)}
     },
 
     updateFromSearch: function(params){
-        if(params.length == 0){return}
         var context = this
         var url = this.props.query.href + '?' + $.param(params)
         $.ajax(url, {
