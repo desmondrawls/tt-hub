@@ -1,14 +1,14 @@
 var _ = require('lodash')
 var transformer = require('./layout.js')
 
-function domesticateObject(backUrl, url, object){
-    return transformer.layout(backUrl, url, object.collection.items, object.collection.template)
+function domesticateMolecule(backUrl, url, molecule){
+    return transformer.layout(backUrl, url, molecule.collection.items, molecule.collection.template)
 }
 
-function domesticateObjectItems(object, items, url){
-    object.collection.items = _.map(items, function(item){
+function domesticateMoleculeItems(molecule, items, url){
+    molecule.collection.items = _.map(items, function(item){
         return domesticateItem(url + item.id, item)})
-    return object
+    return molecule
 }
 
 function domesticateItems(url, items){
@@ -25,8 +25,8 @@ function registerItem(item){
     }
 }
 
-exports.domesticateObject = domesticateObject
-exports.domesticateObjectItems = domesticateObjectItems
+exports.domesticateMolecule = domesticateMolecule
+exports.domesticateMoleculeItems = domesticateMoleculeItems
 exports.domesticateItem = domesticateItem
 exports.domesticateItems = domesticateItems
 exports.registerItem = registerItem

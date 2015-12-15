@@ -39,8 +39,8 @@ RemoteAdapter.prototype.index = function(req, res, resolver) {
                 .then(Q.all(addQueries).done())
                 .then(Q.all(addItems)
                     .then(function (items) {
-                        var partiallyDomesticatedObject = immigrationsHelper.domesticateObjectItems(object, items, context.hostRoot + context.hostPath)
-                        resolver.resolve(immigrationsHelper.domesticateObject(context.hostRoot, context.hostRoot + context.hostPath, partiallyDomesticatedObject))
+                        var partiallyDomesticatedObject = immigrationsHelper.domesticateMoleculeItems(object, items, context.hostRoot + context.hostPath)
+                        resolver.resolve(immigrationsHelper.domesticateMolecule(context.hostRoot, context.hostRoot + context.hostPath, partiallyDomesticatedObject))
                     })
                 .done())
             .done())
@@ -86,7 +86,7 @@ RemoteAdapter.prototype.show = function(req, res, resolver) {
         }
         client.get(item.href, args, function (rawObject, response) {
             new context.CollectionModel(JSON.parse(rawObject).collection).save(function (err, savedObject) {
-                resolver.resolve(immigrationsHelper.domesticateObject(context.hostRoot, context.hostRoot + context.hostPath + savedObject.id, {collection: savedObject}))
+                resolver.resolve(immigrationsHelper.domesticateMolecule(context.hostRoot, context.hostRoot + context.hostPath + savedObject.id, {collection: savedObject}))
             })
         })
     })

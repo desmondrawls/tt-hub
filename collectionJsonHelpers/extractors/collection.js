@@ -1,7 +1,7 @@
 var _ = require('lodash')
 
-function getCollection(jsonCollection){
-    return jsonCollection.collection;
+function getCollection(molecule){
+    return molecule.collection;
 }
 
 function getCollectionValue(collection, value){

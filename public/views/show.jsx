@@ -14,8 +14,8 @@ var collectionHelper = require('../../collectionJsonHelpers/extractors/collectio
 var Show = React.createClass({
     getInitialState: function(){
         return {
-            collectionObject: this.props.collectionObject,
-            template: templateHelper.getPopulatedTemplate(templateHelper.getTemplate(this.props.collectionObject), itemsHelper.getFirstItem(this.props.collectionObject)),
+            molecule: this.props.molecule,
+            template: templateHelper.getPopulatedTemplate(templateHelper.getTemplate(this.props.molecule), itemsHelper.getFirstItem(this.props.molecule)),
             edit: false
         }
     },
@@ -35,14 +35,14 @@ var Show = React.createClass({
                 { context.state.edit ? <EdittingButtons onSave={context.onSave} onCancel={context.onCancel}/> : null }
                 <p>
                     <Link onClick={context.onEdit} text="Edit"/>
-                    <DeleteButton action={context.getPrimaryUrl(context.state.collectionObject)}/>
+                    <DeleteButton action={context.getPrimaryUrl(context.state.molecule)}/>
                 </p>
             </Page>
         )
     },
 
     getBackLink: function(){
-        return _.find(this.props.collectionObject.collection.links, function(link){return link.rel == 'back'}).href
+        return _.find(this.props.molecule.collection.links, function(link){return link.rel == 'back'}).href
     },
 
     handleAttributeChange: function(event){
@@ -55,17 +55,17 @@ var Show = React.createClass({
 
     onSave: function(){
         var context = this
-        $.ajax(collectionHelper.getCollectionValue(collectionHelper.getCollection(context.state.collectionObject), 'href'), {
+        $.ajax(collectionHelper.getCollectionValue(collectionHelper.getCollection(context.state.molecule), 'href'), {
             method: 'PUT',
             headers: {
                 'Accept': 'application/json'
             },
             data: {'template': this.state.template},
-            success: function(collectionObject){
-                context.setState({collectionObject: collectionObject})
+            success: function(molecule){
+                context.setState({molecule: molecule})
                 context.setState({template: templateHelper.getPopulatedTemplate(
-                                                templateHelper.getTemplate(collectionObject),
-                                                itemsHelper.getFirstItem(collectionObject))})
+                                                templateHelper.getTemplate(molecule),
+                                                itemsHelper.getFirstItem(molecule))})
                 context.onCancel()
             }
         })
@@ -76,11 +76,11 @@ var Show = React.createClass({
     },
 
     getItemAttributes: function(){
-        return attributesHelper.getItemAttributes(itemsHelper.getFirstItem(this.state.collectionObject))
+        return attributesHelper.getItemAttributes(itemsHelper.getFirstItem(this.state.molecule))
     },
 
     getItemAttribute: function(attributeName){
-        return attributesHelper.getItemAttributeValue(itemsHelper.getFirstItem(this.state.collectionObject), attributeName)
+        return attributesHelper.getItemAttributeValue(itemsHelper.getFirstItem(this.state.molecule), attributeName)
     },
 
     onEdit: function(){

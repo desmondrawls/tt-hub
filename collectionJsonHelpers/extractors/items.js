@@ -2,12 +2,12 @@ var _ = require('lodash')
 var attributesHelper = require('./attributes.js')
 var collectionsHelper = require('./collection.js')
 
-function getItems(collectionJson){
-    return collectionsHelper.getCollection(collectionJson).items
+function getItems(molecule){
+    return collectionsHelper.getCollection(molecule).items
 }
 
-function getFirstItem(collectionJson){
-    return getFirst(getItems(collectionJson))
+function getFirstItem(molecule){
+    return getFirst(getItems(molecule))
 }
 
 function getFirst(items){

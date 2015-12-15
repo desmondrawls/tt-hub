@@ -8,13 +8,13 @@ var templateHelper = require('../../collectionJsonHelpers/extractors/template.js
 var itemsHelper = require('../../collectionJsonHelpers/extractors/items.js')
 var typeHelper = require('../../collectionJsonHelpers/domain/types.js')
 var collectionHelper = require('../../collectionJsonHelpers/extractors/collection.js')
-var Store = require('./../stores/object.js')
+var Store = require('./../stores/crystal.js')
 
 var Index = React.createClass({
     getInitialState: function () {
-        this.store = new Store.Object(this.props.collectionObject)
+        this.store = new Store.Crystal(this.props.molecule)
         return {
-            collectionObject: this.store.fetch()
+            molecule: this.store.fetch()
         }
     },
 
@@ -22,35 +22,35 @@ var Index = React.createClass({
         this.store.addListener(this.onStoreUpdate)
     },
 
-    onStoreUpdate: function(collectionObject) {
-        this.setState({collectionObject: collectionObject})
+    onStoreUpdate: function(molecule) {
+        this.setState({molecule: molecule})
     },
 
     render: function () {
         return (
             <Page {...this.props}>
-                <h2>{typeHelper.getType(this.state.collectionObject)}</h2>
+                <h2>{typeHelper.getType(this.state.molecule)}</h2>
                 <SearchBar store={this.store} query={this.getSearchQuery()}/>
                 <NewButton store={this.store} template={this.getTemplate()} href={this.getPrimaryUrl()}/>
-                <LinkedList items={itemsHelper.getItems(this.state.collectionObject)} textFormatter={typeHelper.getItemIdentifier}/>
+                <LinkedList items={itemsHelper.getItems(this.state.molecule)} textFormatter={typeHelper.getItemIdentifier}/>
             </Page>
         )
     },
 
     getSearchQuery: function(){
-        return _.find(this.getQueries(this.state.collectionObject), function(query){ return query.rel == 'search' })
+        return _.find(this.getQueries(this.state.molecule), function(query){ return query.rel == 'search' })
     },
 
     getPrimaryUrl: function(){
-       return collectionHelper.getCollectionValue(collectionHelper.getCollection(this.state.collectionObject), 'href')
+       return collectionHelper.getCollectionValue(collectionHelper.getCollection(this.state.molecule), 'href')
     },
 
     getTemplate: function(){
-        return templateHelper.getTemplate(this.props.collectionObject)
+        return templateHelper.getTemplate(this.props.molecule)
     },
 
-    getQueries: function(collectionObject){
-        return collectionHelper.getCollectionValue(collectionHelper.getCollection(collectionObject), 'queries')
+    getQueries: function(molecule){
+        return collectionHelper.getCollectionValue(collectionHelper.getCollection(molecule), 'queries')
     }
 })
 

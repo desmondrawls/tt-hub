@@ -8,7 +8,7 @@ db.once('open', function (callback) {
 })
 var Mixed = mongoose.Schema.Types.Mixed
 
-var collectionJsonCollectionSchema = mongoose.Schema(
+var CollectionSchema = mongoose.Schema(
     {
         version: String,
         href: String,
@@ -29,7 +29,7 @@ var collectionJsonCollectionSchema = mongoose.Schema(
         }
     }, {strict: false})
 
-var collectionJsonItemSchema = mongoose.Schema(
+var ItemSchema = mongoose.Schema(
     {
         href: String,
         links: [{rel: String, href: String, prompt: String}],
@@ -37,13 +37,13 @@ var collectionJsonItemSchema = mongoose.Schema(
     }
 )
 
-var collectionJsonTemplateSchema = mongoose.Schema(
+var TemplateSchema = mongoose.Schema(
     {
         data: [{name: String, value: Mixed, prompt: String}]
     }
 )
 
-var collectionJsonQuerySchema = mongoose.Schema(
+var QuerySchema = mongoose.Schema(
     {
         rel: String, href: String, prompt: String,
         data: [
@@ -52,12 +52,12 @@ var collectionJsonQuerySchema = mongoose.Schema(
     }
 )
 
-exports.DayCollectionJsonCollection = mongoose.model('DayCollectionJsonCollection', collectionJsonCollectionSchema)
-exports.DayCollectionJsonItem = mongoose.model('DayItem', collectionJsonItemSchema)
-exports.DayCollectionJsonTemplate = mongoose.model('DayTemplate', collectionJsonTemplateSchema)
-exports.DayCollectionJsonQuery = mongoose.model('DayQuery', collectionJsonQuerySchema)
+exports.DayCollection = mongoose.model('DayCollection', CollectionSchema)
+exports.DayItem = mongoose.model('DayItem', ItemSchema)
+exports.DayTemplate = mongoose.model('DayTemplate', TemplateSchema)
+exports.DayQuery = mongoose.model('DayQuery', QuerySchema)
 
-exports.SpeakersCollectionJsonCollection = mongoose.model('SpeakerCollectionJsonCollection', collectionJsonCollectionSchema)
-exports.SpeakersCollectionJsonItem = mongoose.model('SpeakerItem', collectionJsonItemSchema)
-exports.SpeakersCollectionJsonTemplate = mongoose.model('SpeakerTemplate', collectionJsonTemplateSchema)
-exports.SpeakersCollectionJsonQuery = mongoose.model('SpeakerQuery', collectionJsonQuerySchema)
+exports.SpeakerCollection = mongoose.model('SpeakerCollection', CollectionSchema)
+exports.SpeakerItem = mongoose.model('SpeakerItem', ItemSchema)
+exports.SpeakerTemplate = mongoose.model('SpeakerTemplate', TemplateSchema)
+exports.SpeakerQuery = mongoose.model('SpeakerQuery', QuerySchema)

@@ -9,8 +9,8 @@ function getPopulatedTemplate(template, item){
     return template;
 }
 
-function getTemplate(collectionJson){
-    return collectionsHelper.getCollection(collectionJson).template
+function getTemplate(molecule){
+    return collectionsHelper.getCollection(molecule).template
 }
 
 exports.getPopulatedTemplate = getPopulatedTemplate

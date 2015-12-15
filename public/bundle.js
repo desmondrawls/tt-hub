@@ -50,14 +50,14 @@ exports.formatTalks = formatTalks
 var attributesHelper = require('../extractors/attributes.js')
 var talksHelper = require('./talks-transformer.js')
 
-function getType(collectionObject){
-    if(collectionObject.collection.href.indexOf('speakers') > -1){
+function getType(molecule){
+    if(molecule.collection.href.indexOf('speakers') > -1){
         return 'speakers'
     }
-    if(collectionObject.collection.href.indexOf('days') > -1){
+    if(molecule.collection.href.indexOf('days') > -1){
         return 'days'
     }
-    if(collectionObject.collection.href.indexOf('talks') > -1){
+    if(molecule.collection.href.indexOf('talks') > -1){
         return 'talks'
     }
 }
@@ -169,8 +169,8 @@ exports.updateAttributeValue = updateAttributeValue
 },{"lodash":35}],4:[function(require,module,exports){
 var _ = require('lodash')
 
-function getCollection(jsonCollection){
-    return jsonCollection.collection;
+function getCollection(molecule){
+    return molecule.collection;
 }
 
 function getCollectionValue(collection, value){
@@ -185,12 +185,12 @@ var _ = require('lodash')
 var attributesHelper = require('./attributes.js')
 var collectionsHelper = require('./collection.js')
 
-function getItems(collectionJson){
-    return collectionsHelper.getCollection(collectionJson).items
+function getItems(molecule){
+    return collectionsHelper.getCollection(molecule).items
 }
 
-function getFirstItem(collectionJson){
-    return getFirst(getItems(collectionJson))
+function getFirstItem(molecule){
+    return getFirst(getItems(molecule))
 }
 
 function getFirst(items){
@@ -210,8 +210,8 @@ exports.getFirst = getFirst
 var _ = require('lodash')
 var collectionsHelper = require('./collection.js')
 
-function getQueries(collectionJson){
-    return collectionsHelper.getCollection(collectionJson).queries
+function getQueries(molecule){
+    return collectionsHelper.getCollection(molecule).queries
 }
 
 function getPrompt(query){
@@ -275,8 +275,8 @@ function getPopulatedTemplate(template, item){
     return template;
 }
 
-function getTemplate(collectionJson){
-    return collectionsHelper.getCollection(collectionJson).template
+function getTemplate(molecule){
+    return collectionsHelper.getCollection(molecule).template
 }
 
 exports.getPopulatedTemplate = getPopulatedTemplate
@@ -47514,33 +47514,33 @@ document.addEventListener('DOMContentLoaded', function onLoad(){
 
 var _ = require('lodash')
 
-var Object = function(object) {
-    this.object = object
+var Crystal = function(crystal) {
+    this.crystal = crystal
     this.listeners = []
 }
 
-Object.prototype.fetch = function() {
-    return this.object
+Crystal.prototype.fetch = function() {
+    return this.crystal
 }
 
-Object.prototype.update = function(object){
-    this.object = object
+Crystal.prototype.update = function(crystal){
+    this.crystal = crystal
     this.trigger()
 }
 
-Object.prototype.addListener = function(listener){
+Crystal.prototype.addListener = function(listener){
     this.listeners = this.listeners.concat(listener)
 }
 
-Object.prototype.trigger = function(){
+Crystal.prototype.trigger = function(){
     var context = this
     _.each(this.listeners, function(listener){
-        console.log('triggering object update with', context.object)
-        listener(context.object)
+        console.log('triggering crystal update with', context.crystal)
+        listener(context.crystal)
     })
 }
 
-exports.Object = Object
+exports.Crystal = Crystal
 
 },{"lodash":35}],223:[function(require,module,exports){
 var React = require('react')
@@ -47610,13 +47610,13 @@ var templateHelper = require('../../collectionJsonHelpers/extractors/template.js
 var itemsHelper = require('../../collectionJsonHelpers/extractors/items.js')
 var typeHelper = require('./../../collectionJsonHelpers/domain/types.js')
 var collectionHelper = require('../../collectionJsonHelpers/extractors/collection.js')
-var Store = require('./../stores/object.js')
+var Store = require('./../stores/crystal.js')
 
 var Double = React.createClass({displayName: "Double",
     getInitialState: function () {
-        this.store = new Store.Object(this.props.collectionObject)
+        this.store = new Store.Crystal(this.props.molecule)
         return {
-            collectionObject: this.store.fetch(),
+            molecule: this.store.fetch(),
             resources: [],
             loaded: false
         }
@@ -47626,8 +47626,8 @@ var Double = React.createClass({displayName: "Double",
         this.store.addListener(this.onStoreUpdate)
     },
 
-    onStoreUpdate: function(collectionObject) {
-        this.setState({collectionObject: collectionObject})
+    onStoreUpdate: function(molecule) {
+        this.setState({molecule: molecule})
     },
 
     componentDidMount: function(){
@@ -47636,7 +47636,7 @@ var Double = React.createClass({displayName: "Double",
 
     fetchResources: function(){
         var context = this
-        var links =_.filter(context.props.collectionObject.collection.links, function(link){ return link.rel == 'resource' })
+        var links =_.filter(context.props.molecule.collection.links, function(link){ return link.rel == 'resource' })
         var hrefs = _.map(links, function(link){ return link.href})
         var resourcePromises = _.map(hrefs, function(href){return context.fetchResource(href)})
         Q.all(resourcePromises).then(function(resources){
@@ -47651,8 +47651,8 @@ var Double = React.createClass({displayName: "Double",
             headers: {
                 'Accept': 'application/json'
             },
-            success: function(collectionObject){
-                return collectionObject
+            success: function(molecule){
+                return molecule
             }
         })
     },
@@ -47664,10 +47664,10 @@ var Double = React.createClass({displayName: "Double",
             return(
                 React.createElement("div", null, 
                     React.createElement("div", {className: "tt-column left-half"}, 
-                        React.createElement(Index, {collectionObject: context.state.resources[0]})
+                        React.createElement(Index, {molecule: context.state.resources[0]})
                     ), 
                     React.createElement("div", {className: "tt-column right-half"}, 
-                        React.createElement(Index, {collectionObject: context.state.resources[1]})
+                        React.createElement(Index, {molecule: context.state.resources[1]})
                     )
                 )
             )
@@ -47684,7 +47684,7 @@ var Double = React.createClass({displayName: "Double",
 
 module.exports = Double
 
-},{"../../collectionJsonHelpers/extractors/collection.js":4,"../../collectionJsonHelpers/extractors/items.js":5,"../../collectionJsonHelpers/extractors/template.js":7,"./../../collectionJsonHelpers/domain/types.js":2,"./../stores/object.js":222,"./index.jsx":227,"./linked-list.jsx":229,"./new-button.jsx":230,"./page.jsx":232,"./search-bar.jsx":235,"lodash":35,"q":36,"react":220}],226:[function(require,module,exports){
+},{"../../collectionJsonHelpers/extractors/collection.js":4,"../../collectionJsonHelpers/extractors/items.js":5,"../../collectionJsonHelpers/extractors/template.js":7,"./../../collectionJsonHelpers/domain/types.js":2,"./../stores/crystal.js":222,"./index.jsx":227,"./linked-list.jsx":229,"./new-button.jsx":230,"./page.jsx":232,"./search-bar.jsx":235,"lodash":35,"q":36,"react":220}],226:[function(require,module,exports){
 var React = require('react')
 var _ = require('lodash')
 
@@ -47712,13 +47712,13 @@ var templateHelper = require('../../collectionJsonHelpers/extractors/template.js
 var itemsHelper = require('../../collectionJsonHelpers/extractors/items.js')
 var typeHelper = require('../../collectionJsonHelpers/domain/types.js')
 var collectionHelper = require('../../collectionJsonHelpers/extractors/collection.js')
-var Store = require('./../stores/object.js')
+var Store = require('./../stores/crystal.js')
 
 var Index = React.createClass({displayName: "Index",
     getInitialState: function () {
-        this.store = new Store.Object(this.props.collectionObject)
+        this.store = new Store.Crystal(this.props.molecule)
         return {
-            collectionObject: this.store.fetch()
+            molecule: this.store.fetch()
         }
     },
 
@@ -47726,41 +47726,41 @@ var Index = React.createClass({displayName: "Index",
         this.store.addListener(this.onStoreUpdate)
     },
 
-    onStoreUpdate: function(collectionObject) {
-        this.setState({collectionObject: collectionObject})
+    onStoreUpdate: function(molecule) {
+        this.setState({molecule: molecule})
     },
 
     render: function () {
         return (
             React.createElement(Page, React.__spread({},  this.props), 
-                React.createElement("h2", null, typeHelper.getType(this.state.collectionObject)), 
+                React.createElement("h2", null, typeHelper.getType(this.state.molecule)), 
                 React.createElement(SearchBar, {store: this.store, query: this.getSearchQuery()}), 
                 React.createElement(NewButton, {store: this.store, template: this.getTemplate(), href: this.getPrimaryUrl()}), 
-                React.createElement(LinkedList, {items: itemsHelper.getItems(this.state.collectionObject), textFormatter: typeHelper.getItemIdentifier})
+                React.createElement(LinkedList, {items: itemsHelper.getItems(this.state.molecule), textFormatter: typeHelper.getItemIdentifier})
             )
         )
     },
 
     getSearchQuery: function(){
-        return _.find(this.getQueries(this.state.collectionObject), function(query){ return query.rel == 'search' })
+        return _.find(this.getQueries(this.state.molecule), function(query){ return query.rel == 'search' })
     },
 
     getPrimaryUrl: function(){
-       return collectionHelper.getCollectionValue(collectionHelper.getCollection(this.state.collectionObject), 'href')
+       return collectionHelper.getCollectionValue(collectionHelper.getCollection(this.state.molecule), 'href')
     },
 
     getTemplate: function(){
-        return templateHelper.getTemplate(this.props.collectionObject)
+        return templateHelper.getTemplate(this.props.molecule)
     },
 
-    getQueries: function(collectionObject){
-        return collectionHelper.getCollectionValue(collectionHelper.getCollection(collectionObject), 'queries')
+    getQueries: function(molecule){
+        return collectionHelper.getCollectionValue(collectionHelper.getCollection(molecule), 'queries')
     }
 })
 
 module.exports = Index
 
-},{"../../collectionJsonHelpers/domain/types.js":2,"../../collectionJsonHelpers/extractors/collection.js":4,"../../collectionJsonHelpers/extractors/items.js":5,"../../collectionJsonHelpers/extractors/template.js":7,"./../stores/object.js":222,"./linked-list.jsx":229,"./new-button.jsx":230,"./page.jsx":232,"./search-bar.jsx":235,"lodash":35,"react":220}],228:[function(require,module,exports){
+},{"../../collectionJsonHelpers/domain/types.js":2,"../../collectionJsonHelpers/extractors/collection.js":4,"../../collectionJsonHelpers/extractors/items.js":5,"../../collectionJsonHelpers/extractors/template.js":7,"./../stores/crystal.js":222,"./linked-list.jsx":229,"./new-button.jsx":230,"./page.jsx":232,"./search-bar.jsx":235,"lodash":35,"react":220}],228:[function(require,module,exports){
 var React = require('react')
 
 var Link = React.createClass({displayName: "Link",
@@ -48021,11 +48021,11 @@ var queriesHelper = require('../../collectionJsonHelpers/extractors/queries.js')
 var QueryCheckbox = require('./query-checkbox.jsx')
 var QueryTextbox = require('./query-textbox.jsx')
 var collectionHelper = require('../../collectionJsonHelpers/extractors/collection.js')
-var Store = require('./../stores/object.js')
+var Store = require('./../stores/crystal.js')
 
 var SearchBar = React.createClass({displayName: "SearchBar",
     getInitialState: function(){
-        this.store = new Store.Object(this.getDisabledSearchQuery())
+        this.store = new Store.Crystal(this.getDisabledSearchQuery())
         return {query: this.store.fetch()}
     },
 
@@ -48088,8 +48088,8 @@ var SearchBar = React.createClass({displayName: "SearchBar",
             headers: {
                 'Accept': 'application/json'
             },
-            success: function(collectionObject){
-                context.props.store.update(collectionObject)
+            success: function(molecule){
+                context.props.store.update(molecule)
             }
         })
     }
@@ -48097,7 +48097,7 @@ var SearchBar = React.createClass({displayName: "SearchBar",
 
 module.exports = SearchBar
 
-},{"../../collectionJsonHelpers/extractors/collection.js":4,"../../collectionJsonHelpers/extractors/queries.js":6,"./../stores/object.js":222,"./query-checkbox.jsx":233,"./query-textbox.jsx":234,"lodash":35,"react":220}],236:[function(require,module,exports){
+},{"../../collectionJsonHelpers/extractors/collection.js":4,"../../collectionJsonHelpers/extractors/queries.js":6,"./../stores/crystal.js":222,"./query-checkbox.jsx":233,"./query-textbox.jsx":234,"lodash":35,"react":220}],236:[function(require,module,exports){
 var React = require('react')
 var Page = require('./page.jsx')
 var Details = require('./details.jsx')
@@ -48114,8 +48114,8 @@ var collectionHelper = require('../../collectionJsonHelpers/extractors/collectio
 var Show = React.createClass({displayName: "Show",
     getInitialState: function(){
         return {
-            collectionObject: this.props.collectionObject,
-            template: templateHelper.getPopulatedTemplate(templateHelper.getTemplate(this.props.collectionObject), itemsHelper.getFirstItem(this.props.collectionObject)),
+            molecule: this.props.molecule,
+            template: templateHelper.getPopulatedTemplate(templateHelper.getTemplate(this.props.molecule), itemsHelper.getFirstItem(this.props.molecule)),
             edit: false
         }
     },
@@ -48135,14 +48135,14 @@ var Show = React.createClass({displayName: "Show",
                  context.state.edit ? React.createElement(EdittingButtons, {onSave: context.onSave, onCancel: context.onCancel}) : null, 
                 React.createElement("p", null, 
                     React.createElement(Link, {onClick: context.onEdit, text: "Edit"}), 
-                    React.createElement(DeleteButton, {action: context.getPrimaryUrl(context.state.collectionObject)})
+                    React.createElement(DeleteButton, {action: context.getPrimaryUrl(context.state.molecule)})
                 )
             )
         )
     },
 
     getBackLink: function(){
-        return _.find(this.props.collectionObject.collection.links, function(link){return link.rel == 'back'}).href
+        return _.find(this.props.molecule.collection.links, function(link){return link.rel == 'back'}).href
     },
 
     handleAttributeChange: function(event){
@@ -48155,17 +48155,17 @@ var Show = React.createClass({displayName: "Show",
 
     onSave: function(){
         var context = this
-        $.ajax(collectionHelper.getCollectionValue(collectionHelper.getCollection(context.state.collectionObject), 'href'), {
+        $.ajax(collectionHelper.getCollectionValue(collectionHelper.getCollection(context.state.molecule), 'href'), {
             method: 'PUT',
             headers: {
                 'Accept': 'application/json'
             },
             data: {'template': this.state.template},
-            success: function(collectionObject){
-                context.setState({collectionObject: collectionObject})
+            success: function(molecule){
+                context.setState({molecule: molecule})
                 context.setState({template: templateHelper.getPopulatedTemplate(
-                                                templateHelper.getTemplate(collectionObject),
-                                                itemsHelper.getFirstItem(collectionObject))})
+                                                templateHelper.getTemplate(molecule),
+                                                itemsHelper.getFirstItem(molecule))})
                 context.onCancel()
             }
         })
@@ -48176,11 +48176,11 @@ var Show = React.createClass({displayName: "Show",
     },
 
     getItemAttributes: function(){
-        return attributesHelper.getItemAttributes(itemsHelper.getFirstItem(this.state.collectionObject))
+        return attributesHelper.getItemAttributes(itemsHelper.getFirstItem(this.state.molecule))
     },
 
     getItemAttribute: function(attributeName){
-        return attributesHelper.getItemAttributeValue(itemsHelper.getFirstItem(this.state.collectionObject), attributeName)
+        return attributesHelper.getItemAttributeValue(itemsHelper.getFirstItem(this.state.molecule), attributeName)
     },
 
     onEdit: function(){

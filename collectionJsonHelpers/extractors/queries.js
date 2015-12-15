@@ -1,8 +1,8 @@
 var _ = require('lodash')
 var collectionsHelper = require('./collection.js')
 
-function getQueries(collectionJson){
-    return collectionsHelper.getCollection(collectionJson).queries
+function getQueries(molecule){
+    return collectionsHelper.getCollection(molecule).queries
 }
 
 function getPrompt(query){

@@ -4,11 +4,11 @@ var queriesHelper = require('../../collectionJsonHelpers/extractors/queries.js')
 var QueryCheckbox = require('./query-checkbox.jsx')
 var QueryTextbox = require('./query-textbox.jsx')
 var collectionHelper = require('../../collectionJsonHelpers/extractors/collection.js')
-var Store = require('./../stores/object.js')
+var Store = require('./../stores/crystal.js')
 
 var SearchBar = React.createClass({
     getInitialState: function(){
-        this.store = new Store.Object(this.getDisabledSearchQuery())
+        this.store = new Store.Crystal(this.getDisabledSearchQuery())
         return {query: this.store.fetch()}
     },
 
@@ -71,8 +71,8 @@ var SearchBar = React.createClass({
             headers: {
                 'Accept': 'application/json'
             },
-            success: function(collectionObject){
-                context.props.store.update(collectionObject)
+            success: function(molecule){
+                context.props.store.update(molecule)
             }
         })
     }

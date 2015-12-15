@@ -1,14 +1,14 @@
 var attributesHelper = require('../extractors/attributes.js')
 var talksHelper = require('./talks-transformer.js')
 
-function getType(collectionObject){
-    if(collectionObject.collection.href.indexOf('speakers') > -1){
+function getType(molecule){
+    if(molecule.collection.href.indexOf('speakers') > -1){
         return 'speakers'
     }
-    if(collectionObject.collection.href.indexOf('days') > -1){
+    if(molecule.collection.href.indexOf('days') > -1){
         return 'days'
     }
-    if(collectionObject.collection.href.indexOf('talks') > -1){
+    if(molecule.collection.href.indexOf('talks') > -1){
         return 'talks'
     }
 }

@@ -1,7 +1,7 @@
 var _ = require('lodash')
 
-function talks(collectionObject) {
-    return _.map(collectionObject.collection.items, function(item){
+function talks(molecule) {
+    return _.map(molecule.collection.items, function(item){
         return talkFromAttributes(item.data)
     })
 }

@@ -10,13 +10,13 @@ var templateHelper = require('../../collectionJsonHelpers/extractors/template.js
 var itemsHelper = require('../../collectionJsonHelpers/extractors/items.js')
 var typeHelper = require('./../../collectionJsonHelpers/domain/types.js')
 var collectionHelper = require('../../collectionJsonHelpers/extractors/collection.js')
-var Store = require('./../stores/object.js')
+var Store = require('./../stores/crystal.js')
 
 var Double = React.createClass({
     getInitialState: function () {
-        this.store = new Store.Object(this.props.collectionObject)
+        this.store = new Store.Crystal(this.props.molecule)
         return {
-            collectionObject: this.store.fetch(),
+            molecule: this.store.fetch(),
             resources: [],
             loaded: false
         }
@@ -26,8 +26,8 @@ var Double = React.createClass({
         this.store.addListener(this.onStoreUpdate)
     },
 
-    onStoreUpdate: function(collectionObject) {
-        this.setState({collectionObject: collectionObject})
+    onStoreUpdate: function(molecule) {
+        this.setState({molecule: molecule})
     },
 
     componentDidMount: function(){
@@ -36,7 +36,7 @@ var Double = React.createClass({
 
     fetchResources: function(){
         var context = this
-        var links =_.filter(context.props.collectionObject.collection.links, function(link){ return link.rel == 'resource' })
+        var links =_.filter(context.props.molecule.collection.links, function(link){ return link.rel == 'resource' })
         var hrefs = _.map(links, function(link){ return link.href})
         var resourcePromises = _.map(hrefs, function(href){return context.fetchResource(href)})
         Q.all(resourcePromises).then(function(resources){
@@ -51,8 +51,8 @@ var Double = React.createClass({
             headers: {
                 'Accept': 'application/json'
             },
-            success: function(collectionObject){
-                return collectionObject
+            success: function(molecule){
+                return molecule
             }
         })
     },
@@ -64,10 +64,10 @@ var Double = React.createClass({
             return(
                 <div>
                     <div className='tt-column left-half'>
-                        <Index collectionObject={context.state.resources[0]}/>
+                        <Index molecule={context.state.resources[0]}/>
                     </div>
                     <div className='tt-column right-half'>
-                        <Index collectionObject={context.state.resources[1]}/>
+                        <Index molecule={context.state.resources[1]}/>
                     </div>
                 </div>
             )
