@@ -2,16 +2,16 @@ var hostRoot = 'http://localhost:4000'
 var serverUrl = 'http://localhost:3000/'
 var hostPath = '/speakers/'
 
-var Collection = require('./cache').SpeakersCollectionJsonCollection
-var Item = require('./cache').SpeakersCollectionJsonItem
-var Template = require('./cache').SpeakersCollectionJsonTemplate
-var Query = require('./cache').SpeakersCollectionJsonQuery
+var Collection = require('./../cache').SpeakersCollectionJsonCollection
+var Item = require('./../cache').SpeakersCollectionJsonItem
+var Template = require('./../cache').SpeakersCollectionJsonTemplate
+var Query = require('./../cache').SpeakersCollectionJsonQuery
 
 var RemoteAdapter = require('./remote-adapter.js').RemoteAdapter
 var adapter = new RemoteAdapter(hostRoot, hostPath, serverUrl, Collection, Item, Template, Query)
 var RemoteResponder = require('./remote-responder.js').RemoteResponder
 var responder = new RemoteResponder()
-var Controller = require('./controller.js').Controller
+var Controller = require('./../controller.js').Controller
 var controller = new Controller(adapter, responder)
 
 function index(req, res)    {controller.index(req, res)}

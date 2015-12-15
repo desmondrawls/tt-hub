@@ -27,7 +27,7 @@ app.use('/jquery', express.static(__dirname + '/node_modules/jquery/dist/'));
 app.use(middleware.logRequest)
 app.use(middleware.logResponse)
 
-var speakersController = require('./speakers-controller')
+var speakersController = require('./remote/speakers-controller')
 app.get('/speakers/', speakersController.index)
 app.get('/speakers/search', speakersController.search)
 app.post('/speakers/', speakersController.create)
@@ -35,7 +35,7 @@ app.get('/speakers/:id', speakersController.show)
 app.put('/speakers/:id', speakersController.update)
 app.delete('/speakers/:id', speakersController.destroy)
 
-var daysController = require('./days-controller')
+var daysController = require('./remote/days-controller')
 app.get('/days/', daysController.index)
 app.get('/days/search', daysController.search)
 app.post('/days/', daysController.create)
@@ -43,7 +43,7 @@ app.get('/days/:id', daysController.show)
 app.put('/days/:id', daysController.update)
 app.delete('/days/:id', daysController.destroy)
 
-var talksController = require('./talks-controller')
+var talksController = require('./local/talks-controller')
 app.get('/', talksController.index)
 
 app.listen(4000);

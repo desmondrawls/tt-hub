@@ -3,15 +3,15 @@ var hostRoot = 'http://localhost:4000'
 var serverUrl = 'http://localhost:3001/'
 var hostPath = '/days/'
 
-var Collection = require('./cache').DayCollectionJsonCollection
-var Item = require('./cache').DayCollectionJsonItem
-var Template = require('./cache').DayCollectionJsonTemplate
-var Query = require('./cache').DayCollectionJsonQuery
+var Collection = require('./../cache').DayCollectionJsonCollection
+var Item = require('./../cache').DayCollectionJsonItem
+var Template = require('./../cache').DayCollectionJsonTemplate
+var Query = require('./../cache').DayCollectionJsonQuery
 
 var adapter = new Adapter(hostRoot, hostPath, serverUrl, Collection, Item, Template, Query)
 var Responder = require('./remote-responder.js').RemoteResponder
 var responder = new Responder()
-var Controller = require('./controller.js').Controller
+var Controller = require('./../controller.js').Controller
 var controller = new Controller(adapter, responder)
 
 function index(req, res)    {controller.index(req, res)}

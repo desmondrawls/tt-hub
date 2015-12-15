@@ -2,22 +2,22 @@
 
 var express = require('express')
 var Client = require('node-rest-client').Client
-var debug = require('./app').debug
-var immigrationsHelper = require('./helpers/collectionJson/immigrations.js')
-var jsonTransformer = require('./helpers/collectionJson/transformer.js')
-var queriesHelper = require('./helpers/collectionJson/queries.js')
-var itemsHelper = require('./helpers/collectionJson/items.js')
-var templateHelper = require('./helpers/collectionJson/template.js')
-var talksHelper = require('./helpers/talks.js')
+var debug = require('./../app').debug
+var immigrationsHelper = require('./../helpers/collectionJson/immigrations.js')
+var jsonTransformer = require('./../helpers/collectionJson/transformer.js')
+var queriesHelper = require('./../helpers/collectionJson/queries.js')
+var itemsHelper = require('./../helpers/collectionJson/items.js')
+var templateHelper = require('./../helpers/collectionJson/template.js')
+var talksHelper = require('./../helpers/talks.js')
 var _ = require('lodash')
 var Q = require('q');
 var client = new Client()
 
-var Collection = require('./cache').CollectionJsonCollection
-var Item = require('./cache').CollectionJsonItem
-var Template = require('./cache').CollectionJsonTemplate
-var Query = require('./cache').CollectionJsonQuery
-var Talk = require('./db').Talk
+var Collection = require('./../cache').CollectionJsonCollection
+var Item = require('./../cache').CollectionJsonItem
+var Template = require('./../cache').CollectionJsonTemplate
+var Query = require('./../cache').CollectionJsonQuery
+var Talk = require('./../db').Talk
 
 var LocalAdapter = function(hostRoot, hostPath, serverUrl){
     this.hostRoot = hostRoot
