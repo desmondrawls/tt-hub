@@ -26,9 +26,10 @@ LocalAdapter.prototype.index = function(req, res, resolver) {
     return resolver.promise
 }
 
-LocalAdapter.prototype.create = function(req, res){
+LocalAdapter.prototype.create = function(req, res, resolver){
     var talk = talksTranslater.talkFromTemplateObject((req.body))
-    new Talk(talk).save().then(function(talk){res.redirect('/')})
+    new Talk(talk).save().then(function(talk){resolver.resolve(context.hostPath)})
+    return resolver.promise
 }
 
 

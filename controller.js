@@ -34,7 +34,7 @@ Controller.prototype.show = function(req, res) {
 
 Controller.prototype.create = function(req, res) {
     var context = this
-    context.adapter.create(req, res)
+    context.adapter.create(req, res, Q.defer()).then(function(path){context.responder.redirect(res, path)}).done()
 }
 
 Controller.prototype.update = function(req, res) {

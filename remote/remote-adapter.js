@@ -65,7 +65,7 @@ RemoteAdapter.prototype.search = function(req, res, resolver) {
     return resolver.promise
 }
 
-RemoteAdapter.prototype.create = function(req, res) {
+RemoteAdapter.prototype.create = function(req, res, resolver) {
     var context = this
     console.log("creating item ", "with " + req.body)
     var args = {
@@ -73,8 +73,9 @@ RemoteAdapter.prototype.create = function(req, res) {
         headers: {"Content-Type": "application/json", "Accept": "application/json"}
     }
     client.post(context.serverUrl, args, function (object, response) {
-        res.redirect(context.hostPath)
+        resolver.resolve(context.hostPath)
     })
+    return resolver.promise
 }
 
 RemoteAdapter.prototype.show = function(req, res, resolver) {
