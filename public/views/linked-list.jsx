@@ -1,6 +1,6 @@
 var React = require('react')
-var itemsHelper = require('./../../helpers/collectionJson/items.js')
-var attributesHelper = require('./../../helpers/collectionJson/attributes.js')
+var itemsHelper = require('../../collectionJsonHelpers/extractors/items.js')
+var attributesHelper = require('../../collectionJsonHelpers/extractors/attributes.js')
 var _ = require('lodash')
 var Details = require('./details.jsx')
 

@@ -1,5 +1,5 @@
 var _ = require('lodash')
-var typesHelper = require('./../types.js')
+var typesHelper = require('../domain/types.js')
 
 function layout(backUrl, url, items, template) {
     return (

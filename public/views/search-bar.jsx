@@ -1,9 +1,9 @@
 var React = require('react')
 var _ = require('lodash')
-var queriesHelper = require('./../../helpers/collectionJson/queries.js')
+var queriesHelper = require('../../collectionJsonHelpers/extractors/queries.js')
 var QueryCheckbox = require('./query-checkbox.jsx')
 var QueryTextbox = require('./query-textbox.jsx')
-var collectionHelper = require('./../../helpers/collectionJson/collection.js')
+var collectionHelper = require('../../collectionJsonHelpers/extractors/collection.js')
 var Store = require('./../stores/object.js')
 
 var SearchBar = React.createClass({

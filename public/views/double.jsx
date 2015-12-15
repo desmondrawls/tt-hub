@@ -6,10 +6,10 @@ var LinkedList = require('./linked-list.jsx')
 var SearchBar = require('./search-bar.jsx')
 var _ = require('lodash')
 var Q = require('q');
-var templateHelper = require('./../../helpers/collectionJson/template.js')
-var itemsHelper = require('./../../helpers/collectionJson/items.js')
-var typeHelper = require('./../../helpers/types.js')
-var collectionHelper = require('./../../helpers/collectionJson/collection.js')
+var templateHelper = require('../../collectionJsonHelpers/extractors/template.js')
+var itemsHelper = require('../../collectionJsonHelpers/extractors/items.js')
+var typeHelper = require('./../../collectionJsonHelpers/domain/types.js')
+var collectionHelper = require('../../collectionJsonHelpers/extractors/collection.js')
 var Store = require('./../stores/object.js')
 
 var Double = React.createClass({

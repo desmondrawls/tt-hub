@@ -1,161 +1,6 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 var _ = require('lodash')
 
-function getAttributeValue(attribute){
-    return attribute.value
-}
-
-function getAttributeName(attribute){
-    return attribute.name
-}
-
-function getAttributePrompt(attribute){
-    return attribute.prompt
-}
-
-function updateAttributeValue(attribute, value) {
-    attribute['value'] = value
-}
-
-function getItemAttributeValue(item, name){
-    return getAttributeValue(getItemAttribute(item, name))
-}
-
-function getItemAttribute(item, name){
-    return _.find(getItemAttributes(item), function(attr){ return attr.name == name})
-}
-
-function getItemAttributes(item){
-    return item.data
-}
-
-exports.getItemAttributes = getItemAttributes
-exports.getItemAttribute = getItemAttribute
-exports.getItemAttributeValue = getItemAttributeValue
-exports.getAttributeValue = getAttributeValue
-exports.getAttributeName = getAttributeName
-exports.getAttributePrompt = getAttributePrompt
-exports.updateAttributeValue = updateAttributeValue
-
-},{"lodash":35}],2:[function(require,module,exports){
-var _ = require('lodash')
-
-function getCollection(jsonCollection){
-    return jsonCollection.collection;
-}
-
-function getCollectionValue(collection, value){
-    return collection[value]
-}
-
-exports.getCollection = getCollection
-exports.getCollectionValue = getCollectionValue
-
-},{"lodash":35}],3:[function(require,module,exports){
-var _ = require('lodash')
-var attributesHelper = require('./attributes.js')
-var collectionsHelper = require('./collection.js')
-
-function getItems(collectionJson){
-    return collectionsHelper.getCollection(collectionJson).items
-}
-
-function getFirstItem(collectionJson){
-    return getFirst(getItems(collectionJson))
-}
-
-function getFirst(items){
-    return items[0]
-}
-
-function getLink(item) {
-    return item.href
-}
-
-exports.getLink = getLink
-exports.getItems = getItems
-exports.getFirstItem = getFirstItem
-exports.getFirst = getFirst
-
-},{"./attributes.js":1,"./collection.js":2,"lodash":35}],4:[function(require,module,exports){
-var _ = require('lodash')
-var collectionsHelper = require('./collection.js')
-
-function getQueries(collectionJson){
-    return collectionsHelper.getCollection(collectionJson).queries
-}
-
-function getPrompt(query){
-    return query.prompt
-}
-
-function getHref(query){
-    return query.href
-}
-
-function getData(query){
-    return query.data
-}
-
-function getDataName(queryData){
-    return queryData.name
-}
-
-function getDataValue(queryData){
-    return queryData.value
-}
-
-function takesInput(query){
-    return typeof getData(query) == 'object'
-}
-
-function getDataType(queryData){
-    return queryData.type
-}
-
-function copyDataWithValue(queryData, value){
-    var newQueryData = _.clone(queryData, true)
-    return _.merge(newQueryData, {value: value})
-}
-
-function mergeData(existingQueryData, newQueryData){
-    var withoutOldData = _.reject(existingQueryData, function(data) {return data.name == newQueryData.name})
-    return withoutOldData.concat(newQueryData)
-}
-
-exports.getQueries = getQueries
-exports.getPrompt = getPrompt
-exports.getData = getData
-exports.getHref = getHref
-exports.getDataName = getDataName
-exports.getDataValue = getDataValue
-exports.takesInput = takesInput
-exports.getDataType = getDataType
-exports.copyDataWithValue = copyDataWithValue
-exports.mergeData = mergeData
-
-},{"./collection.js":2,"lodash":35}],5:[function(require,module,exports){
-var _ = require('lodash')
-var attributesHelper = require('./attributes.js')
-var collectionsHelper = require('./collection.js')
-
-function getPopulatedTemplate(template, item){
-    _.each(attributesHelper.getItemAttributes(template), function(attribute){
-        attribute['value'] = attributesHelper.getItemAttributeValue(item, attribute['name'])
-    })
-    return template;
-}
-
-function getTemplate(collectionJson){
-    return collectionsHelper.getCollection(collectionJson).template
-}
-
-exports.getPopulatedTemplate = getPopulatedTemplate
-exports.getTemplate = getTemplate
-
-},{"./attributes.js":1,"./collection.js":2,"lodash":35}],6:[function(require,module,exports){
-var _ = require('lodash')
-
 function getTemplate(){
     return {
         data: [
@@ -201,8 +46,8 @@ exports.getLinks = getLinks
 exports.formatTalk = formatTalk
 exports.formatTalks = formatTalks
 
-},{"lodash":35}],7:[function(require,module,exports){
-var attributesHelper = require('./collectionJson/attributes.js')
+},{"lodash":35}],2:[function(require,module,exports){
+var attributesHelper = require('../extractors/attributes.js')
 var talksHelper = require('./talks.js')
 
 function getType(collectionObject){
@@ -282,7 +127,162 @@ exports.getQueries = getQueries
 exports.getType = getType
 exports.getLinks = getLinks
 
-},{"./collectionJson/attributes.js":1,"./talks.js":6}],8:[function(require,module,exports){
+},{"../extractors/attributes.js":3,"./talks.js":1}],3:[function(require,module,exports){
+var _ = require('lodash')
+
+function getAttributeValue(attribute){
+    return attribute.value
+}
+
+function getAttributeName(attribute){
+    return attribute.name
+}
+
+function getAttributePrompt(attribute){
+    return attribute.prompt
+}
+
+function updateAttributeValue(attribute, value) {
+    attribute['value'] = value
+}
+
+function getItemAttributeValue(item, name){
+    return getAttributeValue(getItemAttribute(item, name))
+}
+
+function getItemAttribute(item, name){
+    return _.find(getItemAttributes(item), function(attr){ return attr.name == name})
+}
+
+function getItemAttributes(item){
+    return item.data
+}
+
+exports.getItemAttributes = getItemAttributes
+exports.getItemAttribute = getItemAttribute
+exports.getItemAttributeValue = getItemAttributeValue
+exports.getAttributeValue = getAttributeValue
+exports.getAttributeName = getAttributeName
+exports.getAttributePrompt = getAttributePrompt
+exports.updateAttributeValue = updateAttributeValue
+
+},{"lodash":35}],4:[function(require,module,exports){
+var _ = require('lodash')
+
+function getCollection(jsonCollection){
+    return jsonCollection.collection;
+}
+
+function getCollectionValue(collection, value){
+    return collection[value]
+}
+
+exports.getCollection = getCollection
+exports.getCollectionValue = getCollectionValue
+
+},{"lodash":35}],5:[function(require,module,exports){
+var _ = require('lodash')
+var attributesHelper = require('./attributes.js')
+var collectionsHelper = require('./collection.js')
+
+function getItems(collectionJson){
+    return collectionsHelper.getCollection(collectionJson).items
+}
+
+function getFirstItem(collectionJson){
+    return getFirst(getItems(collectionJson))
+}
+
+function getFirst(items){
+    return items[0]
+}
+
+function getLink(item) {
+    return item.href
+}
+
+exports.getLink = getLink
+exports.getItems = getItems
+exports.getFirstItem = getFirstItem
+exports.getFirst = getFirst
+
+},{"./attributes.js":3,"./collection.js":4,"lodash":35}],6:[function(require,module,exports){
+var _ = require('lodash')
+var collectionsHelper = require('./collection.js')
+
+function getQueries(collectionJson){
+    return collectionsHelper.getCollection(collectionJson).queries
+}
+
+function getPrompt(query){
+    return query.prompt
+}
+
+function getHref(query){
+    return query.href
+}
+
+function getData(query){
+    return query.data
+}
+
+function getDataName(queryData){
+    return queryData.name
+}
+
+function getDataValue(queryData){
+    return queryData.value
+}
+
+function takesInput(query){
+    return typeof getData(query) == 'object'
+}
+
+function getDataType(queryData){
+    return queryData.type
+}
+
+function copyDataWithValue(queryData, value){
+    var newQueryData = _.clone(queryData, true)
+    return _.merge(newQueryData, {value: value})
+}
+
+function mergeData(existingQueryData, newQueryData){
+    var withoutOldData = _.reject(existingQueryData, function(data) {return data.name == newQueryData.name})
+    return withoutOldData.concat(newQueryData)
+}
+
+exports.getQueries = getQueries
+exports.getPrompt = getPrompt
+exports.getData = getData
+exports.getHref = getHref
+exports.getDataName = getDataName
+exports.getDataValue = getDataValue
+exports.takesInput = takesInput
+exports.getDataType = getDataType
+exports.copyDataWithValue = copyDataWithValue
+exports.mergeData = mergeData
+
+},{"./collection.js":4,"lodash":35}],7:[function(require,module,exports){
+var _ = require('lodash')
+var attributesHelper = require('./attributes.js')
+var collectionsHelper = require('./collection.js')
+
+function getPopulatedTemplate(template, item){
+    _.each(attributesHelper.getItemAttributes(template), function(attribute){
+        attribute['value'] = attributesHelper.getItemAttributeValue(item, attribute['name'])
+    })
+    return template;
+}
+
+function getTemplate(collectionJson){
+    return collectionsHelper.getCollection(collectionJson).template
+}
+
+exports.getPopulatedTemplate = getPopulatedTemplate
+exports.getTemplate = getTemplate
+
+},{"./attributes.js":3,"./collection.js":4,"lodash":35}],8:[function(require,module,exports){
 // shim for using process in browser
 
 var process = module.exports = {};
@@ -47561,7 +47561,7 @@ module.exports = DeleteButton
 },{"lodash":35,"react":220}],224:[function(require,module,exports){
 var React = require('react')
 var _ = require('lodash')
-var attributesHelper = require('./../../helpers/collectionJson/attributes.js')
+var attributesHelper = require('../../collectionJsonHelpers/extractors/attributes.js')
 
 var Details = React.createClass({displayName: "Details",
     render: function(){
@@ -47597,7 +47597,7 @@ var Details = React.createClass({displayName: "Details",
 
 module.exports = Details
 
-},{"./../../helpers/collectionJson/attributes.js":1,"lodash":35,"react":220}],225:[function(require,module,exports){
+},{"../../collectionJsonHelpers/extractors/attributes.js":3,"lodash":35,"react":220}],225:[function(require,module,exports){
 var React = require('react')
 var Page = require('./page.jsx')
 var Index = require('./index.jsx')
@@ -47606,10 +47606,10 @@ var LinkedList = require('./linked-list.jsx')
 var SearchBar = require('./search-bar.jsx')
 var _ = require('lodash')
 var Q = require('q');
-var templateHelper = require('./../../helpers/collectionJson/template.js')
-var itemsHelper = require('./../../helpers/collectionJson/items.js')
-var typeHelper = require('./../../helpers/types.js')
-var collectionHelper = require('./../../helpers/collectionJson/collection.js')
+var templateHelper = require('../../collectionJsonHelpers/extractors/template.js')
+var itemsHelper = require('../../collectionJsonHelpers/extractors/items.js')
+var typeHelper = require('./../../collectionJsonHelpers/domain/types.js')
+var collectionHelper = require('../../collectionJsonHelpers/extractors/collection.js')
 var Store = require('./../stores/object.js')
 
 var Double = React.createClass({displayName: "Double",
@@ -47684,7 +47684,7 @@ var Double = React.createClass({displayName: "Double",
 
 module.exports = Double
 
-},{"./../../helpers/collectionJson/collection.js":2,"./../../helpers/collectionJson/items.js":3,"./../../helpers/collectionJson/template.js":5,"./../../helpers/types.js":7,"./../stores/object.js":222,"./index.jsx":227,"./linked-list.jsx":229,"./new-button.jsx":230,"./page.jsx":232,"./search-bar.jsx":235,"lodash":35,"q":36,"react":220}],226:[function(require,module,exports){
+},{"../../collectionJsonHelpers/extractors/collection.js":4,"../../collectionJsonHelpers/extractors/items.js":5,"../../collectionJsonHelpers/extractors/template.js":7,"./../../collectionJsonHelpers/domain/types.js":2,"./../stores/object.js":222,"./index.jsx":227,"./linked-list.jsx":229,"./new-button.jsx":230,"./page.jsx":232,"./search-bar.jsx":235,"lodash":35,"q":36,"react":220}],226:[function(require,module,exports){
 var React = require('react')
 var _ = require('lodash')
 
@@ -47708,10 +47708,10 @@ var NewButton = require('./new-button.jsx')
 var LinkedList = require('./linked-list.jsx')
 var SearchBar = require('./search-bar.jsx')
 var _ = require('lodash')
-var templateHelper = require('./../../helpers/collectionJson/template.js')
-var itemsHelper = require('./../../helpers/collectionJson/items.js')
-var typeHelper = require('./../../helpers/types.js')
-var collectionHelper = require('./../../helpers/collectionJson/collection.js')
+var templateHelper = require('../../collectionJsonHelpers/extractors/template.js')
+var itemsHelper = require('../../collectionJsonHelpers/extractors/items.js')
+var typeHelper = require('../../collectionJsonHelpers/domain/types.js')
+var collectionHelper = require('../../collectionJsonHelpers/extractors/collection.js')
 var Store = require('./../stores/object.js')
 
 var Index = React.createClass({displayName: "Index",
@@ -47760,7 +47760,7 @@ var Index = React.createClass({displayName: "Index",
 
 module.exports = Index
 
-},{"./../../helpers/collectionJson/collection.js":2,"./../../helpers/collectionJson/items.js":3,"./../../helpers/collectionJson/template.js":5,"./../../helpers/types.js":7,"./../stores/object.js":222,"./linked-list.jsx":229,"./new-button.jsx":230,"./page.jsx":232,"./search-bar.jsx":235,"lodash":35,"react":220}],228:[function(require,module,exports){
+},{"../../collectionJsonHelpers/domain/types.js":2,"../../collectionJsonHelpers/extractors/collection.js":4,"../../collectionJsonHelpers/extractors/items.js":5,"../../collectionJsonHelpers/extractors/template.js":7,"./../stores/object.js":222,"./linked-list.jsx":229,"./new-button.jsx":230,"./page.jsx":232,"./search-bar.jsx":235,"lodash":35,"react":220}],228:[function(require,module,exports){
 var React = require('react')
 
 var Link = React.createClass({displayName: "Link",
@@ -47773,8 +47773,8 @@ module.exports = Link
 
 },{"react":220}],229:[function(require,module,exports){
 var React = require('react')
-var itemsHelper = require('./../../helpers/collectionJson/items.js')
-var attributesHelper = require('./../../helpers/collectionJson/attributes.js')
+var itemsHelper = require('../../collectionJsonHelpers/extractors/items.js')
+var attributesHelper = require('../../collectionJsonHelpers/extractors/attributes.js')
 var _ = require('lodash')
 var Details = require('./details.jsx')
 
@@ -47811,7 +47811,7 @@ var LinkedList = React.createClass({displayName: "LinkedList",
 
 module.exports = LinkedList
 
-},{"./../../helpers/collectionJson/attributes.js":1,"./../../helpers/collectionJson/items.js":3,"./details.jsx":224,"lodash":35,"react":220}],230:[function(require,module,exports){
+},{"../../collectionJsonHelpers/extractors/attributes.js":3,"../../collectionJsonHelpers/extractors/items.js":5,"./details.jsx":224,"lodash":35,"react":220}],230:[function(require,module,exports){
 var React = require('react')
 var NewForm = require('./new-form.jsx')
 var Link = require('./link.jsx')
@@ -47854,7 +47854,7 @@ var React = require('react')
 var _ = require('lodash')
 var Details = require('./details.jsx')
 var EdittingButtons = require('./editting-buttons.jsx')
-var attributesHelper = require('./../../helpers/collectionJson/attributes.js')
+var attributesHelper = require('../../collectionJsonHelpers/extractors/attributes.js')
 
 var NewForm = React.createClass({displayName: "NewForm",
     getInitialState: function () {
@@ -47905,7 +47905,7 @@ var NewForm = React.createClass({displayName: "NewForm",
 
 module.exports = NewForm
 
-},{"./../../helpers/collectionJson/attributes.js":1,"./details.jsx":224,"./editting-buttons.jsx":226,"lodash":35,"react":220}],232:[function(require,module,exports){
+},{"../../collectionJsonHelpers/extractors/attributes.js":3,"./details.jsx":224,"./editting-buttons.jsx":226,"lodash":35,"react":220}],232:[function(require,module,exports){
 var React = require('react')
 
 var Page = React.createClass({displayName: "Page",
@@ -47930,7 +47930,7 @@ module.exports = Page
 
 },{"react":220}],233:[function(require,module,exports){
 var React = require('react')
-var queriesHelper = require('./../../helpers/collectionJson/queries.js')
+var queriesHelper = require('../../collectionJsonHelpers/extractors/queries.js')
 var _ = require('lodash')
 
 var QueryCheckbox = React.createClass({displayName: "QueryCheckbox",
@@ -47973,9 +47973,9 @@ var QueryCheckbox = React.createClass({displayName: "QueryCheckbox",
 
 module.exports = QueryCheckbox
 
-},{"./../../helpers/collectionJson/queries.js":4,"lodash":35,"react":220}],234:[function(require,module,exports){
+},{"../../collectionJsonHelpers/extractors/queries.js":6,"lodash":35,"react":220}],234:[function(require,module,exports){
 var React = require('react')
-var queriesHelper = require('./../../helpers/collectionJson/queries.js')
+var queriesHelper = require('../../collectionJsonHelpers/extractors/queries.js')
 var _ = require('lodash')
 
 var QueryTextbox = React.createClass({displayName: "QueryTextbox",
@@ -48014,13 +48014,13 @@ var QueryTextbox = React.createClass({displayName: "QueryTextbox",
 
 module.exports = QueryTextbox
 
-},{"./../../helpers/collectionJson/queries.js":4,"lodash":35,"react":220}],235:[function(require,module,exports){
+},{"../../collectionJsonHelpers/extractors/queries.js":6,"lodash":35,"react":220}],235:[function(require,module,exports){
 var React = require('react')
 var _ = require('lodash')
-var queriesHelper = require('./../../helpers/collectionJson/queries.js')
+var queriesHelper = require('../../collectionJsonHelpers/extractors/queries.js')
 var QueryCheckbox = require('./query-checkbox.jsx')
 var QueryTextbox = require('./query-textbox.jsx')
-var collectionHelper = require('./../../helpers/collectionJson/collection.js')
+var collectionHelper = require('../../collectionJsonHelpers/extractors/collection.js')
 var Store = require('./../stores/object.js')
 
 var SearchBar = React.createClass({displayName: "SearchBar",
@@ -48097,7 +48097,7 @@ var SearchBar = React.createClass({displayName: "SearchBar",
 
 module.exports = SearchBar
 
-},{"./../../helpers/collectionJson/collection.js":2,"./../../helpers/collectionJson/queries.js":4,"./../stores/object.js":222,"./query-checkbox.jsx":233,"./query-textbox.jsx":234,"lodash":35,"react":220}],236:[function(require,module,exports){
+},{"../../collectionJsonHelpers/extractors/collection.js":4,"../../collectionJsonHelpers/extractors/queries.js":6,"./../stores/object.js":222,"./query-checkbox.jsx":233,"./query-textbox.jsx":234,"lodash":35,"react":220}],236:[function(require,module,exports){
 var React = require('react')
 var Page = require('./page.jsx')
 var Details = require('./details.jsx')
@@ -48106,10 +48106,10 @@ var DeleteButton = require('./delete-button.jsx')
 var Link = require('./link.jsx')
 var _ = require('lodash')
 var $ = require('jquery')
-var attributesHelper = require('./../../helpers/collectionJson/attributes.js')
-var itemsHelper = require('./../../helpers/collectionJson/items.js')
-var templateHelper = require('./../../helpers/collectionJson/template.js')
-var collectionHelper = require('./../../helpers/collectionJson/collection.js')
+var attributesHelper = require('../../collectionJsonHelpers/extractors/attributes.js')
+var itemsHelper = require('../../collectionJsonHelpers/extractors/items.js')
+var templateHelper = require('../../collectionJsonHelpers/extractors/template.js')
+var collectionHelper = require('../../collectionJsonHelpers/extractors/collection.js')
 
 var Show = React.createClass({displayName: "Show",
     getInitialState: function(){
@@ -48192,4 +48192,4 @@ var Show = React.createClass({displayName: "Show",
 
 module.exports = Show
 
-},{"./../../helpers/collectionJson/attributes.js":1,"./../../helpers/collectionJson/collection.js":2,"./../../helpers/collectionJson/items.js":3,"./../../helpers/collectionJson/template.js":5,"./delete-button.jsx":223,"./details.jsx":224,"./editting-buttons.jsx":226,"./link.jsx":228,"./page.jsx":232,"jquery":34,"lodash":35,"react":220}]},{},[221]);
+},{"../../collectionJsonHelpers/extractors/attributes.js":3,"../../collectionJsonHelpers/extractors/collection.js":4,"../../collectionJsonHelpers/extractors/items.js":5,"../../collectionJsonHelpers/extractors/template.js":7,"./delete-button.jsx":223,"./details.jsx":224,"./editting-buttons.jsx":226,"./link.jsx":228,"./page.jsx":232,"jquery":34,"lodash":35,"react":220}]},{},[221]);

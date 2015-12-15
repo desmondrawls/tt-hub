@@ -1,4 +1,4 @@
-var attributesHelper = require('./collectionJson/attributes.js')
+var attributesHelper = require('../extractors/attributes.js')
 var talksHelper = require('./talks.js')
 
 function getType(collectionObject){

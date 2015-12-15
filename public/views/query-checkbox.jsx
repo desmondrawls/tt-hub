@@ -1,5 +1,5 @@
 var React = require('react')
-var queriesHelper = require('./../../helpers/collectionJson/queries.js')
+var queriesHelper = require('../../collectionJsonHelpers/extractors/queries.js')
 var _ = require('lodash')
 
 var QueryCheckbox = React.createClass({

@@ -6,10 +6,10 @@ var DeleteButton = require('./delete-button.jsx')
 var Link = require('./link.jsx')
 var _ = require('lodash')
 var $ = require('jquery')
-var attributesHelper = require('./../../helpers/collectionJson/attributes.js')
-var itemsHelper = require('./../../helpers/collectionJson/items.js')
-var templateHelper = require('./../../helpers/collectionJson/template.js')
-var collectionHelper = require('./../../helpers/collectionJson/collection.js')
+var attributesHelper = require('../../collectionJsonHelpers/extractors/attributes.js')
+var itemsHelper = require('../../collectionJsonHelpers/extractors/items.js')
+var templateHelper = require('../../collectionJsonHelpers/extractors/template.js')
+var collectionHelper = require('../../collectionJsonHelpers/extractors/collection.js')
 
 var Show = React.createClass({
     getInitialState: function(){

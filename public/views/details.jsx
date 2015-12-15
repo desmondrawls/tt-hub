@@ -1,6 +1,6 @@
 var React = require('react')
 var _ = require('lodash')
-var attributesHelper = require('./../../helpers/collectionJson/attributes.js')
+var attributesHelper = require('../../collectionJsonHelpers/extractors/attributes.js')
 
 var Details = React.createClass({
     render: function(){

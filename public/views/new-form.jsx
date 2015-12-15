@@ -2,7 +2,7 @@ var React = require('react')
 var _ = require('lodash')
 var Details = require('./details.jsx')
 var EdittingButtons = require('./editting-buttons.jsx')
-var attributesHelper = require('./../../helpers/collectionJson/attributes.js')
+var attributesHelper = require('../../collectionJsonHelpers/extractors/attributes.js')
 
 var NewForm = React.createClass({
     getInitialState: function () {
