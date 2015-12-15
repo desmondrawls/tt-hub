@@ -285,6 +285,10 @@ function getTemplateData(molecule){
     return getTemplate(molecule).data
 }
 
+function getData(template){
+    return template.data
+}
+
 function mergeTemplateData(existingTemplateData, newTemplateData){
     var index = _.indexOf(existingTemplateData, _.find(existingTemplateData, function(input){return input.name == newTemplateData.name}));
     var workingCopy = _.clone(existingTemplateData, true)
@@ -294,6 +298,7 @@ function mergeTemplateData(existingTemplateData, newTemplateData){
 
 exports.getPopulatedTemplate = getPopulatedTemplate
 exports.getTemplate = getTemplate
+exports.getData = getData
 exports.getTemplateData = getTemplateData
 exports.mergeTemplateData = mergeTemplateData
 
@@ -47690,7 +47695,7 @@ var Double = React.createClass({displayName: "Double",
         return (
             React.createElement(Page, React.__spread({},  this.props), 
                 React.createElement("h1", null, "TechTalk"), 
-                React.createElement(MatchSelector, {templateInputs: context.getTemplateInputs()}), 
+                React.createElement(MatchSelector, {template: templateHelper.getTemplate(this.state.molecule)}), 
                 context.state.loaded ? resources() : null
             )
         )
@@ -47856,26 +47861,42 @@ module.exports = ListItem
 },{"../../collectionJsonHelpers/extractors/attributes.js":3,"../../collectionJsonHelpers/extractors/items.js":5,"../../collectionJsonHelpers/extractors/template.js":7,"./details.jsx":224,"lodash":35,"react":220}],231:[function(require,module,exports){
 var React = require('react')
 var _ = require('lodash')
+var templateHelper = require('../../collectionJsonHelpers/extractors/template.js')
 
 var MatchSelector = React.createClass({displayName: "MatchSelector",
     render: function(){
         var context = this
         function selections(){
-            return _.map(context.props.templateInputs, function(selection){
+            return _.map(templateHelper.getData(context.props.template), function(selection){
                 return React.createElement("span", {className: "talk-selection"}, selection.value)
             })
         }
         return(
             React.createElement("div", {className: "talk-selector"}, 
+                React.createElement("button", {className: "talk-selector-button", onClick: this.onClick}, "SCHEDULE!"), 
                 selections()
             )
         )
-    }
+    },
+
+    onClick: function(){
+        var context = this
+        $.ajax(context.props.href, {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json'
+            },
+            data: {'template': context.props.template},
+            success: function(molecule){
+                console.log("MADE A TECH TALK:", molecule)
+            }
+        })
+    },
 })
 
 module.exports = MatchSelector
 
-},{"lodash":35,"react":220}],232:[function(require,module,exports){
+},{"../../collectionJsonHelpers/extractors/template.js":7,"lodash":35,"react":220}],232:[function(require,module,exports){
 var React = require('react')
 var NewForm = require('./new-form.jsx')
 var Link = require('./link.jsx')
@@ -47945,9 +47966,9 @@ var NewForm = React.createClass({displayName: "NewForm",
             headers: {
                 'Accept': 'application/json'
             },
-            data: {'template': this.state.template},
-            success: function(collectionObject){
-                context.props.store.update(collectionObject)
+            data: {'template': context.state.template},
+            success: function(molecule){
+                context.props.store.update(molecule)
                 context.onCancel()
             }
         })

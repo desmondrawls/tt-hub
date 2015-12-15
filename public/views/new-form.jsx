@@ -29,9 +29,9 @@ var NewForm = React.createClass({
             headers: {
                 'Accept': 'application/json'
             },
-            data: {'template': this.state.template},
-            success: function(collectionObject){
-                context.props.store.update(collectionObject)
+            data: {'template': context.state.template},
+            success: function(molecule){
+                context.props.store.update(molecule)
                 context.onCancel()
             }
         })

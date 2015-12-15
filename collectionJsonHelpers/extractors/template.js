@@ -17,6 +17,10 @@ function getTemplateData(molecule){
     return getTemplate(molecule).data
 }
 
+function getData(template){
+    return template.data
+}
+
 function mergeTemplateData(existingTemplateData, newTemplateData){
     var index = _.indexOf(existingTemplateData, _.find(existingTemplateData, function(input){return input.name == newTemplateData.name}));
     var workingCopy = _.clone(existingTemplateData, true)
@@ -26,5 +30,6 @@ function mergeTemplateData(existingTemplateData, newTemplateData){
 
 exports.getPopulatedTemplate = getPopulatedTemplate
 exports.getTemplate = getTemplate
+exports.getData = getData
 exports.getTemplateData = getTemplateData
 exports.mergeTemplateData = mergeTemplateData

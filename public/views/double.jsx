@@ -75,7 +75,7 @@ var Double = React.createClass({
         return (
             <Page {...this.props}>
                 <h1>TechTalk</h1>
-                <MatchSelector templateInputs={context.getTemplateInputs()}/>
+                <MatchSelector template={templateHelper.getTemplate(this.state.molecule)}/>
                 {context.state.loaded ? resources() : null}
             </Page>
         )

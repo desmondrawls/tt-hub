@@ -18,8 +18,10 @@ var LocalAdapter = function(hostRoot, hostPath, serverUrl){
 
 LocalAdapter.prototype.index = function(req, res, resolver) {
     var context = this
+    console.log("TALKS INDEX")
     var findTalks = Talk.find({}).exec()
     Q.when(findTalks).then(function(talks){
+        console.log("TALKS SIZE:", talks.length)
         var formattedTalks = layout.layout(context.hostRoot + context.hostPath, context.hostRoot + context.hostPath, talksTransformer.formatTalks(talks), talksTransformer.getTemplate());
         resolver.resolve(formattedTalks)
     }).done()
@@ -28,7 +30,7 @@ LocalAdapter.prototype.index = function(req, res, resolver) {
 
 LocalAdapter.prototype.create = function(req, res, resolver){
     var talk = talksTranslater.talkFromTemplateObject((req.body))
-    new Talk(talk).save().then(function(talk){resolver.resolve(context.hostPath)})
+    new Talk(talk).save().then(function(talk){console.log("made a talk:", talk);resolver.resolve(context.hostPath)})
     return resolver.promise
 }
 
