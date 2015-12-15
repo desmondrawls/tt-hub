@@ -44,7 +44,7 @@ Controller.prototype.update = function(req, res) {
 
 Controller.prototype.destroy = function(req, res) {
     var context = this
-    context.adapter.destroy(req, res)
+    context.adapter.destroy(req, res, Q.defer()).then(function(path){context.responder.redirect(res, path)}).done()
 }
 
 exports.Controller = Controller

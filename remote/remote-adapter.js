@@ -107,7 +107,7 @@ RemoteAdapter.prototype.update = function(req, res) {
     })
 }
 
-RemoteAdapter.prototype.destroy = function(req, res) {
+RemoteAdapter.prototype.destroy = function(req, res, resolver) {
     var context = this
     console.log("destroying item " + req.params.id)
     this.CollectionModel.findById(req.params.id, function (err, itemObject) {
@@ -115,9 +115,10 @@ RemoteAdapter.prototype.destroy = function(req, res) {
             headers: {"Content-Type": "application/json", "Accept": "application/json"}
         }
         client.delete(itemObject.href, args, function () {
-            res.redirect(context.hostPath)
+            resolver.resolve(context.hostPath)
         })
     })
+    return resolver.promise
 }
 
 exports.RemoteAdapter = RemoteAdapter
