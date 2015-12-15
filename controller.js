@@ -39,7 +39,11 @@ Controller.prototype.create = function(req, res) {
 
 Controller.prototype.update = function(req, res) {
     var context = this
-    context.adapter.update(req, res)
+    context.adapter.update(req, res, Q.defer())
+        .then(function(collectionObject){
+            context.responder.set(collectionObject, Q.defer()).then(context.responder.show(req, res)).done()
+        })
+        .done()
 }
 
 Controller.prototype.destroy = function(req, res) {

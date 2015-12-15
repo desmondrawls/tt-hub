@@ -93,7 +93,7 @@ RemoteAdapter.prototype.show = function(req, res, resolver) {
     return resolver.promise
 }
 
-RemoteAdapter.prototype.update = function(req, res) {
+RemoteAdapter.prototype.update = function(req, res, resolver) {
     var context = this
     console.log("updating item " + req.params.id, "with " + req.body)
     this.CollectionModel.findById(req.params.id, function (err, itemObject) {
@@ -102,9 +102,10 @@ RemoteAdapter.prototype.update = function(req, res) {
             headers: {"Content-Type": "application/json", "Accept": "application/json"}
         }
         client.put(itemObject.href, args, function (remoteItemObject, response) {
-            res.send(remoteItemObject)
+            resolver.resolve(remoteItemObject)
         })
     })
+    return resolver.promise
 }
 
 RemoteAdapter.prototype.destroy = function(req, res, resolver) {
@@ -115,7 +116,7 @@ RemoteAdapter.prototype.destroy = function(req, res, resolver) {
             headers: {"Content-Type": "application/json", "Accept": "application/json"}
         }
         client.delete(itemObject.href, args, function () {
-            resolver.resolve(context.hostPath)
+            resolver.resolve(context.hostRoot)
         })
     })
     return resolver.promise

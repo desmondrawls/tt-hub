@@ -48157,9 +48157,11 @@ var Show = React.createClass({displayName: "Show",
         var context = this
         $.ajax(collectionHelper.getCollectionValue(collectionHelper.getCollection(context.state.collectionObject), 'href'), {
             method: 'PUT',
+            headers: {
+                'Accept': 'application/json'
+            },
             data: {'template': this.state.template},
-            success: function(data){
-                var collectionObject = JSON.parse(data)
+            success: function(collectionObject){
                 context.setState({collectionObject: collectionObject})
                 context.setState({template: templateHelper.getPopulatedTemplate(
                                                 templateHelper.getTemplate(collectionObject),
