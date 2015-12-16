@@ -53,9 +53,13 @@ var SearchBar = React.createClass({
     },
 
     onReset: function(){
+        var query = _.clone(this.state.query, true)
+        query.data = _.map(queriesHelper.getData(query), function(input){ return queriesHelper.copyDataWithValue(input, '')})
+        this.store.update(query)
         this.updateFromSearch('')
-        this.setState({query: this.props.query})
     },
+
+
 
     onSearch: function() {
         var enabledParams = _.filter(this.getParams(), function(param){return param.enabled == true})
