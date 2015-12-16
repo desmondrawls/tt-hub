@@ -2,9 +2,11 @@ var React = require('react')
 var Page = require('./page.jsx')
 var Index = require('./index.jsx')
 var MatchSelector = require('./match-selector.jsx')
+var LinkedList = require('./linked-list.jsx')
 var _ = require('lodash')
 var Q = require('q');
 var templateHelper = require('../../collectionJsonHelpers/extractors/template.js')
+var itemsHelper = require('../../collectionJsonHelpers/extractors/items.js')
 var Store = require('./../stores/crystal.js')
 
 var Double = React.createClass({
@@ -13,7 +15,8 @@ var Double = React.createClass({
         return {
             molecule: this.store.fetch(),
             resources: [],
-            loaded: false
+            loaded: false,
+            scheduling: true
         }
     },
 
@@ -72,13 +75,22 @@ var Double = React.createClass({
             )
         }
 
+        function body() {
+            return context.state.scheduling ? resources() : <LinkedList chain={context.store} items={itemsHelper.getItems(context.props.molecule)}/>
+        }
+
         return (
             <Page {...this.props}>
                 <h1>TechTalk</h1>
+                <button onClick={this.onToggle}>{this.state.scheduling ? 'See already scheduled talks' : 'Schedule more talks'}</button>
                 <MatchSelector template={templateHelper.getTemplate(this.state.molecule)}/>
-                {context.state.loaded ? resources() : null}
+                {context.state.loaded ? body() : null}
             </Page>
         )
+    },
+
+    onToggle: function(){
+        this.setState({scheduling: !this.state.scheduling})
     }
 })
 

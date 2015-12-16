@@ -47622,9 +47622,11 @@ var React = require('react')
 var Page = require('./page.jsx')
 var Index = require('./index.jsx')
 var MatchSelector = require('./match-selector.jsx')
+var LinkedList = require('./linked-list.jsx')
 var _ = require('lodash')
 var Q = require('q');
 var templateHelper = require('../../collectionJsonHelpers/extractors/template.js')
+var itemsHelper = require('../../collectionJsonHelpers/extractors/items.js')
 var Store = require('./../stores/crystal.js')
 
 var Double = React.createClass({displayName: "Double",
@@ -47633,7 +47635,8 @@ var Double = React.createClass({displayName: "Double",
         return {
             molecule: this.store.fetch(),
             resources: [],
-            loaded: false
+            loaded: false,
+            scheduling: true
         }
     },
 
@@ -47692,19 +47695,28 @@ var Double = React.createClass({displayName: "Double",
             )
         }
 
+        function body() {
+            return context.state.scheduling ? resources() : React.createElement(LinkedList, {chain: context.store, items: itemsHelper.getItems(context.props.molecule)})
+        }
+
         return (
             React.createElement(Page, React.__spread({},  this.props), 
                 React.createElement("h1", null, "TechTalk"), 
+                React.createElement("button", {onClick: this.onToggle}, this.state.scheduling ? 'See already scheduled talks' : 'Schedule more talks'), 
                 React.createElement(MatchSelector, {template: templateHelper.getTemplate(this.state.molecule)}), 
-                context.state.loaded ? resources() : null
+                context.state.loaded ? body() : null
             )
         )
+    },
+
+    onToggle: function(){
+        this.setState({scheduling: !this.state.scheduling})
     }
 })
 
 module.exports = Double
 
-},{"../../collectionJsonHelpers/extractors/template.js":7,"./../stores/crystal.js":222,"./index.jsx":227,"./match-selector.jsx":231,"./page.jsx":234,"lodash":35,"q":36,"react":220}],226:[function(require,module,exports){
+},{"../../collectionJsonHelpers/extractors/items.js":5,"../../collectionJsonHelpers/extractors/template.js":7,"./../stores/crystal.js":222,"./index.jsx":227,"./linked-list.jsx":229,"./match-selector.jsx":231,"./page.jsx":234,"lodash":35,"q":36,"react":220}],226:[function(require,module,exports){
 var React = require('react')
 var _ = require('lodash')
 
@@ -47752,7 +47764,7 @@ var Index = React.createClass({displayName: "Index",
 
     render: function () {
         return (
-            React.createElement(Page, React.__spread({},  this.props), 
+            React.createElement("div", null, 
                 React.createElement("h2", null, typeHelper.getType(this.state.molecule)), 
                 React.createElement(SearchBar, {store: this.store, query: this.getSearchQuery()}), 
                 React.createElement(NewButton, {store: this.store, template: this.getTemplate(), href: this.getPrimaryUrl()}), 

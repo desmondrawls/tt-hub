@@ -28,7 +28,7 @@ var Index = React.createClass({
 
     render: function () {
         return (
-            <Page {...this.props}>
+            <div>
                 <h2>{typeHelper.getType(this.state.molecule)}</h2>
                 <SearchBar store={this.store} query={this.getSearchQuery()}/>
                 <NewButton store={this.store} template={this.getTemplate()} href={this.getPrimaryUrl()}/>
@@ -37,7 +37,7 @@ var Index = React.createClass({
                     templateInput={this.props.templateInput}
                     items={itemsHelper.getItems(this.state.molecule)}
                     textFormatter={typeHelper.getItemIdentifier}/>
-            </Page>
+            </div>
         )
     },
 
